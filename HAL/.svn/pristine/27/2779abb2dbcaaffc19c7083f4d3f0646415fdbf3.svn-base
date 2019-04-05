@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="patientHistory"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="595"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="discharge_icd_code_Id" isForPrompting="false" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="visitNo" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="serviceNo" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hinNo" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String()]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+     visit.visit_date AS visit_visit_date,
+     visit.visit_no AS visit_visit_no,
+     patient.service_no AS patient_service_no,
+     patient.age AS patient_age,
+     mas_icd.icd_name AS mas_icd_icd_name,
+     mas_department.department_name AS mas_department_name,
+     mas_department1.department_name AS department_name1,
+     mas_employee.first_name AS mas_employee_first_name,
+     mas_hospital.hospital_name AS mas_hospital_hospital_name,
+     (patient.p_first_name||patient.p_middle_name||patient.p_last_name)AS patient_name,
+     (patient.s_first_name||patient.s_middle_name||patient.s_last_name)AS s_name,
+     mas_relation.relation_name AS mas_relation_name,
+     mas_rank.rank_name AS mas_rank_rank_name,
+     mas_administrative_sex.administrative_sex_name AS mas_administr_sex_name,
+     mas_unit.unit_name AS mas_unit_unit_name,
+     mas_service_type.service_type_name AS mas_service_type_name,
+     mas_trade.trade_name AS mas_trade_name,
+     (case when opd_patient_history.personal_past_history IS NULL then '' else ('Past History :  '||opd_patient_history.personal_past_history ||'')end)AS opd_past_history,
+     (case when opd_patient_history.family_present_history IS NULL then '' else ('Family history : '||opd_patient_history.family_present_history ||'')end)AS opd_present_history,
+     (case when opd_patient_history.present_complain IS NULL then '' else ('Complaints :  '||opd_patient_history.present_complain ||'')end)AS opd_present_complain,
+     (case when opd_patient_history.present_advice IS NULL then '' else ('Advise To Patient :  '||opd_patient_history.present_advice ||'')end)AS opd_present_advice,
+     (case when opd_patient_history.present_illness IS NULL then '' else ('H/O Present Illness :  '||opd_patient_history.present_illness ||'')end)AS opd_present_illness,
+     opd_patient_history.ip_op_pac_status AS opd_ip_op_pac_status,
+     patient_prescription_header.prescription_id AS patient__prescription_id,
+     patient_investigation_header.investigation_header_id AS patient_invest_header_id,
+     (case when opd_patient_details.plan IS NULL then '' else ('Plan :  '||opd_patient_details.plan||'')end)AS opd_details_plan,
+     opd_patient_details.referred_dept AS opd_referred_dept,
+     opd_patient_details.refered_doctars AS opd_refered_doctars,
+     opd_patient_details.initial_diagnosis AS opd_initial_diagnosis,
+     (case when TO_CHAR(opd_patient_details.AFMS_desc) IS NULL then ''else ('On Examination :  ' ||TO_CHAR(opd_patient_details.AFMS_desc)||'')end)AS opd_on_examination,
+     opd_patient_details.next_visit_date AS opd_next_visit_date
+FROM
+     visit visit LEFT OUTER JOIN patient patient ON visit.hin_id = patient.hin_id
+     RIGHT OUTER JOIN patient_prescription_header patient_prescription_header ON visit.visit_id = patient_prescription_header.visit_id
+     AND patient_prescription_header.hin_id = visit.hin_id
+     LEFT OUTER JOIN mas_department mas_department ON visit.department_id = mas_department.department_id
+     RIGHT OUTER JOIN patient_investigation_header patient_investigation_header ON visit.visit_id = patient_investigation_header.visit_id
+     INNER JOIN opd_patient_details opd_patient_details ON visit.visit_id = opd_patient_details.visit_id
+     LEFT OUTER JOIN mas_employee mas_employee ON opd_patient_details.refered_doctars = mas_employee.employee_id
+     LEFT OUTER JOIN mas_department mas_department1 ON opd_patient_details.referred_dept = mas_department1.department_id
+     LEFT OUTER JOIN opd_patient_history opd_patient_history ON opd_patient_details.id = opd_patient_history.opd_patient_details
+     RIGHT OUTER JOIN discharge_icd_code discharge_icd_code ON opd_patient_details.visit_id = discharge_icd_code.visit_id
+     LEFT OUTER JOIN mas_icd mas_icd ON discharge_icd_code.icd_id = mas_icd.icd_id
+     AND patient.hin_id = patient_investigation_header.hin_id
+     LEFT OUTER JOIN mas_hospital mas_hospital ON patient.hospital_id = mas_hospital.hospital_id
+     LEFT OUTER JOIN mas_relation mas_relation ON patient.relation_id = mas_relation.relation_id
+     LEFT OUTER JOIN mas_rank mas_rank ON patient.rank_id = mas_rank.rank_id
+     LEFT OUTER JOIN mas_administrative_sex mas_administrative_sex ON patient.sex_id = mas_administrative_sex.administrative_sex_id
+     LEFT OUTER JOIN mas_unit mas_unit ON patient.unit_id = mas_unit.unit_id
+     LEFT OUTER JOIN mas_service_type mas_service_type ON patient.service_type_id = mas_service_type.service_type_id
+     LEFT OUTER JOIN mas_trade mas_trade ON patient.trade_id = mas_trade.trade_id
+WHERE
+     visit.visit_no = $P{visitNo}
+     And patient.service_no = $P{serviceNo}
+     And patient.hin_no = $P{hinNo}
+]]></queryString>
+
+	<field name="VISIT_VISIT_DATE" class="java.sql.Timestamp"/>
+	<field name="VISIT_VISIT_NO" class="java.math.BigDecimal"/>
+	<field name="PATIENT_SERVICE_NO" class="java.lang.String"/>
+	<field name="PATIENT_AGE" class="java.lang.String"/>
+	<field name="MAS_ICD_ICD_NAME" class="java.lang.String"/>
+	<field name="MAS_DEPARTMENT_NAME" class="java.lang.String"/>
+	<field name="DEPARTMENT_NAME1" class="java.lang.String"/>
+	<field name="MAS_EMPLOYEE_FIRST_NAME" class="java.lang.String"/>
+	<field name="MAS_HOSPITAL_HOSPITAL_NAME" class="java.lang.String"/>
+	<field name="PATIENT_NAME" class="java.lang.String"/>
+	<field name="S_NAME" class="java.lang.String"/>
+	<field name="MAS_RELATION_NAME" class="java.lang.String"/>
+	<field name="MAS_RANK_RANK_NAME" class="java.lang.String"/>
+	<field name="MAS_ADMINISTR_SEX_NAME" class="java.lang.String"/>
+	<field name="MAS_UNIT_UNIT_NAME" class="java.lang.String"/>
+	<field name="MAS_SERVICE_TYPE_NAME" class="java.lang.String"/>
+	<field name="MAS_TRADE_NAME" class="java.lang.String"/>
+	<field name="OPD_PAST_HISTORY" class="java.lang.String"/>
+	<field name="OPD_PRESENT_HISTORY" class="java.lang.String"/>
+	<field name="OPD_PRESENT_COMPLAIN" class="java.lang.String"/>
+	<field name="OPD_PRESENT_ADVICE" class="java.lang.String"/>
+	<field name="OPD_PRESENT_ILLNESS" class="java.lang.String"/>
+	<field name="OPD_IP_OP_PAC_STATUS" class="java.lang.String"/>
+	<field name="PATIENT__PRESCRIPTION_ID" class="java.math.BigDecimal"/>
+	<field name="PATIENT_INVEST_HEADER_ID" class="java.math.BigDecimal"/>
+	<field name="OPD_DETAILS_PLAN" class="java.lang.String"/>
+	<field name="OPD_REFERRED_DEPT" class="java.lang.String"/>
+	<field name="OPD_REFERED_DOCTARS" class="java.lang.String"/>
+	<field name="OPD_INITIAL_DIAGNOSIS" class="java.lang.String"/>
+	<field name="OPD_ON_EXAMINATION" class="java.lang.String"/>
+	<field name="OPD_NEXT_VISIT_DATE" class="java.sql.Timestamp"/>
+
+	<variable name="S No" class="java.lang.Integer" resetType="Report" calculation="Count">
+		<variableExpression><![CDATA[new java.lang.Integer(  ($V{REPORT_COUNT}.intValue()) )]]></variableExpression>
+		<initialValueExpression><![CDATA[new Integer(0)]]></initialValueExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="43"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="20"
+						width="434"
+						height="20"
+						key="textField-5"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isItalic="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{OPD_PRESENT_ILLNESS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="0"
+						width="433"
+						height="19"
+						key="textField-6"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isItalic="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{OPD_PRESENT_COMPLAIN}]]></textFieldExpression>
+				</textField>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

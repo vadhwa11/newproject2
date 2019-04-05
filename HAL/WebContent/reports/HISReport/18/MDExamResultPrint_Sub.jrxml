@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="MDExamResultPrint_Sub"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="612"
+		 pageHeight="198"
+		 columnWidth="612"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<style 
+		name="crticalvalue"
+		isDefault="false"
+		hAlign="Left"
+		vAlign="Top"
+		lineSpacing="Single"
+		isBold="false"
+		isUnderline="false"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{RESULT}]]></conditionExpression>
+			<style 
+				name="crticalvalue"
+				isDefault="false"
+				hAlign="Left"
+				vAlign="Top"
+				lineSpacing="Single"
+				isBold="false"
+				isUnderline="false"
+			/>
+		</conditionalStyle>
+	</style>
+
+	<parameter name="DG_ORDER_HD_ID" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+     distinct (case when (dg_result_entry_detail.sub_investigation_id) is null then dg_mas_investigation.investigation_name else (concat(dg_mas_investigation.investigation_name,concat(' / ',dg_sub_mas_investigation.sub_investigation_name)))end)AS testname,
+        DBMS_LOB.substr(dg_result_entry_detail.result,3000) as result,
+     dg_result_entry_detail.investigation_id as investigationId,
+        case 
+when dg_mas_investigation.investigation_type='s' 
+    then dg_mas_investigation.CRITICAL_MIN_VALUE else dg_normal_value.CRITICAL_MIN_VALUE end as CRITICAL_MIN_VALUE,
+   case when dg_mas_investigation.investigation_type='s' 
+    then dg_mas_investigation.CRITICAL_MAX_VALUE else dg_normal_value.CRITICAL_MAX_VALUE end as CRITICAL_MAX_VALUE,
+   case when dg_mas_investigation.investigation_type='s' 
+    then dg_mas_investigation.MAX_NORMAL_VALUE else dg_normal_value.MAX_NORMAL_VALUE end as NORMAL_MAX_VALUE,
+   case when dg_mas_investigation.investigation_type='s' 
+    then dg_mas_investigation.MIN_NORMAL_VALUE else dg_normal_value.MIN_NORMAL_VALUE end as NORMAL_MIN_VALUE,
+   case
+    when dg_mas_investigation.investigation_type='s'
+    then dg_mas_investigation.NORMAL_VALUE else dg_normal_value.NORMALVALUE end as NORM_VALUE,
+    case
+when dg_sub_mas_investigation.comparison_type='f' then
+'0.00001' 
+ when dg_sub_mas_investigation.comparison_type='F' then
+'0.00001'
+ when length(REGEXP_SUBSTR(dg_result_entry_detail.result,'[a-zA-Z!@#$%^&*()<>,?/]'))!=0 then
+'0.00001'
+else 
+DBMS_LOB.substr(dg_result_entry_detail.result,3000) end as res_num,
+      case
+     when dg_mas_investigation.investigation_type='s' then
+    case  when concat(dg_mas_investigation.min_normal_value,concat(' - ',dg_mas_investigation.max_normal_value))=' - '
+     then concat(dg_mas_investigation.normal_value,' ') else 
+     concat(dg_mas_investigation.min_normal_value,concat(' - ',dg_mas_investigation.max_normal_value)) end 
+     else
+     case 
+     when concat(dg_normal_value.min_normal_value,concat(' - ',dg_normal_value.max_normal_value))=' - '
+     then concat(dg_normal_value.normalvalue,' ') else 
+     concat(dg_normal_value.min_normal_value,concat('-',dg_normal_value.max_normal_value))end end as normal_value,
+ case
+     when dg_mas_investigation.investigation_type='s' then
+     (select uom_name from dg_uom where uom_id=dg_mas_investigation.uom_id)
+     else (select uom_name from dg_uom where uom_id=dg_sub_mas_investigation.uom_id) end as uom_name,
+    dg_result_entry_detail.remarks as remarks,
+    dg_orderhd.order_status as order_status
+    from
+    dg_orderhd
+      LEFT  JOIN dg_orderdt ON dg_orderdt.orderhd_id = dg_orderhd.orderhd_id
+
+       LEFT  JOIN dg_sample_collection_header ON dg_sample_collection_header.order_id=dg_orderhd.orderhd_id
+       LEFT  JOIN dg_result_entry_header ON dg_result_entry_header.sample_collection_header_id=dg_sample_collection_header.sample_collection_header_id
+       LEFT  JOIN dg_result_entry_detail ON dg_result_entry_header.result_entry_id=dg_result_entry_detail.result_entry_id
+       LEFT  JOIN  dg_mas_investigation ON dg_mas_investigation.investigation_id=dg_result_entry_header.investigation_id
+      LEFT  JOIN  dg_sub_mas_investigation ON dg_sub_mas_investigation.sub_investigation_id=dg_result_entry_detail.sub_investigation_id
+      LEFT  JOIN dg_normal_value on dg_normal_value.normal_id=dg_result_entry_detail.normal_id and dg_result_entry_detail.sub_investigation_ID=dg_normal_value.sub_investigation_ID
+       LEFT  JOIN dg_uom on dg_uom.uom_id=dg_result_entry_detail.uom_id
+       LEFT  JOIN mas_sub_chargecode on mas_sub_chargecode.sub_chargecode_id=dg_result_entry_header.sub_chargecode_id
+LEFT  JOIN dg_fixed_value on dg_fixed_value.fixed_id=dg_result_entry_detail.fixed_id
+where
+dg_mas_investigation.investigation_type not in ('t','v') and dg_mas_investigation.confidential!='y' and    
+dg_orderhd.orderhd_id= $P{DG_ORDER_HD_ID}
+ order by testname]]></queryString>
+
+	<field name="TESTNAME" class="java.lang.String"/>
+	<field name="RESULT" class="java.lang.String"/>
+	<field name="INVESTIGATIONID" class="java.math.BigDecimal"/>
+	<field name="CRITICAL_MIN_VALUE" class="java.lang.String"/>
+	<field name="CRITICAL_MAX_VALUE" class="java.lang.String"/>
+	<field name="NORMAL_MAX_VALUE" class="java.lang.String"/>
+	<field name="NORMAL_MIN_VALUE" class="java.lang.String"/>
+	<field name="NORM_VALUE" class="java.lang.String"/>
+	<field name="RES_NUM" class="java.lang.String"/>
+	<field name="NORMAL_VALUE" class="java.lang.String"/>
+	<field name="UOM_NAME" class="java.lang.String"/>
+	<field name="REMARKS" class="java.lang.String"/>
+	<field name="ORDER_STATUS" class="java.lang.String"/>
+
+	<variable name="SrNo" class="java.lang.Integer" resetType="None" incrementType="Report" calculation="Count">
+		<variableExpression><![CDATA[new java.lang.Integer(  ($V{REPORT_COUNT}.intValue()) )]]></variableExpression>
+		<initialValueExpression><![CDATA[new Integer(0)]]></initialValueExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="22"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="1"
+						width="43"
+						height="12"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{SrNo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="406"
+						y="1"
+						width="66"
+						height="12"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NORMAL_VALUE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="291"
+						y="0"
+						width="60"
+						height="12"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOM_NAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="50"
+						y="1"
+						width="145"
+						height="12"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{TESTNAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="195"
+						y="1"
+						width="85"
+						height="13"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{RESULT}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

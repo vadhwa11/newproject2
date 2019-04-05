@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="diagnosisDoctorSub"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="324"
+		 pageHeight="189"
+		 columnWidth="324"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="qry" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="service_no" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sub_chargecode_name" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+     dg_mas_investigation.investigation_name AS investigation_name,
+     count(*),
+     dg_result_entry_header.result_date AS header_result_date,
+     mas_employee.service_no AS emp_service_no,
+     (mas_employee.first_name||''|| mas_employee.middle_name||''||mas_employee.last_name )AS mas_employee_middle_name,
+     dg_orderhd.patient_type as aaaa
+FROM
+mas_department mas_department RIGHT OUTER JOIN dg_result_entry_header dg_result_entry_header ON mas_department.department_id = dg_result_entry_header.department_id
+     LEFT OUTER JOIN dg_sample_collection_header dg_sample_collection_header ON dg_result_entry_header.sample_collection_header_id = dg_sample_collection_header.sample_collection_header_id
+     LEFT OUTER JOIN mas_sub_chargecode mas_sub_chargecode ON dg_result_entry_header.sub_chargecode_id = mas_sub_chargecode.sub_chargecode_id
+     LEFT OUTER JOIN dg_orderhd dg_orderhd ON dg_sample_collection_header.order_id = dg_orderhd.orderhd_id
+     LEFT OUTER JOIN mas_employee mas_employee ON dg_result_entry_header.result_verified_by = mas_employee.employee_id
+     LEFT OUTER JOIN dg_mas_investigation dg_mas_investigation ON dg_result_entry_header.investigation_id = dg_mas_investigation.investigation_id
+     LEFT OUTER JOIN mas_main_chargecode mas_main_chargecode ON dg_result_entry_header.main_chargecode_id = mas_main_chargecode.main_chargecode_id
+
+$P!{qry}
+AND service_no = $P{service_no}
+AND mas_sub_chargecode.sub_chargecode_name = $P{sub_chargecode_name}
+GROUP BY
+      dg_mas_investigation.investigation_id,dg_mas_investigation.investigation_name,dg_result_entry_header.result_date,mas_employee.service_no,(mas_employee.first_name||''|| mas_employee.middle_name||''||mas_employee.last_name ),dg_orderhd.patient_type]]></queryString>
+
+	<field name="INVESTIGATION_NAME" class="java.lang.String"/>
+	<field name="COUNT(*)" class="java.lang.Long"/>
+	<field name="HEADER_RESULT_DATE" class="java.sql.Timestamp"/>
+	<field name="EMP_SERVICE_NO" class="java.lang.String"/>
+	<field name="MAS_EMPLOYEE_MIDDLE_NAME" class="java.lang.String"/>
+	<field name="AAAA" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="20"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="21"
+						y="1"
+						width="161"
+						height="13"
+						key="textField-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{INVESTIGATION_NAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="201"
+						y="1"
+						width="100"
+						height="13"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{COUNT(*)}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="SubEarningAndDeduction"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="166"
+		 pageHeight="303"
+		 columnWidth="166"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoDataSection"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="empId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="month" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="year" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+     hr_payroll_process_header.basic AS hr_payroll_process_header_basic,
+     hr_payroll_process_detail.payelement_amount AS hr_payroll_process_detail_payelement_amount,
+     hr_mas_pay_element.pay_element_desc AS hr_mas_pay_element_pay_element_desc,
+     hr_mas_pay_element.pay_element_type AS hr_mas_pay_element_pay_element_type
+FROM
+     hr_payroll_process_header hr_payroll_process_header LEFT OUTER JOIN hr_payroll_process_detail hr_payroll_process_detail ON hr_payroll_process_header.payroll_process_header_id = hr_payroll_process_detail.payroll_process_header_id
+     LEFT OUTER JOIN hr_employee_pay_elements hr_employee_pay_elements ON hr_payroll_process_detail.emp_pay_element_id = hr_employee_pay_elements.id
+     LEFT OUTER JOIN hr_mas_pay_element hr_mas_pay_element ON hr_employee_pay_elements.pay_element_id = hr_mas_pay_element.pay_element_id
+
+where hr_payroll_process_header.employee_id = $P{empId}
+and   hr_payroll_process_header.year        = $P{year}
+and   hr_payroll_process_header.month       =$P{month}
+and  hr_mas_pay_element.pay_element_type = 'Deduction'
+
+union
+
+SELECT
+     hr_payroll_process_header.basic AS hr_payroll_process_header_basic,
+     hr_payroll_process_header.itax  AS hr_payroll_process_detail_payelement_amount,
+     'Tax'                             AS hr_mas_pay_element_pay_element_desc,
+     'Deduction'                       AS hr_mas_pay_element_pay_element_type
+FROM
+     hr_payroll_process_header hr_payroll_process_header LEFT OUTER JOIN hr_payroll_process_detail hr_payroll_process_detail ON hr_payroll_process_header.payroll_process_header_id = hr_payroll_process_detail.payroll_process_header_id
+     LEFT OUTER JOIN hr_employee_pay_elements hr_employee_pay_elements ON hr_payroll_process_detail.emp_pay_element_id = hr_employee_pay_elements.id
+     LEFT OUTER JOIN hr_mas_pay_element hr_mas_pay_element ON hr_employee_pay_elements.pay_element_id = hr_mas_pay_element.pay_element_id
+
+where hr_payroll_process_header.employee_id = $P{empId}
+and   hr_payroll_process_header.year        = $P{year}
+and   hr_payroll_process_header.month       =$P{month}
+and  hr_mas_pay_element.pay_element_type = 'Deduction']]></queryString>
+
+	<field name="hr_payroll_process_header_basic" class="java.math.BigDecimal"/>
+	<field name="hr_payroll_process_detail_payelement_amount" class="java.math.BigDecimal"/>
+	<field name="hr_mas_pay_element_pay_element_desc" class="java.lang.String"/>
+	<field name="hr_mas_pay_element_pay_element_type" class="java.lang.String"/>
+
+	<variable name="d_total" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
+		<variableExpression><![CDATA[$F{hr_payroll_process_detail_payelement_amount}]]></variableExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="14"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="1"
+						y="1"
+						width="93"
+						height="12"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Verdana" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Deduction]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="99"
+						y="1"
+						width="67"
+						height="12"
+						key="staticText-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Verdana" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Amount]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="13"
+						width="166"
+						height="0"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="13"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="1"
+						width="93"
+						height="12"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Verdana" size="6"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{hr_mas_pay_element_pay_element_desc}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="99"
+						y="1"
+						width="66"
+						height="12"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Verdana" size="6"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{hr_payroll_process_detail_payelement_amount}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="14"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="1"
+						width="166"
+						height="0"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="100"
+						y="2"
+						width="66"
+						height="12"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Verdana" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{d_total}]]></textFieldExpression>
+				</textField>
+			</band>
+		</summary>
+		<noData>
+			<band height="10"  isSplitAllowed="true" >
+			</band>
+		</noData>
+</jasperReport>

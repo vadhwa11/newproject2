@@ -1,0 +1,23 @@
+package jkt.hms.masters.business;
+
+import jkt.hms.masters.business.base.BaseOpdGravidagramGestationalDiabitiesOne;
+
+public class OpdGravidagramGestationalDiabitiesOne extends
+		BaseOpdGravidagramGestationalDiabitiesOne {
+	private static final long serialVersionUID = 1L;
+
+	/* [CONSTRUCTOR MARKER BEGIN] */
+	public OpdGravidagramGestationalDiabitiesOne() {
+		super();
+	}
+
+	/**
+	 * Constructor for primary key
+	 */
+	public OpdGravidagramGestationalDiabitiesOne(java.lang.Integer id) {
+		super(id);
+	}
+
+	/* [CONSTRUCTOR MARKER END] */
+
+}

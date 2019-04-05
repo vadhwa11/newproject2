@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="OT_patientDiagnosis"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="123"
+		 pageHeight="47"
+		 columnWidth="122"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="1"
+		 topMargin="20"
+		 bottomMargin="0"
+		 whenNoDataType="BlankPage"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="inpatient_id" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("0")]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select (case when (SELECT max(m.icd_id) FROM mas_icd m,discharge_icd_code dis
+ WHERE dis.inpatient_id =  $P{inpatient_id} AND m.icd_id = dis.icd_id
+ and dis.diagnosis_status  in ('f','p') != "")
+
+then
+(SELECT icd.icd_name AS init_diagnosis FROM discharge_icd_code d ,mas_icd icd ,inpatient i
+WHERE d.icd_id = icd.icd_id
+AND d.inpatient_id =  $P{inpatient_id}
+AND i.inpatient_id =  $P{inpatient_id}
+AND icd.icd_id = (SELECT max(m.icd_id) FROM mas_icd m,discharge_icd_code dis
+ WHERE dis.inpatient_id = $P{inpatient_id} AND m.icd_id = dis.icd_id and dis.diagnosis_status  in ('f','p')))
+
+else
+
+ (select init_diagnosis from inpatient where inpatient.inpatient_id =  $P{inpatient_id})
+
+ end)as init_diagnosis from dual]]></queryString>
+
+	<field name="init_diagnosis" class="java.lang.String"/>
+
+		<background>
+			<band height="1"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="2"
+						y="-20"
+						width="84"
+						height="18"
+						key="textField"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{init_diagnosis}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

@@ -1,0 +1,1584 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="Quaterly_Annual_Health_Report_Sub_3"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="907"
+		 columnWidth="555"
+		 columnSpacing="0"
+		 leftMargin="20"
+		 rightMargin="20"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.zoom" value="1.0" />
+	<property name="ireport.x" value="0" />
+	<property name="ireport.y" value="245" />
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["D:\\SMC\\HMS\\WebContent\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fromDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="toDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select distinct
+
+(select count(discharge_icd_code_id) from discharge_icd_code d where to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1)) as Total_Admission_previous,
+(select count(discharge_icd_code_id) from discharge_icd_code d where to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))) as Total_Admission_current,
+
+(((select count(discharge_icd_code_id) from discharge_icd_code d where to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1))/1000)*100) as Total_Admission_pervious_per,
+(((select count(discharge_icd_code_id) from discharge_icd_code d where to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')))/1000)*100) as Total_Admission_current_per,
+
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('B53.1') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1)) as Malaria_previous,
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('B53.1') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))) as Malaria_current,
+
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('B53.1') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1)/1000)*100)) as Malaria_previous_per,
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('B53.1') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')/1000)*100))) as Malaria_current_per,
+
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('A09') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1)) as Diarrhoea_previous,
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('A09') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))) as Diarrhoea_current,
+
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('A09') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1))/1000)*100) as Diarrhoea_previous_Per,
+((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('A09') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))/1000)*100) as Diarrhoea_Current_Per,
+
+((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('A05.2', 'A05.3', 'A05.0', 'A05.4') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1))) as Food_Poisoning_previous,
+((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('A05.2', 'A05.3', 'A05.0', 'A05.4') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')))) as Food_Poisoning_current,
+
+
+((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('A05.2', 'A05.3', 'A05.0', 'A05.4') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1)/1000)*100) as Food_Poisoning_previous_per,
+((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('A05.2', 'A05.3', 'A05.0', 'A05.4') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))/1000)*100) as Food_Poisoning_current_per,
+
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('B15.0', 'B15.9', '3286', '3287') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))-1) as Hepatitis_previous,
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('B15.0', 'B15.9', '3286', '3287') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))) as Hepatitis_current,
+
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('B15.0', 'B15.9', '3286', '3287') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))-1)/1000)*100) as Hepatitis_previous_Per,
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('B15.0', 'B15.9', '3286', '3287') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')))/1000)*100) as Hepatitis_current_Per,
+
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('B20', 'B21', 'B22', 'B23', 'B24', 'B20.6', 'B20.1', 'B20.2', 'B20.3', 'B20.4', 'B20.5', 'B20.8', 'B21.0', 'B21.1', 'B21.2', 'B21.3', 'B21.7', 'B21.9', 'B22.0', 'B22.7', 'B23.2', 'B23.8', 'B20.7', 'B22.1', 'B23.1', 'B20.0', 'B20.9', 'B22.2', 'B21.8') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1)) as Hiv_Aids_previous,
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('B20', 'B21', 'B22', 'B23', 'B24', 'B20.6', 'B20.1', 'B20.2', 'B20.3', 'B20.4', 'B20.5', 'B20.8', 'B21.0', 'B21.1', 'B21.2', 'B21.3', 'B21.7', 'B21.9', 'B22.0', 'B22.7', 'B23.2', 'B23.8', 'B20.7', 'B22.1', 'B23.1', 'B20.0', 'B20.9', 'B22.2', 'B21.8') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))) as Hiv_Aids_current,
+
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('B20', 'B21', 'B22', 'B23', 'B24', 'B20.6', 'B20.1', 'B20.2', 'B20.3', 'B20.4', 'B20.5', 'B20.8', 'B21.0', 'B21.1', 'B21.2', 'B21.3', 'B21.7', 'B21.9', 'B22.0', 'B22.7', 'B23.2', 'B23.8', 'B20.7', 'B22.1', 'B23.1', 'B20.0', 'B20.9', 'B22.2', 'B21.8') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1))/1000)*100) as Hiv_Aids_previous_Per,
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('B20', 'B21', 'B22', 'B23', 'B24', 'B20.6', 'B20.1', 'B20.2', 'B20.3', 'B20.4', 'B20.5', 'B20.8', 'B21.0', 'B21.1', 'B21.2', 'B21.3', 'B21.7', 'B21.9', 'B22.0', 'B22.7', 'B23.2', 'B23.8', 'B20.7', 'B22.1', 'B23.1', 'B20.0', 'B20.9', 'B22.2', 'B21.8') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')))/1000)*100) as Hiv_Aids_current_Per,
+
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('A15', 'A16', 'A16.9', 'D38.6', 'D02.4', 'D14.4', 'J96', 'J98.9', 'J99*', 'J99.8*', 'J68', 'J70', 'J70.9', 'B97.4', 'J12.1', 'P28.5', 'P28.9', 'P22', 'P22.0', 'P22.9', 'J96.9', 'J99.1*', 'J70.8', 'R09.2', 'A15.9') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1)) as Respiratory_previous,
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('A15', 'A16', 'A16.9', 'D38.6', 'D02.4', 'D14.4', 'J96', 'J98.9', 'J99*', 'J99.8*', 'J68', 'J70', 'J70.9', 'B97.4', 'J12.1', 'P28.5', 'P28.9', 'P22', 'P22.0', 'P22.9', 'J96.9', 'J99.1*', 'J70.8', 'R09.2', 'A15.9') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))) as Respiratory_current,
+
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('A15', 'A16', 'A16.9', 'D38.6', 'D02.4', 'D14.4', 'J96', 'J98.9', 'J99*', 'J99.8*', 'J68', 'J70', 'J70.9', 'B97.4', 'J12.1', 'P28.5', 'P28.9', 'P22', 'P22.0', 'P22.9', 'J96.9', 'J99.1*', 'J70.8', 'R09.2', 'A15.9') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1))/1000)*100) as Respiratory_previous_Per,
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('A15', 'A16', 'A16.9', 'D38.6', 'D02.4', 'D14.4', 'J96', 'J98.9', 'J99*', 'J99.8*', 'J68', 'J70', 'J70.9', 'B97.4', 'J12.1', 'P28.5', 'P28.9', 'P22', 'P22.0', 'P22.9', 'J96.9', 'J99.1*', 'J70.8', 'R09.2', 'A15.9') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')))/1000)*100) as Respiratory_current_Per,
+
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('D48.5', 'D23.3', 'D23.4', 'D23.6', 'D23.7', 'D04.0', 'D04.2', 'D04.4', 'D04.5', 'D04.6', 'D04.7', 'D04.9', 'D04.1', 'D04.8', 'C44.1', 'C44.2', 'C44.3', 'C44.5', 'C44.4', 'D23.9', 'C44.7', 'D23.2', 'L57.9', 'Z94.5', 'D23.0', 'D23.5', 'D04.3', 'L57', 'C44.6', 'Z52.1', 'D23.1') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1)) as Skin_previous,
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('D48.5', 'D23.3', 'D23.4', 'D23.6', 'D23.7', 'D04.0', 'D04.2', 'D04.4', 'D04.5', 'D04.6', 'D04.7', 'D04.9', 'D04.1', 'D04.8', 'C44.1', 'C44.2', 'C44.3', 'C44.5', 'C44.4', 'D23.9', 'C44.7', 'D23.2', 'L57.9', 'Z94.5', 'D23.0', 'D23.5', 'D04.3', 'L57', 'C44.6', 'Z52.1', 'D23.1') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))) as Skin_current,
+
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('D48.5', 'D23.3', 'D23.4', 'D23.6', 'D23.7', 'D04.0', 'D04.2', 'D04.4', 'D04.5', 'D04.6', 'D04.7', 'D04.9', 'D04.1', 'D04.8', 'C44.1', 'C44.2', 'C44.3', 'C44.5', 'C44.4', 'D23.9', 'C44.7', 'D23.2', 'L57.9', 'Z94.5', 'D23.0', 'D23.5', 'D04.3', 'L57', 'C44.6', 'Z52.1', 'D23.1') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1))/1000)*100) as Skin_previous_Per,
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('D48.5', 'D23.3', 'D23.4', 'D23.6', 'D23.7', 'D04.0', 'D04.2', 'D04.4', 'D04.5', 'D04.6', 'D04.7', 'D04.9', 'D04.1', 'D04.8', 'C44.1', 'C44.2', 'C44.3', 'C44.5', 'C44.4', 'D23.9', 'C44.7', 'D23.2', 'L57.9', 'Z94.5', 'D23.0', 'D23.5', 'D04.3', 'L57', 'C44.6', 'Z52.1', 'D23.1') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')))/1000)*100) as Skin_current_Per,
+
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('T67.0' ,'T67.1', 'T67.2', 'T67.4', 'T67.7', 'T67.5', 'T67.6', 'T67.3', 'P80.0') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1)) as Cold_Heat_previous,
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('T67.0' ,'T67.1', 'T67.2', 'T67.4', 'T67.7', 'T67.5', 'T67.6', 'T67.3', 'P80.0') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))) as Cold_Heat_current,
+
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('T67.0' ,'T67.1', 'T67.2', 'T67.4', 'T67.7', 'T67.5', 'T67.6', 'T67.3') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1))/1000)*100) as Cold_Heat_previous_Per,
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('T67.0' ,'T67.1', 'T67.2', 'T67.4', 'T67.7', 'T67.5', 'T67.6', 'T67.3') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')))/1000)*100) as Cold_Heat_current_Per,
+
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('T06.2' ,'T06.1', 'T06.3', 'T06.4', 'T06.0', 'T06.5') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1)) as Injuries_previous,
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('T06.2' ,'T06.1', 'T06.3', 'T06.4', 'T06.0', 'T06.5') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))) as Injuries_current,
+
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('T06.2' ,'T06.1', 'T06.3', 'T06.4', 'T06.0', 'T06.5') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1))/1000)*100) as Injuries_previous_Per,
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('T06.2' ,'T06.1', 'T06.3', 'T06.4', 'T06.0', 'T06.5') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')))/1000)*100) as Injuries_current_Per,
+
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('E50.7', 'E50.8', 'E51.8',   'E56', 'E63', 'E66.8') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1)) as Other_previous,
+(select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('E50.7', 'E50.8', 'E51.8',   'E56', 'E63', 'E66.8') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY'))) as Other_current,
+
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('E50.7', 'E50.8', 'E51.8',   'E56', 'E63', 'E66.8') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')-1))/1000)*100) as Other_previous_Per,
+(((select count(discharge_icd_code_id) from discharge_icd_code d left outer join mas_icd m on m.icd_id=d.icd_id where m.icd_code in ('E50.7', 'E50.8', 'E51.8',   'E56', 'E63', 'E66.8') and to_char(d.ADD_EDIT_DATE, 'YYYY')=(to_char(sysdate, 'YYYY')))/1000)*100) as Other_current_Per
+
+from discharge_icd_code
+where add_edit_date between $P{fromDate} and $P{toDate}]]></queryString>
+
+	<field name="TOTAL_ADMISSION_PREVIOUS" class="java.math.BigDecimal"/>
+	<field name="TOTAL_ADMISSION_CURRENT" class="java.math.BigDecimal"/>
+	<field name="TOTAL_ADMISSION_PERVIOUS_PER" class="java.math.BigDecimal"/>
+	<field name="TOTAL_ADMISSION_CURRENT_PER" class="java.math.BigDecimal"/>
+	<field name="MALARIA_PREVIOUS" class="java.math.BigDecimal"/>
+	<field name="MALARIA_CURRENT" class="java.math.BigDecimal"/>
+	<field name="MALARIA_PREVIOUS_PER" class="java.math.BigDecimal"/>
+	<field name="MALARIA_CURRENT_PER" class="java.math.BigDecimal"/>
+	<field name="DIARRHOEA_PREVIOUS" class="java.math.BigDecimal"/>
+	<field name="DIARRHOEA_CURRENT" class="java.math.BigDecimal"/>
+	<field name="DIARRHOEA_PREVIOUS_PER" class="java.math.BigDecimal"/>
+	<field name="DIARRHOEA_CURRENT_PER" class="java.math.BigDecimal"/>
+	<field name="FOOD_POISONING_PREVIOUS" class="java.math.BigDecimal"/>
+	<field name="FOOD_POISONING_CURRENT" class="java.math.BigDecimal"/>
+	<field name="FOOD_POISONING_PREVIOUS_PER" class="java.math.BigDecimal"/>
+	<field name="FOOD_POISONING_CURRENT_PER" class="java.math.BigDecimal"/>
+	<field name="HEPATITIS_PREVIOUS" class="java.math.BigDecimal"/>
+	<field name="HEPATITIS_CURRENT" class="java.math.BigDecimal"/>
+	<field name="HEPATITIS_PREVIOUS_PER" class="java.math.BigDecimal"/>
+	<field name="HEPATITIS_CURRENT_PER" class="java.math.BigDecimal"/>
+	<field name="HIV_AIDS_PREVIOUS" class="java.math.BigDecimal"/>
+	<field name="HIV_AIDS_CURRENT" class="java.math.BigDecimal"/>
+	<field name="HIV_AIDS_PREVIOUS_PER" class="java.math.BigDecimal"/>
+	<field name="HIV_AIDS_CURRENT_PER" class="java.math.BigDecimal"/>
+	<field name="RESPIRATORY_PREVIOUS" class="java.math.BigDecimal"/>
+	<field name="RESPIRATORY_CURRENT" class="java.math.BigDecimal"/>
+	<field name="RESPIRATORY_PREVIOUS_PER" class="java.math.BigDecimal"/>
+	<field name="RESPIRATORY_CURRENT_PER" class="java.math.BigDecimal"/>
+	<field name="SKIN_PREVIOUS" class="java.math.BigDecimal"/>
+	<field name="SKIN_CURRENT" class="java.math.BigDecimal"/>
+	<field name="SKIN_PREVIOUS_PER" class="java.math.BigDecimal"/>
+	<field name="SKIN_CURRENT_PER" class="java.math.BigDecimal"/>
+	<field name="COLD_HEAT_PREVIOUS" class="java.math.BigDecimal"/>
+	<field name="COLD_HEAT_CURRENT" class="java.math.BigDecimal"/>
+	<field name="COLD_HEAT_PREVIOUS_PER" class="java.math.BigDecimal"/>
+	<field name="COLD_HEAT_CURRENT_PER" class="java.math.BigDecimal"/>
+	<field name="INJURIES_PREVIOUS" class="java.math.BigDecimal"/>
+	<field name="INJURIES_CURRENT" class="java.math.BigDecimal"/>
+	<field name="INJURIES_PREVIOUS_PER" class="java.math.BigDecimal"/>
+	<field name="INJURIES_CURRENT_PER" class="java.math.BigDecimal"/>
+	<field name="OTHER_PREVIOUS" class="java.math.BigDecimal"/>
+	<field name="OTHER_CURRENT" class="java.math.BigDecimal"/>
+	<field name="OTHER_PREVIOUS_PER" class="java.math.BigDecimal"/>
+	<field name="OTHER_CURRENT_PER" class="java.math.BigDecimal"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="22"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="4"
+						y="0"
+						width="546"
+						height="22"
+						key="staticText-18"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Comparative Table of Incidence of Preventable Disease]]></text>
+				</staticText>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="510"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="5"
+						y="6"
+						width="46"
+						height="20"
+						key="staticText-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Sl No.]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="4"
+						y="3"
+						width="547"
+						height="1"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="3"
+						y="3"
+						width="1"
+						height="428"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="551"
+						y="3"
+						width="1"
+						height="428"
+						key="line-3"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="465"
+						y="29"
+						width="1"
+						height="402"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="4"
+						y="28"
+						width="547"
+						height="1"
+						key="line-6"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="4"
+						y="64"
+						width="547"
+						height="1"
+						key="line-7"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="5"
+						y="31"
+						width="46"
+						height="20"
+						key="staticText-10"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[1]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="4"
+						y="87"
+						width="547"
+						height="1"
+						key="line-8"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="5"
+						y="66"
+						width="46"
+						height="20"
+						key="staticText-11"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[2]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="4"
+						y="110"
+						width="547"
+						height="1"
+						key="line-9"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="5"
+						y="89"
+						width="46"
+						height="20"
+						key="staticText-12"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[3]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="4"
+						y="132"
+						width="547"
+						height="1"
+						key="line-10"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="5"
+						y="112"
+						width="46"
+						height="20"
+						key="staticText-13"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[4]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="375"
+						y="3"
+						width="1"
+						height="428"
+						key="line-11"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="377"
+						y="6"
+						width="173"
+						height="20"
+						key="staticText-14"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Current Year]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="287"
+						y="29"
+						width="1"
+						height="402"
+						key="line-12"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="201"
+						y="3"
+						width="1"
+						height="428"
+						key="line-13"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="202"
+						y="6"
+						width="172"
+						height="20"
+						key="staticText-16"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Previous year]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="51"
+						y="3"
+						width="1"
+						height="428"
+						key="line-14"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="52"
+						y="6"
+						width="149"
+						height="20"
+						key="staticText-17"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Disease]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="31"
+						width="149"
+						height="32"
+						key="staticText-19"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Total Admission (fresh cases  only)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="89"
+						width="149"
+						height="20"
+						key="staticText-20"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Food Poisoning]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="66"
+						width="149"
+						height="20"
+						key="staticText-21"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Malaria]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="111"
+						width="149"
+						height="20"
+						key="staticText-22"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Diarrhoea/ Dysentery]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="4"
+						y="155"
+						width="547"
+						height="1"
+						key="line-15"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="5"
+						y="134"
+						width="46"
+						height="20"
+						key="staticText-23"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[5]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="134"
+						width="149"
+						height="20"
+						key="staticText-24"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Viral Hepatitis]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="6"
+						y="178"
+						width="547"
+						height="1"
+						key="line-16"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="5"
+						y="157"
+						width="46"
+						height="20"
+						key="staticText-25"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[6]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="157"
+						width="149"
+						height="20"
+						key="staticText-26"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[STD]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="4"
+						y="200"
+						width="547"
+						height="1"
+						key="line-17"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="5"
+						y="180"
+						width="46"
+						height="20"
+						key="staticText-27"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[7]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="179"
+						width="149"
+						height="20"
+						key="staticText-28"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[HIV/ AIDS]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="3"
+						y="223"
+						width="547"
+						height="1"
+						key="line-18"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="4"
+						y="202"
+						width="46"
+						height="20"
+						key="staticText-29"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[8]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="202"
+						width="149"
+						height="20"
+						key="staticText-30"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Resp Gp]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="3"
+						y="247"
+						width="547"
+						height="1"
+						key="line-19"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="4"
+						y="226"
+						width="46"
+						height="20"
+						key="staticText-31"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[9]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="226"
+						width="149"
+						height="20"
+						key="staticText-32"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Skin Gp]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="3"
+						y="271"
+						width="547"
+						height="1"
+						key="line-20"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="4"
+						y="249"
+						width="46"
+						height="20"
+						key="staticText-33"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[10]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="249"
+						width="149"
+						height="20"
+						key="staticText-34"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Effects of heat and cold]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="3"
+						y="294"
+						width="547"
+						height="1"
+						key="line-21"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="4"
+						y="273"
+						width="46"
+						height="20"
+						key="staticText-35"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[11]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="273"
+						width="149"
+						height="20"
+						key="staticText-36"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Total Injuries]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="296"
+						width="149"
+						height="20"
+						key="staticText-38"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[FA]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="51"
+						y="340"
+						width="499"
+						height="1"
+						key="line-23"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="52"
+						y="319"
+						width="149"
+						height="20"
+						key="staticText-40"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[TWA/ MTA]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="52"
+						y="317"
+						width="499"
+						height="1"
+						key="line-24"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="53"
+						y="341"
+						width="149"
+						height="20"
+						key="staticText-41"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[GA]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="52"
+						y="385"
+						width="499"
+						height="1"
+						key="line-25"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="53"
+						y="364"
+						width="149"
+						height="20"
+						key="staticText-42"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[PA]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="53"
+						y="362"
+						width="499"
+						height="1"
+						key="line-26"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="52"
+						y="387"
+						width="149"
+						height="20"
+						key="staticText-43"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[OA]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="3"
+						y="431"
+						width="550"
+						height="1"
+						key="line-27"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="52"
+						y="410"
+						width="149"
+						height="20"
+						key="staticText-44"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Other causes]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="52"
+						y="408"
+						width="499"
+						height="1"
+						key="line-28"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="69"
+						y="434"
+						width="300"
+						height="20"
+						key="staticText-45"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Admission Rate (All Cases - Fresh only) per 1000]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="69"
+						y="461"
+						width="93"
+						height="20"
+						key="staticText-46"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Perviour Year]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="266"
+						y="461"
+						width="103"
+						height="20"
+						key="staticText-47"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Current Year]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="162"
+						y="461"
+						width="7"
+						height="20"
+						key="staticText-48"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="369"
+						y="435"
+						width="7"
+						height="20"
+						key="staticText-49"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="369"
+						y="461"
+						width="7"
+						height="20"
+						key="staticText-50"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="23"
+						y="487"
+						width="346"
+						height="20"
+						key="staticText-51"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Comments on undue prevalence of any particular disease]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="371"
+						y="487"
+						width="7"
+						height="20"
+						key="staticText-52"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="4"
+						y="487"
+						width="16"
+						height="20"
+						key="staticText-53"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[2.]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="208"
+						y="38"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{TOTAL_ADMISSION_PREVIOUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="380"
+						y="38"
+						width="81"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{TOTAL_ADMISSION_CURRENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="293"
+						y="38"
+						width="76"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{TOTAL_ADMISSION_PERVIOUS_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="472"
+						y="38"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{TOTAL_ADMISSION_CURRENT_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="208"
+						y="67"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{MALARIA_PREVIOUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="380"
+						y="67"
+						width="81"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{MALARIA_CURRENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="293"
+						y="67"
+						width="76"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{MALARIA_PREVIOUS_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="472"
+						y="67"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{MALARIA_CURRENT_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="208"
+						y="113"
+						width="74"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{DIARRHOEA_PREVIOUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="380"
+						y="113"
+						width="81"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{DIARRHOEA_CURRENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="293"
+						y="113"
+						width="76"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{DIARRHOEA_PREVIOUS_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="470"
+						y="113"
+						width="75"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{DIARRHOEA_CURRENT_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="208"
+						y="90"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{FOOD_POISONING_PREVIOUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="380"
+						y="90"
+						width="81"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{FOOD_POISONING_CURRENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="293"
+						y="90"
+						width="76"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{FOOD_POISONING_PREVIOUS_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="472"
+						y="90"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{FOOD_POISONING_CURRENT_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="208"
+						y="136"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{HEPATITIS_PREVIOUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="380"
+						y="136"
+						width="81"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{HEPATITIS_CURRENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="293"
+						y="136"
+						width="76"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{HEPATITIS_PREVIOUS_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="472"
+						y="136"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{HEPATITIS_CURRENT_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="208"
+						y="180"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{HIV_AIDS_PREVIOUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="380"
+						y="180"
+						width="81"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{HIV_AIDS_CURRENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="293"
+						y="181"
+						width="76"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{HIV_AIDS_PREVIOUS_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="472"
+						y="180"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{HIV_AIDS_CURRENT_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="208"
+						y="204"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{RESPIRATORY_PREVIOUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="380"
+						y="204"
+						width="81"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{RESPIRATORY_CURRENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="293"
+						y="204"
+						width="76"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{RESPIRATORY_PREVIOUS_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="472"
+						y="204"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{RESPIRATORY_CURRENT_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="208"
+						y="227"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{SKIN_PREVIOUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="380"
+						y="227"
+						width="81"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{SKIN_CURRENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="293"
+						y="227"
+						width="76"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{SKIN_PREVIOUS_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="472"
+						y="227"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{SKIN_CURRENT_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="208"
+						y="251"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{COLD_HEAT_PREVIOUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="380"
+						y="251"
+						width="81"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{COLD_HEAT_CURRENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="293"
+						y="251"
+						width="76"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{COLD_HEAT_PREVIOUS_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="472"
+						y="251"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{COLD_HEAT_CURRENT_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="208"
+						y="275"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{INJURIES_PREVIOUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="380"
+						y="275"
+						width="81"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{INJURIES_CURRENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="293"
+						y="275"
+						width="76"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{INJURIES_PREVIOUS_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="472"
+						y="275"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{INJURIES_CURRENT_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="208"
+						y="412"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{OTHER_PREVIOUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="380"
+						y="412"
+						width="81"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{OTHER_CURRENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="293"
+						y="412"
+						width="76"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{OTHER_PREVIOUS_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="472"
+						y="412"
+						width="73"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{OTHER_CURRENT_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="173"
+						y="462"
+						width="82"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{TOTAL_ADMISSION_PERVIOUS_PER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="381"
+						y="462"
+						width="100"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{TOTAL_ADMISSION_CURRENT_PER}]]></textFieldExpression>
+				</textField>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="12"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-31"
+						y="2"
+						width="89"
+						height="9"
+						key="subreport-1"/>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="fromDate">
+						<subreportParameterExpression><![CDATA[$P{fromDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="toDate">
+						<subreportParameterExpression><![CDATA[$P{toDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//Quaterly_Annual_Health_Report_Sub_4.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</summary>
+</jasperReport>

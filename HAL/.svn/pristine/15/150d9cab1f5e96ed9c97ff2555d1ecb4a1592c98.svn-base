@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="wardCase_IntakeOutputNewIPD"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="720"
+		 pageHeight="864"
+		 columnWidth="720"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoDataSection"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="fromDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="toDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="adNo" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+     (patient.p_first_name+' '+isnull(patient.p_middle_name,'')+' '+isnull(patient.p_last_name,''))as patientName,
+(patient.s_first_name+' '+isnull(patient.s_middle_name,'')+' '+isnull(patient.s_last_name,''))as servpersonname,
+mas_relation.relation_name as relation_name,
+     inpatient.age AS inpatient_age,
+     inpatient.ad_no AS inpatient_ad_no,
+     inpatient.date_of_addmission AS date_of_addmission,
+     mas_rank.rank_name AS mas_rank_rank_name,
+     mas_unit.unit_name AS mas_unit_unit_name,
+     mas_diagnosis_conclusion.diagnosis_conclusion_name AS diagnosis_conclusion_name,
+     patient.hin_no AS patient_hin_no,
+     patient.service_no AS patient_service_no,
+     ipd_temperature.time AS ipd_temperature_time,
+     ipd_temperature.bp AS ipd_temperature_bp,
+     ipd_temperature.remarks AS remarks,
+     ipd_temperature.temperature AS temperature,
+     ipd_temperature.ipd_date AS ipd_temperature_date,
+     ipd_temperature.pulse AS ipd_temperature_pulse,
+     ipd_temperature.respiration AS respiration,
+     mas_hospital.hospital_name,
+mas_department.department_name as department_name,
+mas_trade.trade_name as trade_name,
+mas_administrative_sex.administrative_sex_name as administrative_sex_name,
+category.categories
+FROM
+     patient patient INNER JOIN inpatient inpatient ON patient.hin_id = inpatient.hin_id
+     LEFT JOIN mas_unit mas_unit ON patient.unit_id = mas_unit.unit_id
+     LEFT JOIN mas_rank mas_rank ON patient.rank_id = mas_rank.rank_id
+LEFT JOIN mas_trade mas_trade ON patient.trade_id = mas_trade.trade_id
+LEFT JOIN mas_administrative_sex mas_administrative_sex ON patient.sex_id = mas_administrative_sex.administrative_sex_id
+LEFT JOIN mas_relation mas_relation ON patient.relation_id = mas_relation.relation_id
+LEFT JOIN mas_department mas_department ON inpatient.department_id = mas_department.department_id
+     INNER JOIN ipd_intake_output_chart ipd_intake_output_chart ON patient.hin_id = ipd_intake_output_chart.hin_id
+     left JOIN ipd_temperature ipd_temperature ON ipd_intake_output_chart.intakeoutput_id = ipd_temperature.intakeoutput_id
+     LEFT JOIN mas_diagnosis_conclusion mas_diagnosis_conclusion ON inpatient.diagnosis_id = mas_diagnosis_conclusion.diagnosis_conclusion_id
+     LEFT JOIN mas_hospital mas_hospital ON patient.hospital_id=mas_hospital.hospital_id
+left join category category on patient.category_id=category.categoryid
+WHERE
+     inpatient.inpatient_id =  $P{adNo}]]></queryString>
+
+	<field name="patientName" class="java.lang.String"/>
+	<field name="servpersonname" class="java.lang.String"/>
+	<field name="relation_name" class="java.lang.String"/>
+	<field name="inpatient_age" class="java.lang.String"/>
+	<field name="inpatient_ad_no" class="java.lang.String"/>
+	<field name="date_of_addmission" class="java.lang.String"/>
+	<field name="mas_rank_rank_name" class="java.lang.String"/>
+	<field name="mas_unit_unit_name" class="java.lang.String"/>
+	<field name="diagnosis_conclusion_name" class="java.lang.String"/>
+	<field name="patient_hin_no" class="java.lang.String"/>
+	<field name="patient_service_no" class="java.lang.String"/>
+	<field name="ipd_temperature_time" class="java.lang.String"/>
+	<field name="ipd_temperature_bp" class="java.lang.String"/>
+	<field name="remarks" class="java.lang.String"/>
+	<field name="temperature" class="java.lang.Double"/>
+	<field name="ipd_temperature_date" class="java.sql.Timestamp"/>
+	<field name="ipd_temperature_pulse" class="java.lang.Integer"/>
+	<field name="respiration" class="java.lang.Integer"/>
+	<field name="hospital_name" class="java.lang.String"/>
+	<field name="department_name" class="java.lang.String"/>
+	<field name="trade_name" class="java.lang.String"/>
+	<field name="administrative_sex_name" class="java.lang.String"/>
+	<field name="categories" class="java.lang.String"/>
+
+	<variable name="SrNo" class="java.lang.Integer" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[new java.lang.Integer(  ($V{REPORT_COUNT}.intValue()) )]]></variableExpression>
+		<initialValueExpression><![CDATA[new Integer(0)]]></initialValueExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="23"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="-4"
+						y="0"
+						width="655"
+						height="23"
+						key="staticText-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font fontName="Verdana" pdfFontName="Helvetica-Bold" size="10" isBold="true" isUnderline="false"/>
+					</textElement>
+				<text><![CDATA[Intake/Output  Chart]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="-4"
+						y="1"
+						width="655"
+						height="0"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch" pen="Dotted"/>
+				</line>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="61"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-7"
+						y="2"
+						width="658"
+						height="28"
+						key="subreport-1"
+						positionType="Float"/>
+					<subreportParameter  name="adNo">
+						<subreportParameterExpression><![CDATA[$P{adNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"//IntakeReportIPD.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-7"
+						y="32"
+						width="658"
+						height="29"
+						key="subreport-2"
+						positionType="Float"/>
+					<subreportParameter  name="adNo">
+						<subreportParameterExpression><![CDATA[$P{adNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"//OutputReportIPD.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</summary>
+</jasperReport>

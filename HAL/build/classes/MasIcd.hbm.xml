@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="jkt.hms.masters.business">
+	<class name="MasIcd" table="mas_icd">
+		<meta attribute="sync-DAO">false</meta>
+		<id name="Id" type="integer" column="icd_id">
+			<generator class="native" />
+		</id>
+
+		<property name="IcdCode" column="icd_code" type="string"
+			not-null="false" length="8" />
+		<property name="IcdName" column="icd_name" type="string"
+			not-null="false" length="150" />
+		<property name="Status" column="status" type="string"
+			not-null="false" length="1" />
+		<property name="LastChgBy" column="last_chg_by" type="string"
+			not-null="false" length="12" />
+		<property name="LastChgDate" column="last_chg_date" type="date"
+			not-null="false" />
+		<property name="LastChgTime" column="last_chg_time" type="string"
+			not-null="false" length="10" />
+		<many-to-one name="IcdCause" column="icd_cause_id" class="MasIcdcausegrp"
+			not-null="false">
+		</many-to-one>
+		<many-to-one name="IcdSubCategory" column="icd_sub_category_id"
+			class="MasIcdSubCategory" not-null="false">
+		</many-to-one>
+
+
+		<set name="DischargeIcdCodes" inverse="true">
+			<key column="icd_id" />
+			<one-to-many class="DischargeIcdCode" />
+		</set>
+
+		<set name="MisNotifiables" inverse="true">
+			<key column="icd_id" />
+			<one-to-many class="MisNotifiable" />
+		</set>
+
+		<set name="Inpatients" inverse="true">
+			<key column="icd_id" />
+			<one-to-many class="Inpatient" />
+		</set>
+
+		<set name="SilDilStatus" inverse="true">
+			<key column="icd_id" />
+			<one-to-many class="SilDilStatus" />
+		</set>
+
+
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="sub_sildil2"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="595"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="inpatientId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer("0")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="fromDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="toDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select a.max as max,b.pre_max as pre_max from
+(SELECT max(id) as max FROM sil_dil_status where sil_dil_status.`inpatient_id` = $P{inpatientId}
+and sil_dil_status.`last_chg_date` <= $P{toDate}
+ ) a,
+(SELECT 
+ CASE 
+WHEN (SELECT id as pre_max FROM sil_dil_status where sil_dil_status.`inpatient_id` =$P{inpatientId}
+      and sil_dil_status.`last_chg_date` <= $P{toDate} ORDER BY id desc limit 1,1) != "" 
+  THEN
+     (SELECT id as pre_max FROM sil_dil_status where sil_dil_status.`inpatient_id` =$P{inpatientId}
+      and sil_dil_status.`last_chg_date` <= $P{toDate} ORDER BY id desc limit 1,1) 
+  ELSE (SELECT id as pre_max FROM sil_dil_status where sil_dil_status.`inpatient_id` =$P{inpatientId} and
+  sil_dil_status.`last_chg_date` <= $P{toDate}) 
+  END as pre_max FROM DUAL) b]]></queryString>
+
+	<field name="max" class="java.lang.Integer"/>
+	<field name="pre_max" class="java.lang.Long"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="14"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="1"
+						y="0"
+						width="129"
+						height="14"
+						key="subreport-1"
+						positionType="Float"/>
+					<subreportParameter  name="inpatientId">
+						<subreportParameterExpression><![CDATA[$P{inpatientId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="fromDate">
+						<subreportParameterExpression><![CDATA[$P{fromDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="toDate">
+						<subreportParameterExpression><![CDATA[$P{toDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="max">
+						<subreportParameterExpression><![CDATA[$F{max}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="pre_max">
+						<subreportParameterExpression><![CDATA[$F{pre_max}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//sub_sildil3.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

@@ -1,0 +1,1045 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="av_equipmentInUse"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoDataSection"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="true">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="AV_ACCIDENT_ID" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT 
+A.ID, A.DETAIL_DATE, A.DETAIL_TIME, 
+   A.PLACE, A.MARK, A.FLIGHT_PURPOSE, 
+   A.SERIAL_NUMBER, A.UNI_ID, A.AIRCRFT_TYPE_ID, 
+   A.NO_ACCIDENT, A.NO_CASUALTIES, A.NO_OTHER_ENCLOSURSES, 
+   A.ESCAPE_FLIGHT, A.ACCIDENT_CIRCUMSTANCES1, A.ACCIDENT_CIRCUMSTANCES2, 
+   A.ENEMY_ACTION, A.MAJOR_STRUCTURAL_FAILURE, A.LOSS_CONTROL, 
+   A.LOSS_POWER, A.LOSS_SERVICE, A.RADIO_OTHER, 
+   A.OTHER_CIRCUMSTANCES, A.OPERATING_CONDITION1, A.OPERATING_CONDITION2, 
+   A.UNDERGROUND_CONTROL, A.INTENDERED_SORTIE, A.INTENDERED_SORTIE_EMERGENCY, 
+   A.HOSPITAL_ID, A.DEPARTMENT_ID, A.LAST_CHG_BY, 
+   A.LAST_CHG_DATE, A.LAST_CHG_TIME, A.UNINJURED, 
+   A.INJURED_FATAL, A.MISSING,     
+     A.OXYGEN_MASK, 
+   A.OXYGEN_SIZE, A.REGULATER_MARK, A.REGULATER_SETTING, 
+   A.REGULATER_NOT_PROVIDE, A.EMERGENCY_PORTABLE_EQUIPMENT, A.OUTER_CLOTHING, 
+   A.HELMET_MARK, A.HELMET_ESCAPE_IMPACT, A.HELMET_CHIN_STEP, 
+   A.HELMET_INNER, A.HELMET_OUTER, A.HELMET_VIZOR_MARK, 
+   A.HELMET_COMMENT, A.CLOTHING_PRESSURESUIT, A.CLOTHING_PRESSURESUIT_MARK, 
+   A.CLOTHING_RELEVENT_ACCIDENT, A.IF_OTHER1, A.IF_OTHER2, 
+   A.HEAR_TYPE_OTHER, A.OUTER_TYPE_OTHER, A.EQUIP_VENTILATED, 
+     A.EQUIP_TYPE, A.AGE, A.HEIGHT, 
+   A.WEIGHT, A.MARITAL_STATUS_ID, A.MED_CATE_ID, 
+   A.MEDICAL_DATE, A.MEDICAL_REASON, A.MEDICATION, 
+   A.BODY_BUILD, A.ALCOHOL, A.TOBACCO, 
+   A.PER_DAY, A.EMPLOYMENT, A.EXTRA_QUALIFICATIONS, 
+   A.RENEWAL_DATE, A.PHYSIO_INTOXICATION, A.PHYSIO_HYPOXIA, 
+   A.SERVICE_NO, 
+   A.HIN_ID, A.SURNAME, A.FIRST_NAME, 
+   A.CREW_DUTY, A.MEDICAL_CONDITION, A.MEDICAL_CONDITION_RESON, 
+RANK.RANK_NAME,
+(case when A.GROUND_IMPACT_AIRCRAFT='n' then 'In normal Seat'
+  when A.GROUND_IMPACT_AIRCRAFT='f' then 'In Fuselage Out of Position'
+ when A.GROUND_IMPACT_AIRCRAFT='e' then 'Using Escape apparatus'
+ when A.GROUND_IMPACT_AIRCRAFT='a' then 'Thrown form Aircraft in air'
+ when A.GROUND_IMPACT_AIRCRAFT='k' then 'Not Known'
+ when A.GROUND_IMPACT_AIRCRAFT='o' then 'Other'
+ end) as GROUND_IMPACT_AIRCRAFT,
+
+(case 
+ when A.DISPLACEMENT_CASUALTY='n' then 'In normal Seat'
+ when A.DISPLACEMENT_CASUALTY='f' then 'In Fuselage Out of Position'
+ when A.DISPLACEMENT_CASUALTY='e' then 'Using Escape apparatus'
+ when A.DISPLACEMENT_CASUALTY='k' then 'Not Known'
+ when A.DISPLACEMENT_CASUALTY='o' then 'Other'
+ end) as DISPLACEMENT_CASUALTY,
+
+ (case 
+ when   A.SEAT_FACING='n' then 'In normal Seat'
+ when A.SEAT_FACING='f' then 'Forward'
+ when A.SEAT_FACING='s' then 'Sideway'
+ when A.SEAT_FACING='b' then 'Backward'
+ when A.SEAT_FACING='t' then 'Stretcher'
+ when A.SEAT_FACING='k' then 'Not Known'
+ end) as SEAT_FACING,
+
+ (case  
+ when A.SEAT_CONDITION='u' then 'Undamaged'
+ when A.SEAT_CONDITION='d' then 'Distorted'
+ when A.SEAT_CONDITION='t' then 'Torn Free'
+ when A.SEAT_CONDITION='e' then 'Destoryed'
+ when A.SEAT_CONDITION='s' then 'Spontaneous Ejection'
+ when A.SEAT_CONDITION='k' then 'Not Known'
+ end) as SEAT_CONDITION,
+ 
+ (case  
+ when A.HEARNESS_TYPE='l' then 'Lap Shoulder'
+ when A.HEARNESS_TYPE='c' then 'Combind Parachute'
+ when A.HEARNESS_TYPE='o' then 'Other'
+ end) as HEARNESS_TYPE,
+ 
+ (case  
+ when A.HEAR_ADJUSTMENTS='u' then 'Undamaged'
+ when A.HEAR_ADJUSTMENTS='t' then 'Tight'
+ when A.HEAR_ADJUSTMENTS='l' then 'Lose'
+ when A.HEAR_ADJUSTMENTS='n' then 'Unfastened'
+ when A.HEAR_ADJUSTMENTS='k' then 'Not Known'
+ end) as HEAR_ADJUSTMENTS,
+  (case  
+ when A.HEAR_RELAX_BOX='l' then 'Locked'
+ when A.HEAR_RELAX_BOX='o' then 'Open'
+ when A.HEAR_RELAX_BOX='a' then 'Automatic Separation'
+ when A.HEAR_RELAX_BOX='n' then 'Unfastened'
+ when A.HEAR_RELAX_BOX='k' then 'Not Known'
+ end) as HEAR_RELAX_BOX,
+ 
+  (case  
+ when A.HEAR_EFFECTIVENESS='e' then 'Effective'
+ when A.HEAR_EFFECTIVENESS='n' then 'Not Effective'
+ when A.HEAR_EFFECTIVENESS='k' then 'Not Known'
+ end) as HEAR_EFFECTIVENESS,
+ 
+  (case  
+ when A.HEAR_CAUSE_FAILURE='a' then 'Not Applicable'
+ when A.HEAR_CAUSE_FAILURE='w' then 'Webbing Failure'
+ when A.HEAR_CAUSE_FAILURE='s' then 'Adjustment Slip'
+ when A.HEAR_CAUSE_FAILURE='f' then 'Attachment Failure'
+ when A.HEAR_CAUSE_FAILURE='d' then 'Destroyed in Fire'
+ when A.HEAR_CAUSE_FAILURE='k' then 'Not Known'
+ end) as HEAR_CAUSE_FAILURE,
+ 
+  (case  
+ when A.ESCAPE_TYPE='n' then 'No Parachute'
+ when A.ESCAPE_TYPE='p' then 'Parachut Without Ejection Seat'
+ end)as ESCAPE_TYPE,
+ 
+ (case 
+ when A.ESCAP_STOWING='m' then 'Normally Attached to Man'
+ when A.ESCAP_STOWING='a' then 'Normally Stowed in AirCraft'
+ when A.ESCAP_STOWING='e' then 'Ejection Seat'
+ end) as ESCAP_STOWING,
+ 
+ (case when A.ESCAP_USE='u' then 'Unknown'
+    when A.ESCAP_USE='n' then 'Not Used'
+    when A.ESCAP_STOWING='i' then 'Apparatus Used Intertionally/Unintertionally'
+  end) as ESCAP_USE
+
+FROM AV_ACCIDENT A
+LEFT OUTER JOIN MAS_RANK RANK ON A.RANK_ID=RANK.RANK_ID
+where  
+A.ID=$P{AV_ACCIDENT_ID}]]></queryString>
+
+	<field name="ID" class="java.math.BigDecimal"/>
+	<field name="DETAIL_DATE" class="java.sql.Timestamp"/>
+	<field name="DETAIL_TIME" class="java.lang.String"/>
+	<field name="PLACE" class="java.lang.String"/>
+	<field name="MARK" class="java.lang.String"/>
+	<field name="FLIGHT_PURPOSE" class="java.lang.String"/>
+	<field name="SERIAL_NUMBER" class="java.lang.String"/>
+	<field name="UNI_ID" class="java.math.BigDecimal"/>
+	<field name="AIRCRFT_TYPE_ID" class="java.math.BigDecimal"/>
+	<field name="NO_ACCIDENT" class="java.lang.String"/>
+	<field name="NO_CASUALTIES" class="java.lang.String"/>
+	<field name="NO_OTHER_ENCLOSURSES" class="java.lang.String"/>
+	<field name="ESCAPE_FLIGHT" class="java.lang.String"/>
+	<field name="ACCIDENT_CIRCUMSTANCES1" class="java.lang.String"/>
+	<field name="ACCIDENT_CIRCUMSTANCES2" class="java.lang.String"/>
+	<field name="ENEMY_ACTION" class="java.lang.String"/>
+	<field name="MAJOR_STRUCTURAL_FAILURE" class="java.lang.String"/>
+	<field name="LOSS_CONTROL" class="java.lang.String"/>
+	<field name="LOSS_POWER" class="java.lang.String"/>
+	<field name="LOSS_SERVICE" class="java.lang.String"/>
+	<field name="RADIO_OTHER" class="java.lang.String"/>
+	<field name="OTHER_CIRCUMSTANCES" class="java.lang.String"/>
+	<field name="OPERATING_CONDITION1" class="java.lang.String"/>
+	<field name="OPERATING_CONDITION2" class="java.lang.String"/>
+	<field name="UNDERGROUND_CONTROL" class="java.lang.String"/>
+	<field name="INTENDERED_SORTIE" class="java.math.BigDecimal"/>
+	<field name="INTENDERED_SORTIE_EMERGENCY" class="java.math.BigDecimal"/>
+	<field name="HOSPITAL_ID" class="java.math.BigDecimal"/>
+	<field name="DEPARTMENT_ID" class="java.math.BigDecimal"/>
+	<field name="LAST_CHG_BY" class="java.lang.String"/>
+	<field name="LAST_CHG_DATE" class="java.sql.Timestamp"/>
+	<field name="LAST_CHG_TIME" class="java.lang.String"/>
+	<field name="UNINJURED" class="java.lang.String"/>
+	<field name="INJURED_FATAL" class="java.lang.String"/>
+	<field name="MISSING" class="java.lang.String"/>
+	<field name="OXYGEN_MASK" class="java.lang.String"/>
+	<field name="OXYGEN_SIZE" class="java.lang.String"/>
+	<field name="REGULATER_MARK" class="java.lang.String"/>
+	<field name="REGULATER_SETTING" class="java.lang.String"/>
+	<field name="REGULATER_NOT_PROVIDE" class="java.lang.String"/>
+	<field name="EMERGENCY_PORTABLE_EQUIPMENT" class="java.lang.String"/>
+	<field name="OUTER_CLOTHING" class="java.lang.String"/>
+	<field name="HELMET_MARK" class="java.lang.String"/>
+	<field name="HELMET_ESCAPE_IMPACT" class="java.lang.String"/>
+	<field name="HELMET_CHIN_STEP" class="java.lang.String"/>
+	<field name="HELMET_INNER" class="java.lang.String"/>
+	<field name="HELMET_OUTER" class="java.lang.String"/>
+	<field name="HELMET_VIZOR_MARK" class="java.lang.String"/>
+	<field name="HELMET_COMMENT" class="java.lang.String"/>
+	<field name="CLOTHING_PRESSURESUIT" class="java.lang.String"/>
+	<field name="CLOTHING_PRESSURESUIT_MARK" class="java.lang.String"/>
+	<field name="CLOTHING_RELEVENT_ACCIDENT" class="java.lang.String"/>
+	<field name="IF_OTHER1" class="java.lang.String"/>
+	<field name="IF_OTHER2" class="java.lang.String"/>
+	<field name="HEAR_TYPE_OTHER" class="java.lang.String"/>
+	<field name="OUTER_TYPE_OTHER" class="java.lang.String"/>
+	<field name="EQUIP_VENTILATED" class="java.lang.String"/>
+	<field name="EQUIP_TYPE" class="java.lang.String"/>
+	<field name="AGE" class="java.lang.String"/>
+	<field name="HEIGHT" class="java.math.BigDecimal"/>
+	<field name="WEIGHT" class="java.math.BigDecimal"/>
+	<field name="MARITAL_STATUS_ID" class="java.math.BigDecimal"/>
+	<field name="MED_CATE_ID" class="java.math.BigDecimal"/>
+	<field name="MEDICAL_DATE" class="java.sql.Timestamp"/>
+	<field name="MEDICAL_REASON" class="java.lang.String"/>
+	<field name="MEDICATION" class="java.lang.String"/>
+	<field name="BODY_BUILD" class="java.lang.String"/>
+	<field name="ALCOHOL" class="java.lang.String"/>
+	<field name="TOBACCO" class="java.lang.String"/>
+	<field name="PER_DAY" class="java.lang.String"/>
+	<field name="EMPLOYMENT" class="java.lang.String"/>
+	<field name="EXTRA_QUALIFICATIONS" class="java.lang.String"/>
+	<field name="RENEWAL_DATE" class="java.sql.Timestamp"/>
+	<field name="PHYSIO_INTOXICATION" class="java.lang.String"/>
+	<field name="PHYSIO_HYPOXIA" class="java.lang.String"/>
+	<field name="SERVICE_NO" class="java.lang.String"/>
+	<field name="HIN_ID" class="java.math.BigDecimal"/>
+	<field name="SURNAME" class="java.lang.String"/>
+	<field name="FIRST_NAME" class="java.lang.String"/>
+	<field name="CREW_DUTY" class="java.lang.String"/>
+	<field name="MEDICAL_CONDITION" class="java.lang.String"/>
+	<field name="MEDICAL_CONDITION_RESON" class="java.lang.String"/>
+	<field name="RANK_NAME" class="java.lang.String"/>
+	<field name="GROUND_IMPACT_AIRCRAFT" class="java.lang.String"/>
+	<field name="DISPLACEMENT_CASUALTY" class="java.lang.String"/>
+	<field name="SEAT_FACING" class="java.lang.String"/>
+	<field name="SEAT_CONDITION" class="java.lang.String"/>
+	<field name="HEARNESS_TYPE" class="java.lang.String"/>
+	<field name="HEAR_ADJUSTMENTS" class="java.lang.String"/>
+	<field name="HEAR_RELAX_BOX" class="java.lang.String"/>
+	<field name="HEAR_EFFECTIVENESS" class="java.lang.String"/>
+	<field name="HEAR_CAUSE_FAILURE" class="java.lang.String"/>
+	<field name="ESCAPE_TYPE" class="java.lang.String"/>
+	<field name="ESCAP_STOWING" class="java.lang.String"/>
+	<field name="ESCAP_USE" class="java.lang.String"/>
+
+	<variable name="SlNo" class="java.lang.Integer" resetType="Report" incrementType="Page" calculation="Nothing">
+		<variableExpression><![CDATA[new java.lang.Integer($V{REPORT_COUNT}.intValue())]]></variableExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="59"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="423"
+						y="3"
+						width="99"
+						height="15"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="Times New Roman" pdfFontName="Times-Bold" size="13" isBold="true" isItalic="false" isUnderline="false"/>
+					</textElement>
+				<text><![CDATA[APPENDIX 'A']]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="20"
+						width="523"
+						height="16"
+						key="staticText-3"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Times New Roman" pdfFontName="Times-Bold" size="13" isBold="true" isUnderline="false"/>
+					</textElement>
+				<text><![CDATA[MEDICAL REPORT ON A MAJOR AIRCRAFT ACCIDENT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="38"
+						width="523"
+						height="17"
+						key="staticText-73"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Times New Roman" pdfFontName="Times-Bold" size="13" isBold="true" isUnderline="false"/>
+					</textElement>
+				<text><![CDATA[AIRCRAFT ACCIDENT- EQUIPMENT AND HUMAN FACTORS]]></text>
+				</staticText>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="637"  isSplitAllowed="true" >
+				<rectangle>
+					<reportElement
+						x="0"
+						y="11"
+						width="533"
+						height="100"
+						key="rectangle-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<staticText>
+					<reportElement
+						x="5"
+						y="18"
+						width="61"
+						height="20"
+						key="staticText-6"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12"/>
+					</textElement>
+				<text><![CDATA[1. Surname]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="146"
+						y="12"
+						width="0"
+						height="99"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="152"
+						y="18"
+						width="94"
+						height="20"
+						key="staticText-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12"/>
+					</textElement>
+				<text><![CDATA[2. First Name]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="285"
+						y="11"
+						width="0"
+						height="100"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="5"
+						y="66"
+						width="44"
+						height="20"
+						key="staticText-14"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[4. Rank]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="4"
+						y="121"
+						width="73"
+						height="20"
+						key="staticText-42"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[UNINJURED]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="196"
+						width="481"
+						height="14"
+						key="staticText-43"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[6. POSITION OF CASUALTY AT TIME OF GROUND IMPACT OF AIRCRAFT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="6"
+						y="239"
+						width="378"
+						height="14"
+						key="staticText-44"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[7. DISPLACEMENT OF CASUALTY]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="280"
+						width="49"
+						height="14"
+						key="staticText-45"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[8. SEAT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="338"
+						width="143"
+						height="14"
+						key="staticText-46"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="11" isBold="false"/>
+					</textElement>
+				<text><![CDATA[(b) Condition :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="307"
+						width="99"
+						height="14"
+						key="staticText-47"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="11" isBold="false"/>
+					</textElement>
+				<text><![CDATA[(a) Facing :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="152"
+						y="64"
+						width="76"
+						height="20"
+						key="staticText-74"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[5. Number]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="292"
+						y="18"
+						width="180"
+						height="20"
+						key="staticText-75"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12"/>
+					</textElement>
+				<text><![CDATA[3. Crew Duty (or Passenger Seating)]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="59"
+						width="285"
+						height="1"
+						key="line-3"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="168"
+						y="121"
+						width="100"
+						height="20"
+						key="staticText-76"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[INJURED/FATAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="377"
+						y="121"
+						width="55"
+						height="20"
+						key="staticText-77"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[MISSING]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="148"
+						width="518"
+						height="28"
+						key="staticText-78"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" pdfFontName="Times-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[PART I - EQUIPMENT IN USE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="372"
+						width="126"
+						height="14"
+						key="staticText-79"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[9. HEARNESS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="399"
+						width="99"
+						height="14"
+						key="staticText-80"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="11" isBold="false"/>
+					</textElement>
+				<text><![CDATA[(a) Type :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="6"
+						y="428"
+						width="143"
+						height="14"
+						key="staticText-81"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="11" isBold="false"/>
+					</textElement>
+				<text><![CDATA[(b) Adjustments :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="4"
+						y="459"
+						width="99"
+						height="14"
+						key="staticText-82"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="11" isBold="false"/>
+					</textElement>
+				<text><![CDATA[(c) Release Box :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="490"
+						width="143"
+						height="14"
+						key="staticText-83"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="11" isBold="false"/>
+					</textElement>
+				<text><![CDATA[(d) Effectiveness :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="517"
+						width="143"
+						height="14"
+						key="staticText-84"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="11" isBold="false"/>
+					</textElement>
+				<text><![CDATA[(e) Cause of Failure :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="548"
+						width="199"
+						height="14"
+						key="staticText-85"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="12" isBold="false"/>
+					</textElement>
+				<text><![CDATA[10.  ESCAPE APPARATUS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="577"
+						width="99"
+						height="14"
+						key="staticText-86"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="11" isBold="false"/>
+					</textElement>
+				<text><![CDATA[(a) Type :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="49"
+						y="598"
+						width="50"
+						height="14"
+						key="staticText-87"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="11" isBold="false"/>
+					</textElement>
+				<text><![CDATA[ Stowing :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="618"
+						width="99"
+						height="14"
+						key="staticText-88"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Times-Roman" size="11" isBold="false"/>
+					</textElement>
+				<text><![CDATA[(b) Use :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="437"
+						y="121"
+						width="85"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{MISSING}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="271"
+						y="121"
+						width="100"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{INJURED_FATAL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="77"
+						y="121"
+						width="88"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UNINJURED}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="6"
+						y="215"
+						width="480"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{GROUND_IMPACT_AIRCRAFT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="6"
+						y="258"
+						width="480"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DISPLACEMENT_CASUALTY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="168"
+						y="307"
+						width="318"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{SEAT_FACING}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="168"
+						y="338"
+						width="318"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{SEAT_CONDITION}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="168"
+						y="399"
+						width="318"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{HEARNESS_TYPE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="168"
+						y="428"
+						width="318"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{HEAR_ADJUSTMENTS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="168"
+						y="459"
+						width="318"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{HEAR_RELAX_BOX}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="168"
+						y="490"
+						width="318"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{HEAR_EFFECTIVENESS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="168"
+						y="517"
+						width="318"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{HEAR_CAUSE_FAILURE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="168"
+						y="577"
+						width="318"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ESCAPE_TYPE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="168"
+						y="598"
+						width="316"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ESCAP_STOWING}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="168"
+						y="618"
+						width="318"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ESCAP_USE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="5"
+						y="38"
+						width="100"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{SURNAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="152"
+						y="38"
+						width="100"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{FIRST_NAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="292"
+						y="44"
+						width="230"
+						height="55"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CREW_DUTY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="152"
+						y="86"
+						width="100"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{SERVICE_NO}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="6"
+						y="86"
+						width="100"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{RANK_NAME}]]></textFieldExpression>
+				</textField>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="128"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="5"
+						y="3"
+						width="523"
+						height="19"
+						key="subreport-1"/>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="AV_ACCIDENT_ID">
+						<subreportParameterExpression><![CDATA[$P{AV_ACCIDENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//av_equipmentInUseSubOne.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="5"
+						y="24"
+						width="523"
+						height="19"
+						key="subreport-2"/>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="AV_ACCIDENT_ID">
+						<subreportParameterExpression><![CDATA[$P{AV_ACCIDENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//av_equipmentInUseSubTwo.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="5"
+						y="44"
+						width="523"
+						height="19"
+						key="subreport-3"/>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="AV_ACCIDENT_ID">
+						<subreportParameterExpression><![CDATA[$P{AV_ACCIDENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//av_equipmentInUseSubThree.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="6"
+						y="64"
+						width="523"
+						height="19"
+						key="subreport-4"/>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="AV_ACCIDENT_ID">
+						<subreportParameterExpression><![CDATA[$P{AV_ACCIDENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//av_equipmentInUseSubFour.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="5"
+						y="84"
+						width="523"
+						height="19"
+						key="subreport-5"/>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="AV_ACCIDENT_ID">
+						<subreportParameterExpression><![CDATA[$P{AV_ACCIDENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//av_equipmentInUseSubFive.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="5"
+						y="105"
+						width="523"
+						height="19"
+						key="subreport-6"/>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="AV_ACCIDENT_ID">
+						<subreportParameterExpression><![CDATA[$P{AV_ACCIDENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//av_equipmentInUseSubSix.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</summary>
+		<noData>
+			<band height="20"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="138"
+						y="5"
+						width="199"
+						height="14"
+						key="staticText-89"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" pdfFontName="Times-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Not Record Found ! ]]></text>
+				</staticText>
+			</band>
+		</noData>
+</jasperReport>

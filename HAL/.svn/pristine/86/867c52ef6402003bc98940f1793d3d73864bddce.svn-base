@@ -1,0 +1,28 @@
+SELECT 
+      MAS_HOSPITAL.HOSPITAL_NAME,MAS_HOSPITAL.ADDRESS,
+     relegation_process.`relegation_no` AS mas_rank_rank_name,
+     relegation_process.`relegation_date` AS relegation_process_relegation_date,
+     relegation_process.`relegation_time` AS relegation_process_relegation_time,
+     relegation_process.`relegation_no` AS relegation_process_relegation_no,
+     accom_registration.`service_no` AS accom_registration_service_no,
+     accom_registration.`service_person_name` AS accom_registration_service_person_name,
+     accom_registration.`unit_id` AS accom_registration_unit_id,
+     accom_registration.`trade_id` AS accom_registration_trade_id,
+     accom_registration.`rank_id` AS accom_registration_rank_id,
+     accom_registration.`remarks` AS accom_registration_remarks,
+     mas_unit.`unit_name` AS mas_unit_unit_name,
+     mas_trade.`trade_name` AS mas_trade_trade_name,
+     mas_rank.`rank_name` AS mas_rank_rank_name,
+     mas_rank_A.`rank_code` AS mas_rank_A_rank_code,
+     mas_pool.`pool_code` AS mas_pool_pool_code
+FROM
+     `mas_unit` mas_unit RIGHT OUTER JOIN `accom_registration` accom_registration ON mas_unit.`unit_id` = accom_registration.`unit_id`
+     LEFT OUTER JOIN `mas_trade` mas_trade ON accom_registration.`trade_id` = mas_trade.`trade_id`
+     LEFT OUTER JOIN `mas_rank` mas_rank ON accom_registration.`rank_id` = mas_rank.`rank_id`
+     LEFT OUTER JOIN `mas_rank` mas_rank_A ON accom_registration.`rank_id` = mas_rank_A.`rank_id`
+     INNER JOIN `mas_pool` mas_pool ON accom_registration.`pool_id` = mas_pool.`pool_id`,
+        `relegation_process` relegation_process
+       LEFT OUTER JOIN MAS_HOSPITAL ON MAS_HOSPITAL.HOSPITAL_ID
+WHERE 
+       relegation_process.`relegation_date` between $P{relegationfromdate}and $P{relegationtodate}
+         and   accom_registration.`rank_id` = $P{rank}

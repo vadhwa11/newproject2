@@ -1,0 +1,1314 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="medicalCaseSheetnewforstorageforWardBoth"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="720"
+		 pageHeight="850"
+		 columnWidth="660"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="0"
+		 bottomMargin="20"
+		 whenNoDataType="NoDataSection"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="hinNo" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="visitDate" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="diagnosis" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="hospitalId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="visitNo" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="serviceNo" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["D:\\mukesh back\\SMC WORK\\jsper report\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="caseSheetDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="adNo" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="caseSheetTime" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hinId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="jfcRenderer" isForPrompting="true" class="java.lang.Object"/>
+	<parameter name="pjfcRenderer" isForPrompting="true" class="java.lang.Object"/>
+	<parameter name="clinicalChart" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ioChart" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="inpatient_id" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+     (PATIENT.P_FIRST_NAME + ' ' + ISNULL(PATIENT.P_MIDDLE_NAME,'') + ' ' + ISNULL(PATIENT.P_LAST_NAME,''))AS PATIENT_NAME,
+      PATIENT.SEX_ID AS PATIENT_SEX_ID,
+     PATIENT.AGE AS PATIENT_AGE,
+     MAS_ADMINISTRATIVE_SEX.ADMINISTRATIVE_SEX_NAME AS ADMINISTRATIVE_SEX_NAME,
+     PATIENT.RELATION_ID AS PATIENT_RELATION_ID,
+     MAS_RELATION_A.RELATION_NAME AS A_RELATION_NAME,
+     PATIENT.HIN_NO AS PATIENT_HIN_NO,
+     MAS_RANK.RANK_NAME AS MAS_RANK_RANK_NAME,
+     (PATIENT.S_FIRST_NAME + ' ' + ISNULL(PATIENT.S_MIDDLE_NAME,'') + ' ' + ISNULL(PATIENT.S_LAST_NAME,''))AS SERVICE_NAME,
+    MAS_MARITAL_STATUS.MARITAL_STATUS_NAME AS MARITAL_STATUS,
+     MAS_BLOOD_GROUP.BLOOD_GROUP_NAME AS BLOODGROUP,
+     PATIENT.UNIT_ID AS PATIENT_UNIT_ID,
+    PATIENT.DATE_OF_BIRTH AS DOB,
+     INPATIENT.HIN_ID AS INPATIENT_HIN_ID,
+     INPATIENT.DATE_OF_ADDMISSION AS INPATIENT_VISIT_DATE,
+     INPATIENT.AD_NO AS ADNO,
+     OPD_PATIENT_DETAILS.INITIAL_DIAGNOSIS AS WORKING_DIAGNOSIS,
+     PATIENT.RANK_ID AS PATIENT_RANK_ID,
+     MAS_HOSPITAL.HOSPITAL_NAME AS HOSPITAL_NAME,
+     MAS_HOSPITAL.ADDRESS AS HOSPITAL_ADDRESS,
+     PATIENT.SERVICE_NO AS SERVICENO,
+     OPD_PATIENT_DETAILS.BP AS OPD_PATIENT_DETAILS_BP,
+     OPD_PATIENT_DETAILS.PLANS AS OPD_PATIENT_DETAILS_PLAN,
+     OPD_PATIENT_DETAILS.AFMS_DESC AS OPD_PATIENT_DETAILS_AFMS_DESC,
+     OPD_PATIENT_DETAILS.NEXT_VISIT_DATE AS OPD_PATIENT_DETAILS_NEXT_VISIT,
+     OPD_PATIENT_DETAILS.CONSULTATION_DATE AS OPD_PATIENT_DETAILS_CONSULTATI,
+     OPD_PATIENT_DETAILS.CONSULTATION_TIME AS OPD_PATIENT_DETAILS_CONSULTATI,
+     OPD_PATIENT_DETAILS.REFERRED_DEPT AS OPD_PATIENT_DETAILS_REFERRED_D,
+     OPD_PATIENT_DETAILS.INITIAL_DIAGNOSIS AS OPD_PATIENT_DETAILS_INITIAL_DI,
+     OPD_PATIENT_DETAILS.OPD_DATE AS OPD_PATIENT_DETAILS_OPD_DATE,
+     OPD_PATIENT_DETAILS.OPD_TIME AS OPD_PATIENT_DETAILS_OPD_TIME,
+     OPD_PATIENT_DETAILS.ON_EXAMINATION AS OPD_PATIENT_DETAILS_ON_EXAMINA,
+     OPD_PATIENT_DETAILS.REFERED_DOCTARS AS OPD_PATIENT_DETAILS_REFERED_DO,
+     OPD_PATIENT_DETAILS.DISPOSAL AS OPD_PATIENT_DETAILS_DISPOSAL,
+     OPD_PATIENT_DETAILS.DAYS AS OPD_PATIENT_DETAILS_DAYS,
+     OPD_PATIENT_DETAILS.RETURNFROMHOSPITAL AS OPD_PATIENT_DETAILS_RETURNFROM,
+     OPD_PATIENT_DETAILS.HOSPNAME AS OPD_PATIENT_DETAILS_HOSPNAME,
+     OPD_PATIENT_DETAILS.DOA AS OPD_PATIENT_DETAILS_DOA,
+     OPD_PATIENT_DETAILS.DOD AS OPD_PATIENT_DETAILS_DOD,
+     OPD_PATIENT_DETAILS.GPE_EXAMINATION AS OPD_PATIENT_DETAILS_GPE_EXAMIN,
+     OPD_PATIENT_DETAILS.SYSTAMICEXAM AS OPD_PATIENT_DETAILS_SYSTAMICEX,
+     OPD_PATIENT_DETAILS.HEIGHT AS OPD_PATIENT_DETAILS_HEIGHT,
+     OPD_PATIENT_DETAILS.WEIGHT AS OPD_PATIENT_DETAILS_WEIGHT,
+     OPD_PATIENT_DETAILS.PULSE AS OPD_PATIENT_DETAILS_PULSE,
+     OPD_PATIENT_DETAILS.TEMPERATURE AS OPD_PATIENT_DETAILS_TEMPERATUR,
+     OPD_PATIENT_DETAILS.RR AS OPD_PATIENT_DETAILS_RR,
+     OPD_PATIENT_DETAILS.BMI AS OPD_PATIENT_DETAILS_BMI,
+     OPD_PATIENT_DETAILS.PHY_STATUS AS OPD_PATIENT_DETAILS_PHY_STATUS,
+     OPD_PATIENT_DETAILS.ADVICEONDISCHARGE AS OPD_PATIENT_DETAILS_ADVICEONDI,
+     OPD_PATIENT_DETAILS.PASTDIAGNOSIS AS OPD_PATIENT_DETAILS_PASTDIAGNO,
+     OPD_PATIENT_DETAILS.PASTDISPOSAL AS OPD_PATIENT_DETAILS_PASTDISPOS,
+     OPD_PATIENT_DETAILS.DAYSPHY AS OPD_PATIENT_DETAILS_DAYSPHY,
+     OPD_PATIENT_DETAILS.THREPYTYPEID AS OPD_PATIENT_DETAILS_THREPYTYPE,
+     OPD_PATIENT_DETAILS.DURATIONPHY AS OPD_PATIENT_DETAILS_DURATIONPH,
+     OPD_PATIENT_DETAILS.MH_RUN AS OPD_PATIENT_DETAILS_MH_RUN,
+     OPD_PATIENT_DETAILS.IDEAL_WEIGHT AS IDEAL_WEIGHT,
+    OPD_PATIENT_HISTORY.PRESENT_COMPLAIN AS COMPLAINT,
+    OPD_PATIENT_HISTORY.PASTMEDICALHISTORY AS PASTMEDICALHISTORY,
+    OPD_PATIENT_HISTORY.FAMILY_PAST_HISTORY AS FAMILYHISTORY,
+   OPD_PATIENT_HISTORY.RISKFACTOR AS RISKFACTOR,
+ OPD_PATIENT_DETAILS.INITIAL_DIAGNOSIS AS WORKINGDIAGNOSIS ,
+INPATIENT.INPATIENT_ID AS INPATIENT_ID
+ 
+FROM   OPD_PATIENT_DETAILS OPD_PATIENT_DETAILS 
+ LEFT OUTER JOIN INPATIENT INPATIENT ON OPD_PATIENT_DETAILS.INPATIENT_ID = INPATIENT.INPATIENT_ID
+ LEFT OUTER JOIN PATIENT PATIENT ON INPATIENT.HIN_ID=PATIENT.HIN_ID
+LEFT JOIN
+     MAS_ADMINISTRATIVE_SEX MAS_ADMINISTRATIVE_SEX  ON MAS_ADMINISTRATIVE_SEX.ADMINISTRATIVE_SEX_ID = PATIENT.SEX_ID
+     LEFT OUTER JOIN MAS_RELATION MAS_RELATION ON PATIENT.RELATION_ID = MAS_RELATION.RELATION_ID
+     LEFT OUTER JOIN MAS_RELATION MAS_RELATION_A ON PATIENT.RELATION_ID = MAS_RELATION_A.RELATION_ID
+     LEFT OUTER JOIN MAS_RANK MAS_RANK ON PATIENT.RANK_ID = MAS_RANK.RANK_ID
+     
+  LEFT JOIN MAS_MARITAL_STATUS MAS_MARITAL_STATUS ON PATIENT.MARITAL_STATUS_ID = MAS_MARITAL_STATUS.MARITAL_STATUS_ID
+    LEFT JOIN MAS_BLOOD_GROUP MAS_BLOOD_GROUP ON PATIENT.BLOOD_GROUP_ID = MAS_BLOOD_GROUP.BLOOD_GROUP_ID    
+     LEFT OUTER JOIN MAS_HOSPITAL MAS_HOSPITAL ON OPD_PATIENT_DETAILS.HOSPITAL_ID = MAS_HOSPITAL.HOSPITAL_ID       
+     LEFT JOIN OPD_PATIENT_HISTORY OPD_PATIENT_HISTORY ON OPD_PATIENT_DETAILS.ID = OPD_PATIENT_HISTORY.OPD_PATIENT_DETAILS_ID
+WHERE
+    
+   inpatient.ad_no = $P{adNo}
+   And inpatient.inpatient_id = $P{inpatient_id}
+     And mas_hospital.hospital_id=$P{hospitalId}
+And OPD_PATIENT_DETAILS.OPD_DATE in (select opd_date from temp_case_sheet where hin_no=$P{hinNo}
+and hin_id=$P{hinId})
+order by OPD_PATIENT_DETAILS.OPD_DATE asc,OPD_PATIENT_DETAILS.OPD_time asc]]></queryString>
+
+	<field name="WORKINGDIAGNOSIS" class="java.lang.String"/>
+	<field name="WORKING_DIAGNOSIS" class="java.lang.String"/>
+	<field name="SERVICENO" class="java.lang.String"/>
+	<field name="SERVICE_NAME" class="java.lang.String"/>
+	<field name="RISKFACTOR" class="java.lang.String"/>
+	<field name="PATIENT_UNIT_ID" class="java.lang.Integer"/>
+	<field name="PATIENT_SEX_ID" class="java.lang.Integer"/>
+	<field name="PATIENT_RELATION_ID" class="java.lang.Integer"/>
+	<field name="PATIENT_RANK_ID" class="java.lang.Integer"/>
+	<field name="PATIENT_NAME" class="java.lang.String"/>
+	<field name="PATIENT_HIN_NO" class="java.lang.String"/>
+	<field name="PATIENT_AGE" class="java.lang.String"/>
+	<field name="PASTMEDICALHISTORY" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_WEIGHT" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_THREPYTYPE" class="java.lang.Integer"/>
+	<field name="OPD_PATIENT_DETAILS_TEMPERATUR" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_SYSTAMICEX" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_RR" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_RETURNFROM" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_REFERRED_D" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_REFERED_DO" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_PULSE" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_PLAN" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_PHY_STATUS" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_PASTDISPOS" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_PASTDIAGNO" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_OPD_TIME" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_OPD_DATE" class="java.util.Date"/>
+	<field name="OPD_PATIENT_DETAILS_ON_EXAMINA" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_NEXT_VISIT" class="java.sql.Timestamp"/>
+	<field name="OPD_PATIENT_DETAILS_MH_RUN" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_INITIAL_DI" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_HOSPNAME" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_HEIGHT" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_GPE_EXAMIN" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_DURATIONPH" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_DOD" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_DOA" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_DISPOSAL" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_DAYSPHY" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_DAYS" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_CONSULTATI" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_BP" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_BMI" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_AFMS_DESC" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_ADVICEONDI" class="java.lang.String"/>
+	<field name="MAS_RANK_RANK_NAME" class="java.lang.String"/>
+	<field name="MARITAL_STATUS" class="java.lang.String"/>
+	<field name="INPATIENT_VISIT_DATE" class="java.util.Date"/>
+	<field name="INPATIENT_ID" class="java.lang.Integer"/>
+	<field name="INPATIENT_HIN_ID" class="java.lang.Integer"/>
+	<field name="IDEAL_WEIGHT" class="java.lang.String"/>
+	<field name="HOSPITAL_NAME" class="java.lang.String"/>
+	<field name="HOSPITAL_ADDRESS" class="java.lang.String"/>
+	<field name="FAMILYHISTORY" class="java.lang.String"/>
+	<field name="DOB" class="java.lang.String"/>
+	<field name="COMPLAINT" class="java.lang.String"/>
+	<field name="BLOODGROUP" class="java.lang.String"/>
+	<field name="ADNO" class="java.lang.String"/>
+	<field name="ADMINISTRATIVE_SEX_NAME" class="java.lang.String"/>
+	<field name="A_RELATION_NAME" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="230"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="2"
+						y="191"
+						width="658"
+						height="1"
+						key="line-44"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch" pen="Dotted"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="1"
+						y="193"
+						width="81"
+						height="16"
+						key="staticText-62"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Diagnosis ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="99"
+						y="169"
+						width="480"
+						height="22"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_ON_EXAMINA}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{OPD_PATIENT_DETAILS_ON_EXAMINA}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="2"
+						y="99"
+						width="658"
+						height="1"
+						key="line-47"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[($F{OPD_PATIENT_DETAILS_WEIGHT}.equals("") && $F{OPD_PATIENT_DETAILS_HEIGHT}.equals("") && $F{OPD_PATIENT_DETAILS_BMI}.equals("") && $F{IDEAL_WEIGHT}.equals("") && $F{OPD_PATIENT_DETAILS_TEMPERATUR}.equals("") && $F{OPD_PATIENT_DETAILS_PULSE}.equals("") && $F{OPD_PATIENT_DETAILS_BP}.equals("") && $F{OPD_PATIENT_DETAILS_RR}.equals("") && $F{OPD_PATIENT_DETAILS_ON_EXAMINA}.equals(""))?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<graphicElement stretchType="NoStretch" pen="Dotted"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="1"
+						y="25"
+						width="98"
+						height="16"
+						key="staticText-110"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{COMPLAINT}.equals("")?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Complaints]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="1"
+						y="43"
+						width="98"
+						height="16"
+						key="staticText-111"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{PASTMEDICALHISTORY}.equals("")?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Past Medical History]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="1"
+						y="62"
+						width="98"
+						height="23"
+						key="staticText-112"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{FAMILYHISTORY}.equals("")?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Family History]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="1"
+						y="81"
+						width="98"
+						height="16"
+						key="staticText-113"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{RISKFACTOR}.equals("")?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Risk Factors]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="107"
+						y="25"
+						width="553"
+						height="16"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{COMPLAINT}.equals("")?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{COMPLAINT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="107"
+						y="43"
+						width="553"
+						height="16"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{PASTMEDICALHISTORY}.equals("")?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PASTMEDICALHISTORY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="107"
+						y="62"
+						width="553"
+						height="16"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{FAMILYHISTORY}.equals("")?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{FAMILYHISTORY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="107"
+						y="82"
+						width="553"
+						height="16"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{RISKFACTOR}.equals("")?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{RISKFACTOR}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="1"
+						y="101"
+						width="52"
+						height="17"
+						key="staticText-114"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[($F{OPD_PATIENT_DETAILS_WEIGHT}.equals("") && $F{OPD_PATIENT_DETAILS_HEIGHT}.equals("") && $F{OPD_PATIENT_DETAILS_BMI}.equals("") && $F{IDEAL_WEIGHT}.equals("") && $F{OPD_PATIENT_DETAILS_TEMPERATUR}.equals("") && $F{OPD_PATIENT_DETAILS_PULSE}.equals("") && $F{OPD_PATIENT_DETAILS_BP}.equals("") && $F{OPD_PATIENT_DETAILS_RR}.equals("") && $F{OPD_PATIENT_DETAILS_ON_EXAMINA}.equals(""))?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[VITALS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="1"
+						y="120"
+						width="52"
+						height="22"
+						key="staticText-115"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_WEIGHT}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Weight]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="1"
+						y="142"
+						width="56"
+						height="24"
+						key="staticText-116"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_TEMPERATUR}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Temperature]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="1"
+						y="166"
+						width="88"
+						height="24"
+						key="staticText-117"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_ON_EXAMINA}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[On Examination]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="131"
+						y="120"
+						width="25"
+						height="21"
+						key="staticText-118"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_WEIGHT}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<text><![CDATA[Kg]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="131"
+						y="142"
+						width="25"
+						height="25"
+						key="staticText-119"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_TEMPERATUR}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<text><![CDATA[F]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="182"
+						y="120"
+						width="37"
+						height="21"
+						key="staticText-120"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_HEIGHT}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Height]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="182"
+						y="142"
+						width="37"
+						height="23"
+						key="staticText-121"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_PULSE}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Pulse]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="301"
+						y="120"
+						width="19"
+						height="21"
+						key="staticText-122"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_HEIGHT}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<text><![CDATA[cm]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="301"
+						y="142"
+						width="19"
+						height="23"
+						key="staticText-123"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_PULSE}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<text><![CDATA[/min]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="344"
+						y="120"
+						width="35"
+						height="21"
+						key="staticText-124"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_BMI}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[BMI]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="344"
+						y="142"
+						width="36"
+						height="21"
+						key="staticText-125"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_BP}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[BP]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="449"
+						y="142"
+						width="33"
+						height="23"
+						key="staticText-126"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_BP}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<text><![CDATA[mm/hg]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="449"
+						y="120"
+						width="33"
+						height="21"
+						key="staticText-127"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_BMI}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<text><![CDATA[kg/m]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="504"
+						y="120"
+						width="60"
+						height="21"
+						key="staticText-128"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{IDEAL_WEIGHT}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Ideal Weight]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="504"
+						y="142"
+						width="60"
+						height="23"
+						key="staticText-129"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_RR}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[RR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="637"
+						y="121"
+						width="21"
+						height="21"
+						key="staticText-138"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{IDEAL_WEIGHT}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<text><![CDATA[kg]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="637"
+						y="142"
+						width="21"
+						height="23"
+						key="staticText-139"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_RR}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<text><![CDATA[min]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="390"
+						y="142"
+						width="56"
+						height="23"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_BP}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{OPD_PATIENT_DETAILS_BP}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="233"
+						y="120"
+						width="62"
+						height="21"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_HEIGHT}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{OPD_PATIENT_DETAILS_HEIGHT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="71"
+						y="120"
+						width="58"
+						height="23"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_WEIGHT}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{OPD_PATIENT_DETAILS_WEIGHT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="234"
+						y="142"
+						width="65"
+						height="25"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_PULSE}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{OPD_PATIENT_DETAILS_PULSE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="71"
+						y="142"
+						width="58"
+						height="25"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_TEMPERATUR}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{OPD_PATIENT_DETAILS_TEMPERATUR}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="575"
+						y="142"
+						width="56"
+						height="23"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_RR}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{OPD_PATIENT_DETAILS_RR}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="390"
+						y="120"
+						width="56"
+						height="22"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_BMI}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{OPD_PATIENT_DETAILS_BMI}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="574"
+						y="120"
+						width="57"
+						height="21"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{IDEAL_WEIGHT}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{IDEAL_WEIGHT}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="1"
+						y="213"
+						width="97"
+						height="17"
+						key="staticText-142"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{WORKINGDIAGNOSIS}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Working Diagnosis]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="106"
+						y="213"
+						width="550"
+						height="16"
+						key="textField"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[$F{WORKINGDIAGNOSIS}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{WORKINGDIAGNOSIS}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="0"
+						y="4"
+						width="126"
+						height="16"
+						key="staticText-143"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[IPD Case Sheet Date & Time :-]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="137"
+						y="4"
+						width="60"
+						height="16"
+						key="textField-1"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{OPD_PATIENT_DETAILS_OPD_DATE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="h.mm.ss a" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="202"
+						y="4"
+						width="60"
+						height="16"
+						key="textField-2"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{caseSheetTime}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="2"
+						y="22"
+						width="658"
+						height="1"
+						key="line-49"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch" pen="Dotted"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="129"
+						y="3"
+						width="6"
+						height="16"
+						key="staticText-144"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="59"
+						y="142"
+						width="6"
+						height="23"
+						key="staticText-145">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_TEMPERATUR}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="59"
+						y="121"
+						width="6"
+						height="21"
+						key="staticText-146">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_WEIGHT}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="99"
+						y="82"
+						width="6"
+						height="16"
+						key="staticText-147">
+							<printWhenExpression><![CDATA[$F{RISKFACTOR}.equals("")?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="99"
+						y="62"
+						width="6"
+						height="16"
+						key="staticText-148">
+							<printWhenExpression><![CDATA[$F{FAMILYHISTORY}.equals("")?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="99"
+						y="42"
+						width="6"
+						height="16"
+						key="staticText-149">
+							<printWhenExpression><![CDATA[$F{PASTMEDICALHISTORY}.equals("")?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="99"
+						y="25"
+						width="6"
+						height="16"
+						key="staticText-150">
+							<printWhenExpression><![CDATA[$F{COMPLAINT}.equals("")?Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="379"
+						y="140"
+						width="6"
+						height="23"
+						key="staticText-151">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_BP}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="379"
+						y="120"
+						width="6"
+						height="21"
+						key="staticText-152">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_BMI}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="221"
+						y="147"
+						width="6"
+						height="23"
+						key="staticText-153">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_PULSE}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="221"
+						y="119"
+						width="6"
+						height="21"
+						key="staticText-154">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_HEIGHT}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="564"
+						y="119"
+						width="6"
+						height="21"
+						key="staticText-155">
+							<printWhenExpression><![CDATA[$F{IDEAL_WEIGHT}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="564"
+						y="141"
+						width="6"
+						height="23"
+						key="staticText-156">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_RR}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="98"
+						y="213"
+						width="6"
+						height="16"
+						key="staticText-157">
+							<printWhenExpression><![CDATA[$F{WORKINGDIAGNOSIS}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="89"
+						y="168"
+						width="6"
+						height="22"
+						key="staticText-159">
+							<printWhenExpression><![CDATA[$F{OPD_PATIENT_DETAILS_ON_EXAMINA}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="70"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-1"
+						y="10"
+						width="657"
+						height="10"
+						key="subreport-13"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="caseSheetTime">
+						<subreportParameterExpression><![CDATA[$P{caseSheetTime}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="inpatient_id">
+						<subreportParameterExpression><![CDATA[$F{INPATIENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="caseSheetDate">
+						<subreportParameterExpression><![CDATA[$F{OPD_PATIENT_DETAILS_OPD_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetIcdDiagnosisforWardBoth.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-1"
+						y="20"
+						width="657"
+						height="10"
+						key="subreport-14"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="caseSheetTime">
+						<subreportParameterExpression><![CDATA[$P{caseSheetTime}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="inpatient_id">
+						<subreportParameterExpression><![CDATA[$F{INPATIENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="caseSheetDate">
+						<subreportParameterExpression><![CDATA[$F{OPD_PATIENT_DETAILS_OPD_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetInvestigationforWardBoth.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-1"
+						y="30"
+						width="657"
+						height="10"
+						key="subreport-15"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="caseSheetTime">
+						<subreportParameterExpression><![CDATA[$P{caseSheetTime}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="inpatient_id">
+						<subreportParameterExpression><![CDATA[$F{INPATIENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="caseSheetDate">
+						<subreportParameterExpression><![CDATA[$F{OPD_PATIENT_DETAILS_OPD_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetMedicineforWardBoth.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-1"
+						y="40"
+						width="658"
+						height="10"
+						key="subreport-16"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="caseSheetTime">
+						<subreportParameterExpression><![CDATA[$P{caseSheetTime}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="inpatient_id">
+						<subreportParameterExpression><![CDATA[$F{INPATIENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="caseSheetDate">
+						<subreportParameterExpression><![CDATA[$F{OPD_PATIENT_DETAILS_OPD_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetProcedureAdviceforWardBoth.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-1"
+						y="50"
+						width="658"
+						height="10"
+						key="subreport-18"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="caseSheetTime">
+						<subreportParameterExpression><![CDATA[$P{caseSheetTime}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="inpatient_id">
+						<subreportParameterExpression><![CDATA[$F{INPATIENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="caseSheetDate">
+						<subreportParameterExpression><![CDATA[$F{OPD_PATIENT_DETAILS_OPD_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetPhysiotheraphyAdviceforWardBoth.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-1"
+						y="60"
+						width="657"
+						height="10"
+						key="subreport-19"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="caseSheetTime">
+						<subreportParameterExpression><![CDATA[$P{caseSheetTime}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="inpatient_id">
+						<subreportParameterExpression><![CDATA[$F{INPATIENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="caseSheetDate">
+						<subreportParameterExpression><![CDATA[$F{OPD_PATIENT_DETAILS_OPD_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetAdditionalAdviceforWardBoth.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-1"
+						y="0"
+						width="657"
+						height="10"
+						key="subreport-20"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="caseSheetTime">
+						<subreportParameterExpression><![CDATA[$P{caseSheetTime}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="inpatient_id">
+						<subreportParameterExpression><![CDATA[$F{INPATIENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="caseSheetDate">
+						<subreportParameterExpression><![CDATA[$F{OPD_PATIENT_DETAILS_OPD_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetSystemDiagnosisForWardBoth.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</summary>
+</jasperReport>

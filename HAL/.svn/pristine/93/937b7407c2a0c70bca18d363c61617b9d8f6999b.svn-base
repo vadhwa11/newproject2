@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="mdexamassistentpdfsub2"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="535"
+		 pageHeight="802"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="AllSectionsNoDetail"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="hdId" isForPrompting="true" class="java.math.BigDecimal"/>
+	<queryString><![CDATA[SELECT
+     distinct (case when (dg_result_entry_detail.sub_investigation_id) is null then dg_mas_investigation.investigation_name else (concat(dg_mas_investigation.investigation_name,concat(' / ',dg_sub_mas_investigation.sub_investigation_name)))end)AS testname,
+    --  (case when (dg_result_entry_detail.fixed_id) is null then dg_result_entry_detail.result
+     --else (dg_fixed_value.fixed_value)end) as result,
+     DBMS_LOB.substr(dg_result_entry_detail.result,3000)as result,
+     dg_result_entry_detail.investigation_id as investigationId,
+   case 
+when dg_mas_investigation.investigation_type='s' 
+    then dg_mas_investigation.CRITICAL_MIN_VALUE else dg_normal_value.CRITICAL_MIN_VALUE end as CRITICAL_MIN_VALUE,
+   case when dg_mas_investigation.investigation_type='s' 
+    then dg_mas_investigation.CRITICAL_MAX_VALUE else dg_normal_value.CRITICAL_MAX_VALUE end as CRITICAL_MAX_VALUE,
+   case when dg_mas_investigation.investigation_type='s' 
+    then dg_mas_investigation.MAX_NORMAL_VALUE else dg_normal_value.MAX_NORMAL_VALUE end as NORMAL_MAX_VALUE,
+   case when dg_mas_investigation.investigation_type='s' 
+    then dg_mas_investigation.MIN_NORMAL_VALUE else dg_normal_value.MIN_NORMAL_VALUE end as NORMAL_MIN_VALUE,
+   case
+    when dg_mas_investigation.investigation_type='s'
+    then dg_mas_investigation.NORMAL_VALUE else dg_normal_value.NORMALVALUE end as NORM_VALUE,
+case
+when dg_sub_mas_investigation.comparison_type='f' then
+'0.00001' 
+ when dg_sub_mas_investigation.comparison_type='F' then
+'0.00001'
+ when length(REGEXP_SUBSTR(dg_result_entry_detail.result,'[a-zA-Z!@#$%^&*()<>,?/]'))!=0 then
+'0.00001'
+else 
+DBMS_LOB.substr(dg_result_entry_detail.result,3000) end as res_num,
+      case
+     when dg_mas_investigation.investigation_type='s' then
+    case  when concat(dg_mas_investigation.min_normal_value,concat(' - ',dg_mas_investigation.max_normal_value))=' - '
+     then concat(dg_mas_investigation.normal_value,' ') else 
+     concat(dg_mas_investigation.min_normal_value,concat(' - ',dg_mas_investigation.max_normal_value)) end 
+     else
+     case 
+     when concat(dg_normal_value.min_normal_value,concat(' - ',dg_normal_value.max_normal_value))=' - '
+     then concat(dg_normal_value.normalvalue,' ') else 
+     concat(dg_normal_value.min_normal_value,concat('-',dg_normal_value.max_normal_value))end end as normal_value,
+ case
+     when dg_mas_investigation.investigation_type='s' then
+     (select uom_name from dg_uom where uom_id=dg_mas_investigation.uom_id)
+     else (select uom_name from dg_uom where uom_id=dg_sub_mas_investigation.uom_id) end as uom_name,
+    dg_result_entry_detail.remarks as remarks
+FROM
+      dg_orderhd
+      LEFT  JOIN dg_orderdt ON dg_orderdt.orderhd_id = dg_orderhd.orderhd_id
+
+       LEFT  JOIN dg_sample_collection_header ON dg_sample_collection_header.order_id=dg_orderhd.orderhd_id
+       LEFT  JOIN dg_result_entry_header ON dg_result_entry_header.sample_collection_header_id=dg_sample_collection_header.sample_collection_header_id
+       LEFT  JOIN dg_result_entry_detail ON dg_result_entry_header.result_entry_id=dg_result_entry_detail.result_entry_id
+       LEFT  JOIN  dg_mas_investigation ON dg_mas_investigation.investigation_id=dg_result_entry_header.investigation_id
+      LEFT  JOIN  dg_sub_mas_investigation ON dg_sub_mas_investigation.sub_investigation_id=dg_result_entry_detail.sub_investigation_id
+      LEFT  JOIN dg_normal_value on dg_normal_value.normal_id=dg_result_entry_detail.normal_id and dg_result_entry_detail.sub_investigation_ID=dg_normal_value.sub_investigation_ID
+       LEFT  JOIN dg_uom on dg_uom.uom_id=dg_result_entry_detail.uom_id
+       LEFT  JOIN mas_sub_chargecode on mas_sub_chargecode.sub_chargecode_id=dg_result_entry_header.sub_chargecode_id
+LEFT  JOIN dg_fixed_value on dg_fixed_value.fixed_id=dg_result_entry_detail.fixed_id
+where
+
+
+dg_orderhd.orderhd_id=$P{hdId}
+ order by testname]]></queryString>
+
+	<field name="TESTNAME" class="java.lang.String"/>
+	<field name="RESULT" class="java.lang.String"/>
+	<field name="INVESTIGATIONID" class="java.math.BigDecimal"/>
+	<field name="CRITICAL_MIN_VALUE" class="java.math.BigDecimal"/>
+	<field name="CRITICAL_MAX_VALUE" class="java.math.BigDecimal"/>
+	<field name="NORMAL_MAX_VALUE" class="java.math.BigDecimal"/>
+	<field name="NORMAL_MIN_VALUE" class="java.math.BigDecimal"/>
+	<field name="NORM_VALUE" class="java.math.BigDecimal"/>
+	<field name="RES_NUM" class="java.math.BigDecimal"/>
+	<field name="NORMAL_VALUE" class="java.lang.String"/>
+	<field name="UOM_NAME" class="java.lang.String"/>
+	<field name="REMARKS" class="java.lang.String"/>
+
+	<variable name="SrNo" class="java.lang.Integer" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[new java.lang.Integer(  ($V{REPORT_COUNT}.intValue()) )]]></variableExpression>
+		<initialValueExpression><![CDATA[new Integer(0)]]></initialValueExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="30"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="8"
+						y="7"
+						width="45"
+						height="17"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[SrNo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="67"
+						y="5"
+						width="101"
+						height="20"
+						key="staticText-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Test Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="189"
+						y="8"
+						width="92"
+						height="18"
+						key="staticText-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Result]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="303"
+						y="6"
+						width="101"
+						height="17"
+						key="staticText-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[UOM]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="425"
+						y="5"
+						width="101"
+						height="23"
+						key="staticText-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Range]]></text>
+				</staticText>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="30"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="13"
+						y="3"
+						width="43"
+						height="16"
+						key="textField-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{SrNo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="72"
+						y="3"
+						width="96"
+						height="16"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{TESTNAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="189"
+						y="3"
+						width="92"
+						height="16"
+						key="textField-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{RESULT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="303"
+						y="3"
+						width="101"
+						height="16"
+						key="textField-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOM_NAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="422"
+						y="3"
+						width="108"
+						height="16"
+						key="textField-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NORMAL_VALUE}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

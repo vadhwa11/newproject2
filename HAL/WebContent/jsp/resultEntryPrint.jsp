@@ -1,0 +1,398 @@
+<%@page import="java.util.HashMap"%>
+<%@ page import="static jkt.hms.util.RequestConstants.*"%>
+<%@page import="java.util.*"%>
+<%@page import="jkt.hms.masters.business.DgResultEntryDetail"%>
+<%@page import="jkt.hms.util.HMSUtil"%>
+<%@page import="jkt.hms.masters.business.DgSampleCollectionDetails"%>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Hospital Management System</title>
+<link rel="stylesheet" type="text/css" href="/hms/jsp/css/hms_style.css" />
+<style>
+#contentHolder1 {
+	width: 100%;
+	margin: 0px auto;
+}
+
+#contentHolder1 .blockFrame1 {
+	width: 100%;
+	margin: 0px auto;
+}
+
+#contentHolder1 .blockFrame1 label {
+	width: 170px;
+	float: left;
+	text-align: left;
+	height: auto;
+	line-height: normal;
+	padding-right: 5px;
+	padding-left: 50px;
+	font-weight: bold;
+}
+
+#contentHolder1 .blockFrame1 label.value {
+	color: #000000;
+	width: 180px;
+	float: left;
+	font-size: 11px;
+	text-align: left;
+	height: auto;
+	font-weight: normal;
+}
+
+#contentHolder1 .divisionR {
+	height: 1px;
+	clear: both;
+	border-top: 1px solid #000;
+	margin-top: 2px;
+}
+
+#contentHolder1 .Clear {
+	clear: both;
+	height: 1px;
+	overflow: hidden;
+}
+
+#html,body {
+	overflow: visible;
+	text-align: left;
+}
+</style>
+
+</head>
+
+<body>
+<%Date d=new Date();
+String hinNo="&nbsp;";
+String serviceNo="&nbsp;";
+String deptName="&nbsp;";
+String patientName="&nbsp;";
+String orderNo="&nbsp;";
+String orderDate="&nbsp;";
+String relationName="&nbsp;";
+String patientAge="&nbsp;";
+String sex="&nbsp;";
+String resultDate="&nbsp;";
+String rankName="&nbsp;";
+String subChargeCodeName="&nbsp;";
+String mainChargeCodeName="&nbsp;";
+String charge="&nbsp;";
+String doctorName="&nbsp;";
+String entryPersonName="&nbsp;";
+String servicePersonName="&nbsp;";
+String radioId = "&nbsp;";
+String entryPersonNameRank = "&nbsp;";
+String prefix = "";
+String suffix = "";
+
+	List<DgResultEntryDetail> dgResultdetailList = new ArrayList<DgResultEntryDetail>();
+	Map<String, Object> map = new HashMap<String, Object>();
+	Map<String, Object> detailsMap1 = new HashMap<String, Object>();
+	String message = "";
+	String url = "";
+	String clinicalNotes = "";
+	int deptId = 0;
+	String verifiedPersonNameDesignation = "&nbsp;";
+	String entryPersonNameDesignation = "&nbsp;";
+	if (request.getAttribute("map") != null) {
+		map = (Map<String, Object>) request.getAttribute("map");
+	
+	}
+	if (map.get("detailsMap1") != null) {
+		
+		detailsMap1 = (Map<String, Object>)map.get("detailsMap1");
+		System.out.println("in not null");
+		
+	}
+	if(session.getAttribute("deptName")!=null){
+		deptName=(String)session.getAttribute("deptName");
+	}
+	if(session.getAttribute("deptId")!=null){
+		deptId =(Integer)session.getAttribute("deptId");
+	}
+
+	if (detailsMap1.get("hinNo") != null) {
+		hinNo = (String)detailsMap1.get("hinNo");
+
+	}if (detailsMap1.get("servicePersonName") != null) {
+		servicePersonName = (String)detailsMap1.get("servicePersonName");
+
+	}
+	
+	if (detailsMap1.get("serviceNo") != null) {
+		serviceNo = (String)detailsMap1.get("serviceNo");
+
+	}
+	if (detailsMap1.get("prefix") != null) {
+		prefix = (String)detailsMap1.get("prefix");
+
+	}
+	if (detailsMap1.get("suffix") != null) {
+		suffix = (String)detailsMap1.get("suffix");
+
+	}
+
+	if (detailsMap1.get("entryPersonName") != null) {
+		entryPersonName = (String)detailsMap1.get("entryPersonName");
+
+	}
+	if (detailsMap1.get("entryPersonNameDesignation") != null) {
+		entryPersonNameDesignation = (String)detailsMap1.get("entryPersonNameDesignation");
+
+	}
+	if (detailsMap1.get("entryPersonNameRank") != null) {
+		entryPersonNameRank = (String)detailsMap1.get("entryPersonNameRank");
+
+	}
+	if (detailsMap1.get("verifiedPersonNameDesignation") != null) {
+		verifiedPersonNameDesignation = (String)detailsMap1.get("verifiedPersonNameDesignation");
+
+	}
+
+	if (detailsMap1.get("patientName") != null) {
+		patientName = (String)detailsMap1.get("patientName");
+
+	}
+	if (detailsMap1.get("orderNo") != null) {
+		orderNo = (String)detailsMap1.get("orderNo");
+
+	}
+	if (detailsMap1.get("radioId") != null) {
+		radioId = (String)detailsMap1.get("radioId");
+
+	}
+	if (detailsMap1.get("orderDate") != null) {
+		orderDate = HMSUtil.convertDateToStringWithoutTime((Date)detailsMap1.get("orderDate"));
+
+	}
+	if (detailsMap1.get("relationName") != null) {
+		relationName = (String)detailsMap1.get("relationName");
+
+	}
+	if (detailsMap1.get("patientAge") != null) {
+		patientAge = (String)detailsMap1.get("patientAge");
+
+	}
+	if (detailsMap1.get("sex") != null) {
+		sex = (String)detailsMap1.get("sex");
+
+	}
+	if (detailsMap1.get("resultDate") != null) {
+		resultDate = HMSUtil.convertDateToStringWithoutTime((Date)detailsMap1.get("resultDate"));
+
+	}
+	if (detailsMap1.get("rankName") != null) {
+		rankName = (String)detailsMap1.get("rankName");
+
+	}
+	if (detailsMap1.get("subChargeCodeName") != null) {
+		subChargeCodeName = (String)detailsMap1.get("subChargeCodeName");
+
+	}
+	if (detailsMap1.get("mainChargeCodeName") != null) {
+		mainChargeCodeName = (String)detailsMap1.get("mainChargeCodeName");
+
+	}
+	if (detailsMap1.get("charge") != null) {
+		charge = (String)detailsMap1.get("charge");
+
+	}
+	if (detailsMap1.get("doctorName") != null) {
+		doctorName = (String)detailsMap1.get("doctorName");
+
+	}
+	if (detailsMap1.get("clinicalNotes") != null) {
+		clinicalNotes = (String)detailsMap1.get("clinicalNotes");
+	}
+	if (map.get("messageTOBeVisibleToTheUser") != null) {
+		message = "" + map.get("messageTOBeVisibleToTheUser");
+	}
+	if (map.get("url") != null) {
+		url = "" + map.get("url");
+	}
+	if (map.get("dgResultdetailList") != null) {
+		dgResultdetailList = (List<DgResultEntryDetail>) map
+				.get("dgResultdetailList");
+	}
+
+	String resultType = "";
+	if (map.get("resultType") != null) {
+		resultType = (String) map.get("resultType");
+	}
+
+	String sampleCollDateString = "";
+	System.out.println("resultType is------" + resultType);
+	DgSampleCollectionDetails dgSampleCollectionDetails = dgResultdetailList.get(0).getSampleCollectionDetails();
+	 Date sampleCollectionDate =  dgSampleCollectionDetails.getSampleCollDatetime();
+	 sampleCollDateString = HMSUtil.convertDateToStringWithoutTime(sampleCollectionDate);
+
+
+%>
+<div id="contentHolder1">
+<%if(deptId == 49){ %> <label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 20px; font-weight: bold; width: 70px; padding-right: 0px; margin-right: 0px; margin-top: 0px; margin-bottom: 0px;">Tele-25369030
+Ext 248</label>
+<div class="Clear"></div>
+
+<label
+	style="font: bold 13px arial color : #000; font-weight: bold; text-decoration: underline; float: right; text-align: center; font-size: 12px; width: 100%; margin-top: 3px;">DEPARTMENT
+OF RADIODIAGNOSIS & IMAGING</label>
+<div class="Clear"></div>
+<label
+	style="font: bold 13px arial color : #000; font-weight: bold; text-decoration: underline; float: right; text-align: center; font-size: 12px; width: 100%; margin-top: 0px;">COMMAND
+HOSPITAL AIR FORCE</label>
+<div class="Clear"></div>
+<label
+	style="font: bold 13px arial color : #000; font-weight: bold; text-decoration: underline; float: right; text-align: center; font-size: 12px; width: 100%; margin-top: 0px;">BANGALORE-560007</label>
+
+<div class="Clear"></div>
+<% if(dgResultdetailList.get(0).getResultDetailStatus().equalsIgnoreCase("W")){ %>
+<label
+	style="font: bold 13px arial color : #000; width: 100%; font-weight: bold; text-align: center; font-size: 12px; float: right; margin-top: 1px"><%=deptName %>
+Report </label> <% }else{ %> <label
+	style="font: bold 13px arial color : #000; width: 100%; font-weight: bold; text-align: center; font-size: 12px; float: right; margin-top: 1px">Provisional
+<%=deptName %> Report </label> <% } %> <br>
+
+<%}else{ %> <label
+	style="font: bold 13px arial color : #000; font-weight: bold; text-decoration: underline; float: right; text-align: center; font-size: 12px; width: 100%; margin-top: 0px;">COMMAND
+HOSPITAL AIR FORCE</label>
+<div class="Clear"></div>
+<label
+	style="font: bold 13px arial color : #000; font-weight: bold; text-decoration: underline; float: right; text-align: center; font-size: 12px; width: 100%; margin-top: 0px;">BANGALORE-560007</label>
+
+<div class="Clear"></div>
+<% if(dgResultdetailList.get(0).getResultDetailStatus().equalsIgnoreCase("W")){ %>
+<label
+	style="font: bold 13px arial color : #000; width: 100%; font-weight: bold; text-align: center; font-size: 12px; float: right; margin-top: 1px"><%=deptName %>
+Result </label> <% }else{ %> <label
+	style="font: bold 13px arial color : #000; width: 100%; font-weight: bold; text-align: center; font-size: 12px; float: right; margin-top: 1px">Provisional
+<%=deptName %> Result </label> <% } %> <br>
+<% } %>
+<div style="padding-top: 10px;"></div>
+<div class="blockFrame1" style="border: none; background: #FFF;">
+<label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 20px; width: 130px; padding-right: 0px; margin-right: 0px;">Dept/Ward</label>
+<label class="value"
+	style="width: 249px; margin-left: 0px; padding-left: 0px;">: <%=dgResultdetailList.get(0).getSampleCollectionDetails().getSampleCollectionHeader().getOrderByDepartment().getDepartmentName() %>
+</label>
+
+<div class="divisionR"></div>
+
+<label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 20px; width: 130px; padding-right: 0px; margin-right: 0px;">Service
+No.</label> <label class="value"
+	style="width: 180px; margin-left: 0px; padding-left: 0px;">: <%=prefix%>
+<%=serviceNo %> <%=suffix%> </label> <label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 91px; width: 71px; padding-right: 0px; margin-right: 0px;">Rank</label>
+<label class="value"
+	style="width: auto; margin-left: 0px; padding-left: 0px;">: <%=rankName %>
+</label>
+
+<div class="Clear"></div>
+<label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 20px; width: 130px; padding-right: 0px; margin-right: 0px;">Service
+Person Name</label> <label class="value"
+	style="width: auto; margin-left: 0px; padding-left: 0px;">: <%=servicePersonName %>
+</label>
+<div class="Clear"></div>
+
+<label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 20px; width: 130px; padding-right: 0px; margin-right: 0px;">Patient
+Name</label> <label class="value"
+	style="width: 261px; margin-left: 0px; padding-left: 0px;">: <%=patientName %>
+</label> <label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 10px; width: 71px; padding-right: 0px; margin-right: 0px;">Relation</label>
+<label class="value"
+	style="width: 120px; margin-left: 0px; padding-left: 0px;">: <%=relationName %>
+</label>
+
+<div class="Clear"></div>
+
+
+
+<label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 20px; width: 130px; padding-right: 0px; margin-right: 0px;">Age/Sex</label>
+<label class="value"
+	style="width: 120px; margin-left: 0px; padding-left: 0px;">: <%=patientAge%>/<%=sex %></label>
+<div class="divisionR"></div>
+
+<label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 20px; width: 130px; padding-right: 0px; margin-right: 0px;">Prescribed
+By</label> <label class="value"
+	style="width: auto; margin-left: 0px; padding-left: 0px;">: <%=doctorName %></label>
+<div class="Clear"></div>
+
+<label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 20px; width: 130px; padding-right: 0px;">
+Clinical Notes </label> <label class="value"
+	style="padding-right: 0px; margin-right: 0px; width: auto; padding-left: 0px;">:
+<%=clinicalNotes%></label>
+
+
+
+
+<div class="Clear"></div>
+
+<!-- line should  be here -->
+<h1 align="center" class="style1"><!-- charge Code here --></h1>
+<!-- line should  behere -->
+<div class="Clear"></div>
+<div class="divisionR"></div>
+<label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 270px; width: auto;">Sub
+Department :</label> <label class="value"
+	style="padding-right: 0px; margin-right: 0px; width: auto; padding-left: 0px;">
+<%=subChargeCodeName%></label>
+<div class="divisionR"></div>
+<label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 20px; width: auto;">Test</label>
+<label class="value"
+	style="padding-right: 0px; margin-right: 0px; width: 220px; padding-left: 0px;">:
+<%=charge%> </label> <% if(deptId == 49 ){ %> <label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 5px; width: auto;">Radio
+Id</label> <% }else{ %> <label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 5px; width: auto;">Diag
+No</label> <% } %> <label class="value"
+	style="padding-right: 0px; margin-right: 0px; width: 120px; padding-left: 0px;">:
+<%=radioId %> </label> <label
+	style="font-size: 11px; color: #000; font-family: arial; padding-left: 10px; width: 55px; padding-right: 0px; margin-right: 0px;">Test
+Date</label> <label class="value"
+	style="width: 90px; margin-left: 0px; padding-left: 0px;">: <%=sampleCollDateString %>
+</label>
+
+<div class="Clear"></div>
+<div class="divisionR"></div>
+<!-- line should  behere -->
+<div class="Clear"></div>
+<%if(deptId == 49){ %> <% }else{ %> <label
+	style="font-size: 11px; color: #000; font-family: arial; width: auto; padding-left: 20px;">Result
+:</label> <% } %> <label class="value"><%=dgResultdetailList.get(0).getResult()%></label>
+<div class="Clear"></div>
+
+<label class="value"
+	style="font-size: 12px; width: 220px; margin-left: 0px; padding-left: 20px; padding-top: 20px;">(<%=entryPersonName%>)
+</label>
+<div class="Clear"></div>
+<label class="value"
+	style="font-size: 12px; width: 220px; margin-left: 0px; padding-left: 20px; padding-top: 0px;"><%=entryPersonNameRank%>
+</label>
+<div class="Clear"></div>
+<label class="value"
+	style="font-size: 12px; width: 220px; margin-left: 0px; padding-left: 20px; padding-top: 0px;"><%=entryPersonNameDesignation%>
+</label>
+
+<div class="Clear"></div>
+<!--  <label style="font-size:11px; color:#000;font-family:arial;	padding-left:20px;
+			width:55px;padding-top:5px;margin-right: 0px;">Date</label> --> <!--  <label class="value" style="width:120px;margin-left: 0px;padding-left: 0px;padding-top:4px;">: <%=resultDate%> </label> -->
+
+</div>
+
+</div>
+<label
+	style="font: bold 13px arial color : #000; font-weight: bold; float: right; text-align: center; font-size: 11px; width: 100%; height: 0px; margin-top: 0px;">----------
+End Of The Report ----------</label>
+
+<div style='page-break-after: always;'></div>
+</body>
+</html>

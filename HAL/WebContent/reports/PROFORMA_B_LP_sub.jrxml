@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="PROFORMA_B_LP_sub"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="421"
+		 pageHeight="842"
+		 columnWidth="421"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoDataSection"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="proNo" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="itemId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hospitalId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select distinct to_char(v.WORKING_DIAGNOSIS),me.FIRST_NAME,me.LAST_NAME ,pph.specialty,
+case mrel.RELATION_NAME when 'Self' then (p.SERVICE_NO ||' '||mr.RANK_NAME ||' '||p.S_FIRST_NAME||' '|| nvl(p.S_LAST_NAME,'') ) 
+else (mrel.RELATION_NAME||' '||p.SERVICE_NO||' '||mr.RANK_NAME||' '||p.S_FIRST_NAME||' '||nvl(p.S_LAST_NAME,'')) end as rel
+,ppd.DOSAGE|| ' ' ||mf.FREQUENCY as dosages
+from  store_proforma_header sph
+left outer join store_proforma_detail spd on sph.PROFORMA_ID= spd.PROFORMA_ID 
+left outer join mas_store_item msi on  spd.ITEM_ID= msi.ITEM_ID
+left outer join STORE_LOANIN_T sgt on spd.CRV_ID=sgt.LOANIN_TRANS_ID
+left outer join mas_manufacturer mm on sgt.MANUFACTURER_ID=mm.MANUFACTURER_ID
+LEFT outer join STORE_LOANIN_M sgm on sgm.LOANIN_MASTER_ID=sgt.LOANIN_MASTER_ID
+left outer join mas_store_supplier mss on sgm.SUPPLIER_ID=mss.SUPPLIER_ID
+left outer join patient_prescription_details ppd on  spd.PRESCRIPTION_ID= ppd.ID
+right outer join patient_prescription_header pph on ppd.PRESCRIPTION_ID=pph.PRESCRIPTION_ID
+left outer join mas_frequency mf on ppd.FREQUENCY_ID=mf.FREQUENCY_ID
+left outer join visit v on pph.VISIT_ID=v.VISIT_ID
+left outer join patient p on v.HIN_ID=p.HIN_ID
+left outer join mas_employee me on v.DOCTOR_ID=me.EMPLOYEE_ID
+left outer join mas_hospital mh on v.HOSPITAL_ID=mh.HOSPITAL_ID
+left outer join mas_rank mr on p.RANK_ID=mr.RANK_ID
+left outer join mas_relation mrel on p.RELATION_ID  =mrel.RELATION_ID
+where  sph.PROFORMA_no=$P{proNo} and spd.item_id=$P{itemId} and sph.HOSPITAL_ID=$P{hospitalId}]]></queryString>
+
+	<field name="TO_CHAR(V.WORKING_DIAGNOSIS)" class="java.lang.String"/>
+	<field name="FIRST_NAME" class="java.lang.String"/>
+	<field name="LAST_NAME" class="java.lang.String"/>
+	<field name="SPECIALTY" class="java.lang.String"/>
+	<field name="REL" class="java.lang.String"/>
+	<field name="DOSAGES" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="24"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="0"
+						width="142"
+						height="22"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{REL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="150"
+						y="0"
+						width="92"
+						height="22"
+						key="textField-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{TO_CHAR(V.WORKING_DIAGNOSIS)}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="348"
+						y="0"
+						width="72"
+						height="23"
+						key="textField-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{SPECIALTY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="242"
+						y="0"
+						width="98"
+						height="24"
+						key="textField-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DOSAGES}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+		<noData>
+			<band height="25"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="1"
+						y="1"
+						width="303"
+						height="18"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[For Smc Use Only]]></text>
+				</staticText>
+			</band>
+		</noData>
+</jasperReport>

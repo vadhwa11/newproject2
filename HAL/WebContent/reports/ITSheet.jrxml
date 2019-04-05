@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="ITSheet"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="842"
+		 pageHeight="595"
+		 columnWidth="782"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["C:\\Documents and Settings\\vishal jain\\Desktop\\Clinirx\\vishal_jain\\IT\\it_report_format\\it_related\\done\\IncomeTaxSheet\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="emp_id" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="year" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+     hr_payroll_process_header.year AS hr_payroll_process_header_year,
+     hr_payroll_process_header.month  as pay_month,
+     hr_mas_pay_element.pay_element_desc AS pay_element,
+     hr_payroll_process_detail.payelement_amount AS payelement_amount,
+     mas_employee.employee_code AS mas_employee_employee_code,
+     mas_employee.employee_id   as empId,
+     mas_employee.first_name AS mas_employee_first_name,
+     mas_employee.last_name AS mas_employee_last_name,
+     mas_employee.middle_name AS mas_employee_middle_name,
+    
+     mas_rank.rank_name AS mas_rank_rank_name,
+     mas_department.department_name AS mas_department_department_name,
+     mh.hospital_name
+     
+FROM
+     hr_payroll_process_header hr_payroll_process_header
+     LEFT OUTER JOIN hr_payroll_process_detail hr_payroll_process_detail ON hr_payroll_process_header.payroll_process_header_id = hr_payroll_process_detail.payroll_process_header_id
+     LEFT OUTER JOIN hr_employee_pay_elements hr_employee_pay_elements ON hr_payroll_process_detail.emp_pay_element_id = hr_employee_pay_elements.id
+     LEFT OUTER JOIN hr_mas_pay_element hr_mas_pay_element ON hr_employee_pay_elements.pay_element_id = hr_mas_pay_element.pay_element_id
+     RIGHT OUTER JOIN mas_employee mas_employee ON hr_payroll_process_header.employee_id = mas_employee.employee_id
+     LEFT OUTER JOIN mas_rank mas_rank ON mas_employee.rank_id = mas_rank.rank_id
+     LEFT OUTER JOIN mas_department mas_department ON mas_employee.department_id = mas_department.department_id
+     LEFT OUTER JOIN mas_hospital mh ON mas_employee.hospital_id = mh.hospital_id
+
+WHERE
+     mas_employee.employee_id = $P{emp_id}
+     and hr_mas_pay_element.pay_element_type != 'deduction'
+     and hr_payroll_process_header.year = $P{year}
+union
+
+SELECT
+     hr_payroll_process_header.year AS hr_payroll_process_header_year,
+     hr_payroll_process_header.month  AS pay_month,
+     'Basic' as pay_element,
+     hr_payroll_process_header.basic AS payelement_amount,
+     mas_employee.employee_code AS mas_employee_employee_code,
+     mas_employee.employee_id   as empId,
+     mas_employee.first_name AS mas_employee_first_name,
+     mas_employee.last_name AS mas_employee_last_name,
+     mas_employee.middle_name AS mas_employee_middle_name,
+    
+     mas_rank.rank_name AS mas_rank_rank_name,
+     mas_department.department_name AS mas_department_department_name,
+     mh.hospital_name
+FROM
+     mas_employee mas_employee
+     LEFT OUTER JOIN hr_payroll_process_header hr_payroll_process_header ON mas_employee.employee_id = hr_payroll_process_header.employee_id
+     LEFT OUTER JOIN mas_rank mas_rank ON mas_employee.rank_id = mas_rank.rank_id
+     LEFT OUTER JOIN mas_department mas_department ON mas_employee.department_id = mas_department.department_id
+     LEFT OUTER JOIN mas_hospital mh ON mas_employee.hospital_id = mh.hospital_id
+WHERE
+     mas_employee.employee_id = $P{emp_id}]]></queryString>
+
+	<field name="hr_payroll_process_header_year" class="java.lang.Integer"/>
+	<field name="pay_month" class="java.lang.Integer"/>
+	<field name="pay_element" class="java.lang.String"/>
+	<field name="payelement_amount" class="java.math.BigDecimal"/>
+	<field name="mas_employee_employee_code" class="java.lang.String"/>
+	<field name="empId" class="java.lang.Long"/>
+	<field name="mas_employee_first_name" class="java.lang.String"/>
+	<field name="mas_employee_last_name" class="java.lang.String"/>
+	<field name="mas_employee_middle_name" class="java.lang.String"/>
+	<field name="mas_rank_rank_name" class="java.lang.String"/>
+	<field name="mas_department_department_name" class="java.lang.String"/>
+	<field name="hospital_name" class="java.lang.String"/>
+
+	<variable name="name" class="java.lang.String" resetType="None" calculation="Nothing">
+		<variableExpression><![CDATA[$F{mas_employee_first_name}+ " " + $F{mas_employee_last_name}]]></variableExpression>
+		<initialValueExpression><![CDATA[new String("")]]></initialValueExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="91"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="1"
+						y="44"
+						width="65"
+						height="18"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Employee :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="66"
+						y="44"
+						width="218"
+						height="18"
+						key="textField-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="297"
+						y="65"
+						width="59"
+						height="18"
+						key="staticText-6"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[PF No.:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="297"
+						y="44"
+						width="59"
+						height="18"
+						key="staticText-9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Department:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="1"
+						y="65"
+						width="65"
+						height="18"
+						key="staticText-10"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Designation :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="621"
+						y="44"
+						width="58"
+						height="18"
+						key="staticText-11"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Year :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="357"
+						y="44"
+						width="167"
+						height="18"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{mas_department_department_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="66"
+						y="65"
+						width="218"
+						height="18"
+						key="textField-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{mas_rank_rank_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="0"
+						y="22"
+						width="782"
+						height="20"
+						key="staticText-13"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Income Tax Computation Sheet]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="90"
+						width="782"
+						height="0"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="-1"
+						y="43"
+						width="782"
+						height="0"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="681"
+						y="44"
+						width="100"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$P{year}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="4"
+						width="782"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{hospital_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="31"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-29"
+						y="3"
+						width="811"
+						height="28"
+						key="subreport-4"/>
+					<subreportParameter  name="fDate">
+						<subreportParameterExpression><![CDATA[$P{fDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="tDate">
+						<subreportParameterExpression><![CDATA[$P{tDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="empId">
+						<subreportParameterExpression><![CDATA[$P{emp_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/ITSheetDetails.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</summary>
+</jasperReport>

@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="DRSS-livingIn"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="842"
+		 pageHeight="595"
+		 columnWidth="782"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["C:\\hrOrderlyModuleReport\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="date" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select 'SNCO CHAFB' as UnitMess,
+(SELECT Count(employee_id ) FROM mas_employee e where mess_id =3  and rank_id >= 14 and living_in_date=$P{date} and livingInOut='0') as POSTEDSTR ,
+
+(SELECT count(employee_id) FROM movement_in_entry where movement_type ='t') as ATTD,
+
+((SELECT Count(employee_id ) FROM mas_employee e where mess_id =3 and rank_id >= 14
+and living_in_date=$P{date} and livingInOut='0')+(SELECT count(employee_id) FROM movement_in_entry where movement_type ='t')) as TOTALSTR ,
+
+(SELECT count(employee_id) FROM mas_leave_application where leave_from_date = $P{date} between leave_from_date and leave_to_date) as LEAV,
+
+(SELECT count(employee_id) FROM movement_out_entry where movement_type ='t') as DETD,
+
+(select count(hin_id) from inpatient
+where hin_id in ( select distinct hin_id  from patient where relation_id in (select relation_id from mas_relation where relation_code='06') and patient_status ='In patient' )
+and ad_status ='A'
+and date_of_addmission = $P{date} between date_of_addmission and discharge_date) as HOSP,
+
+(Select count(employee_id) From movement_out_Entry where movement_type = 'a') as AWL,
+
+((SELECT count(employee_id) FROM movement_out_entry where movement_type ='t')+(SELECT count(employee_id) FROM movement_out_entry where movement_type ='a')+(SELECT count(employee_id) FROM mas_leave_application where leave_from_date = $P{date} between leave_from_date and leave_to_date) + (select count(hin_id) from inpatient
+where hin_id in ( select distinct hin_id  from patient where relation_id in (select relation_id from mas_relation where relation_code='06') and patient_status ='In patient' )
+and ad_status ='A'
+and date_of_addmission = $P{date} between date_of_addmission and discharge_date)) as TOTALNE ,
+
+(((SELECT Count(employee_id ) FROM mas_employee e where mess_id =3 and rank_id >= 14 and living_in_date=$P{date} and livingInOut='0')+(SELECT count(employee_id) FROM movement_in_entry where movement_type ='t')) - ((SELECT count(employee_id) FROM movement_out_entry where movement_type ='t')+(SELECT count(employee_id) FROM movement_out_entry where movement_type ='a')+(SELECT count(employee_id) FROM mas_leave_application where leave_from_date = $P{date} between leave_from_date and leave_to_date) + (select count(hin_id) from inpatient
+where hin_id in ( select distinct hin_id  from patient where relation_id in (select relation_id from mas_relation where relation_code='06') and patient_status ='In patient' )
+and ad_status ='A'
+and date_of_addmission = $P{date} between date_of_addmission and discharge_date))) as STR
+
+union
+
+select 'AIRMEN CHAFB' as UnitMess,
+(SELECT Count(employee_id ) FROM mas_employee e where mess_id =1  and rank_id >= 14 and living_in_date=$P{date} and livingInOut='0') as POSTEDSTR ,
+
+(SELECT count(employee_id) FROM movement_in_entry where movement_type ='t') as ATTD,
+
+((SELECT Count(employee_id ) FROM mas_employee e where mess_id =1 and rank_id >= 14 and living_in_date=$P{date} and livingInOut='0')+(SELECT count(employee_id) FROM movement_in_entry where movement_type ='t')) as TOTALSTR ,
+
+(SELECT count(employee_id) FROM mas_leave_application where leave_from_date = $P{date} between leave_from_date and leave_to_date) as LEAV,
+
+(SELECT count(employee_id) FROM movement_out_entry where movement_type ='t') as DETD,
+
+(select count(hin_id) from inpatient
+where hin_id in ( select distinct hin_id  from patient where relation_id in (select relation_id from mas_relation where relation_code='06') and patient_status ='In patient' )
+and ad_status ='A'
+and date_of_addmission = $P{date} between date_of_addmission and discharge_date) as HOSP,
+
+(Select count(employee_id) From movement_out_Entry where movement_type = 'a') as AWL,
+
+((SELECT count(employee_id) FROM movement_out_entry where movement_type ='t')+(SELECT count(employee_id) FROM movement_out_entry where movement_type ='a')+(SELECT count(employee_id) FROM mas_leave_application where leave_from_date = $P{date} between leave_from_date and leave_to_date) + (select count(hin_id) from inpatient
+where hin_id in ( select distinct hin_id  from patient where relation_id in (select relation_id from mas_relation where relation_code='06') and patient_status ='In patient' )
+and ad_status ='A'
+and date_of_addmission = $P{date} between date_of_addmission and discharge_date)) as TOTALNE ,
+
+(((SELECT Count(employee_id ) FROM mas_employee e where mess_id =1 and rank_id >= 14 and living_in_date=$P{date} and livingInOut='0')+(SELECT count(employee_id) FROM movement_in_entry where movement_type ='t')) - ((SELECT count(employee_id) FROM movement_out_entry where movement_type ='t')+(SELECT count(employee_id) FROM movement_out_entry where movement_type ='a')+(SELECT count(employee_id) FROM mas_leave_application where leave_from_date = $P{date} between leave_from_date and leave_to_date) + (select count(hin_id) from inpatient
+where hin_id in ( select distinct hin_id  from patient where relation_id in (select relation_id from mas_relation where relation_code='06') and patient_status ='In patient' )
+and ad_status ='A'
+and date_of_addmission = $P{date} between date_of_addmission and discharge_date))) as STR]]></queryString>
+
+	<field name="UnitMess" class="java.lang.String"/>
+	<field name="POSTEDSTR" class="java.lang.Long"/>
+	<field name="ATTD" class="java.lang.Long"/>
+	<field name="TOTALSTR" class="java.lang.Long"/>
+	<field name="LEAV" class="java.lang.Long"/>
+	<field name="DETD" class="java.lang.Long"/>
+	<field name="HOSP" class="java.lang.Long"/>
+	<field name="AWL" class="java.lang.Long"/>
+	<field name="TOTALNE" class="java.lang.Long"/>
+	<field name="STR" class="java.lang.Long"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="49"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="50"
+						y="28"
+						width="0"
+						height="0"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Static Text]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="50"
+						y="28"
+						width="0"
+						height="0"
+						key="staticText-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Static Text]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="50"
+						y="38"
+						width="0"
+						height="0"
+						key="staticText-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Static Text]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="41"
+						y="18"
+						width="60"
+						height="30"
+						key="staticText-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[UNIT/Mess]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="103"
+						y="18"
+						width="60"
+						height="30"
+						key="staticText-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[POSTED STR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="165"
+						y="18"
+						width="60"
+						height="30"
+						key="staticText-6"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[ATT/T/D]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="227"
+						y="18"
+						width="60"
+						height="30"
+						key="staticText-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[TOTAL STR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="289"
+						y="18"
+						width="165"
+						height="15"
+						key="staticText-8"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[NON EFFECTED]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="290"
+						y="33"
+						width="38"
+						height="15"
+						key="staticText-9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[LEAVE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="330"
+						y="33"
+						width="40"
+						height="15"
+						key="staticText-10"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[DETT/T/D]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="372"
+						y="33"
+						width="40"
+						height="15"
+						key="staticText-11"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[HOSP]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="414"
+						y="33"
+						width="40"
+						height="15"
+						key="staticText-12"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[AWL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="455"
+						y="18"
+						width="60"
+						height="30"
+						key="staticText-13"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[TOTAL N/E]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="517"
+						y="18"
+						width="60"
+						height="30"
+						key="staticText-14"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[DINNING IN STR]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="101"
+						y="18"
+						width="0"
+						height="30"
+						key="line-4"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="163"
+						y="18"
+						width="0"
+						height="30"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="163"
+						y="18"
+						width="0"
+						height="30"
+						key="line-6"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="225"
+						y="18"
+						width="0"
+						height="30"
+						key="line-7"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="287"
+						y="18"
+						width="0"
+						height="30"
+						key="line-8"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="328"
+						y="33"
+						width="0"
+						height="15"
+						key="line-9"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="328"
+						y="33"
+						width="0"
+						height="15"
+						key="line-10"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="328"
+						y="33"
+						width="0"
+						height="15"
+						key="line-11"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="370"
+						y="33"
+						width="0"
+						height="15"
+						key="line-12"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="370"
+						y="33"
+						width="0"
+						height="15"
+						key="line-13"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="370"
+						y="33"
+						width="0"
+						height="15"
+						key="line-14"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="412"
+						y="33"
+						width="0"
+						height="15"
+						key="line-15"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="287"
+						y="18"
+						width="0"
+						height="30"
+						key="line-16"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="454"
+						y="18"
+						width="0"
+						height="30"
+						key="line-17"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="454"
+						y="18"
+						width="0"
+						height="30"
+						key="line-18"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="515"
+						y="18"
+						width="0"
+						height="30"
+						key="line-19"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="40"
+						y="48"
+						width="600"
+						height="0"
+						key="line-21"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="284"
+						y="28"
+						width="0"
+						height="0"
+						key="line-23"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="294"
+						y="28"
+						width="0"
+						height="0"
+						key="line-24"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="287"
+						y="32"
+						width="168"
+						height="0"
+						key="line-25"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="24"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="160"
+						y="0"
+						width="0"
+						height="0"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="40"
+						y="0"
+						width="62"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UnitMess}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="102"
+						y="0"
+						width="58"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{POSTEDSTR}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="160"
+						y="0"
+						width="69"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{ATTD}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="229"
+						y="0"
+						width="61"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{TOTALSTR}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="290"
+						y="0"
+						width="40"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{LEAV}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="330"
+						y="0"
+						width="40"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{DETD}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="370"
+						y="0"
+						width="40"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{HOSP}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="410"
+						y="0"
+						width="43"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{AWL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="453"
+						y="0"
+						width="67"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{TOTALNE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="520"
+						y="0"
+						width="60"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{STR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="false" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="50"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="35"
+						y="6"
+						width="180"
+						height="40"
+						key="subreport-1"/>
+					<subreportParameter  name="date1">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "\\sub.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="304"
+						y="6"
+						width="150"
+						height="40"
+						key="subreport-2"/>
+					<subreportParameter  name="date2">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "DRSS-livingIn_subreport0.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</summary>
+</jasperReport>

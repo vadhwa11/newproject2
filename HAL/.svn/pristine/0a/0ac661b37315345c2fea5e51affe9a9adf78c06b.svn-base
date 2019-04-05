@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="medicalCaseSheetInvestigationforWard"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="595"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="inpatient_id" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="caseSheetDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+     inpatient.inpatient_id AS VISIT_VISIT_ID,
+     inpatient.ad_no AS VISIT_VISIT_NO,
+     PATIENT.HIN_ID AS PATIENT_HIN_ID,
+     PATIENT.SERVICE_NO AS PATIENT_SERVICE_NO,
+     PATIENT.HIN_NO AS PATIENT_HIN_NO,
+     PATIENT_INVESTIGATION_HEADER.HIN_ID AS PATIENT_INVESTIGATION_HEADER_H,
+     PATIENT_INVESTIGATION_HEADER.VISIT_ID AS PATIENT_INVESTIGATION_HEADER_V,
+     MAS_CHARGE_CODE.CHARGE_CODE_NAME AS MAS_CHARGE_CODE_CHARGE_CODE_NA,
+     PATIENT_INVESTIGATION_DETAILS.QUANTITY AS PATIENT_INVESTIGATION_QTY,
+     PATIENT_INVESTIGATION_DETAILS.CLINICAL_NOTES AS CLINICAL_NOTES,
+    ( case when PATIENT_INVESTIGATION_DETAILS.refer_to_mh='n' then '' else 'Yes' end) AS refer_to_mh
+FROM
+     HMS.PATIENT PATIENT INNER JOIN HMS.inpatient inpatient ON PATIENT.HIN_ID = inpatient.HIN_ID
+     INNER JOIN HMS.PATIENT_INVESTIGATION_HEADER PATIENT_INVESTIGATION_HEADER ON inpatient.inpatient_id = PATIENT_INVESTIGATION_HEADER.inpatient_id
+     INNER JOIN HMS.PATIENT_INVESTIGATION_DETAILS PATIENT_INVESTIGATION_DETAILS ON PATIENT_INVESTIGATION_HEADER.INVESTIGATION_HEADER_ID = PATIENT_INVESTIGATION_DETAILS.INVESTIGATION_HEADER_ID
+     INNER JOIN HMS.MAS_CHARGE_CODE MAS_CHARGE_CODE ON PATIENT_INVESTIGATION_DETAILS.CHARGE_CODE_ID = MAS_CHARGE_CODE.CHARGE_CODE_ID
+
+where PATIENT_INVESTIGATION_HEADER.inpatient_id=$P{inpatient_id} 
+and PATIENT_INVESTIGATION_HEADER.investigation_date=$P{caseSheetDate}]]></queryString>
+
+	<field name="VISIT_VISIT_ID" class="java.math.BigDecimal"/>
+	<field name="VISIT_VISIT_NO" class="java.lang.String"/>
+	<field name="PATIENT_HIN_ID" class="java.math.BigDecimal"/>
+	<field name="PATIENT_SERVICE_NO" class="java.lang.String"/>
+	<field name="PATIENT_HIN_NO" class="java.lang.String"/>
+	<field name="PATIENT_INVESTIGATION_HEADER_H" class="java.math.BigDecimal"/>
+	<field name="PATIENT_INVESTIGATION_HEADER_V" class="java.math.BigDecimal"/>
+	<field name="MAS_CHARGE_CODE_CHARGE_CODE_NA" class="java.lang.String"/>
+	<field name="PATIENT_INVESTIGATION_QTY" class="java.math.BigDecimal"/>
+	<field name="CLINICAL_NOTES" class="java.lang.String"/>
+	<field name="REFER_TO_MH" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="40"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="7"
+						y="24"
+						width="81"
+						height="15"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[SR. NO.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="106"
+						y="23"
+						width="210"
+						height="15"
+						key="staticText-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Test Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="426"
+						y="23"
+						width="81"
+						height="15"
+						key="staticText-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Refer To MH]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="7"
+						y="8"
+						width="93"
+						height="15"
+						key="staticText-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[INVESTIGATIONS]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="5"
+						width="590"
+						height="0"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch" pen="Dotted"/>
+				</line>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="20"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="106"
+						y="2"
+						width="210"
+						height="16"
+						key="textField-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{MAS_CHARGE_CODE_CHARGE_CODE_NA}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="7"
+						y="4"
+						width="47"
+						height="16"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="426"
+						y="1"
+						width="100"
+						height="16"
+						key="textField-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{REFER_TO_MH}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="20"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="7"
+						y="3"
+						width="97"
+						height="16"
+						key="staticText-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Clinical Notes]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="131"
+						y="3"
+						width="232"
+						height="16"
+						key="textField-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CLINICAL_NOTES}]]></textFieldExpression>
+				</textField>
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="medicalCaseSheetInvestigationResult"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="595"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoDataSection"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="visitId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["D:\\SMC13Feb\\SMC\\WebContent\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select p.hin_no,(p.p_first_name+' ' +p.p_middle_name+' '+p.p_last_name) as pname,
+(p.s_first_name+' ' +p.s_middle_name+' '+p.s_last_name) as sname,
+dgo.hin_id,dgo.order_no,dgo.order_date,
+(case when (dgo.patient_type='OP') then 'Out Patient' else 'In Patient' end) as patient_type,
+mmcc.main_chargecode_name,mscc.sub_chargecode_name,
+dreh.remarks as header_remarks,dred.remarks as details_remarks,
+(case when (investigation_type='m' and multiple_results='y') then dmi.investigation_name else '' end )as investigation_name,
+isnull(dsmi.sub_investigation_name,dmi.investigation_name) as sub_investigation_name,
+dreh.result_date,dreh.result_time,
+(case when(dred.result_type='t') then '' else dred.result end) as result,
+(me.first_name + ' '+ me.middle_name + ' '+ me.last_name) as emp_name,
+(mr.rank_name+' '+me1.first_name + ' '+ me1.middle_name + ' ' + me1.last_name) as pre_emp_name,mh.contact_number,
+mh.hospital_name,mh.address,(p.age+' /'+administrative_sex_name) as age,
+case when (investigation_type='s') then (dmi.min_normal_value + '-'+dmi.max_normal_value) else
+(select (dnv.min_normal_value + ' - ' + dnv.max_normal_value) from dg_normal_value dnv where dnv.sub_investigation_id=dsmi.sub_investigation_id
+  and dnv.sex= (case when (dnv.sex='n') then dnv.sex else substring(lower(administrative_sex_name),1,1) end)) end 
+as minValue,
+case when (investigation_type='s') then du.uom_name else isnull(dus.uom_name,'') end as um,
+relation_name,unit_name,administrative_sex_name,rank.rank_name,p.service_no,sample_validation_date
+from dg_result_entry_header dreh
+left outer join dg_result_entry_detail dred on dreh.result_entry_id=dred.result_entry_id
+left outer join dg_sample_collection_header dsch on dreh.sample_collection_header_id=dsch.sample_collection_header_id
+left outer join dg_orderhd dgo on dsch.order_id=dgo.orderhd_id
+left outer join mas_main_chargecode mmcc on mmcc.main_chargecode_id=dreh.main_chargecode_id
+left outer join mas_sub_chargecode mscc on mscc.sub_chargecode_id=dreh.sub_chargecode_id
+left outer join dg_mas_investigation dmi on dred.investigation_id=dmi.investigation_id
+left outer join dg_uom du on du.uom_id=dmi.uom_id
+left outer join dg_sub_mas_investigation dsmi on dred.sub_investigation_id=dsmi.sub_investigation_id
+left outer join dg_uom dus on dus.uom_id=dsmi.uom_id
+left outer join patient p on p.hin_id=dgo.hin_id
+left outer join mas_employee me on dreh.result_verified_by=me.employee_id
+left outer join mas_hospital mh on dreh.hospital_id=mh.hospital_id
+left outer join mas_employee me1 on dgo.prescribed_by=me1.employee_id
+left outer join mas_rank mr on me1.rank_id=mr.rank_id
+left outer join mas_administrative_sex mas on p.sex_id=mas.administrative_sex_id
+left outer join dg_fixed_value dfv on dred.fixed_id=dfv.fixed_id
+left join mas_relation rel on p.relation_id=rel.relation_id
+left join mas_unit unit on p.unit_id=unit.unit_id
+left join mas_rank rank on p.rank_id=rank.rank_id
+left join visit visit on dgo.visit_id = visit.visit_id
+where visit.visit_id=$P{visitId}
+order by dmi.test_order_no asc]]></queryString>
+
+	<field name="hin_no" class="java.lang.String"/>
+	<field name="pname" class="java.lang.String"/>
+	<field name="sname" class="java.lang.String"/>
+	<field name="hin_id" class="java.lang.Integer"/>
+	<field name="order_no" class="java.lang.String"/>
+	<field name="order_date" class="java.lang.String"/>
+	<field name="patient_type" class="java.lang.String"/>
+	<field name="main_chargecode_name" class="java.lang.String"/>
+	<field name="sub_chargecode_name" class="java.lang.String"/>
+	<field name="header_remarks" class="java.lang.String"/>
+	<field name="details_remarks" class="java.lang.String"/>
+	<field name="investigation_name" class="java.lang.String"/>
+	<field name="sub_investigation_name" class="java.lang.String"/>
+	<field name="result_date" class="java.lang.String"/>
+	<field name="result_time" class="java.lang.String"/>
+	<field name="result" class="java.lang.String"/>
+	<field name="emp_name" class="java.lang.String"/>
+	<field name="pre_emp_name" class="java.lang.String"/>
+	<field name="contact_number" class="java.lang.String"/>
+	<field name="hospital_name" class="java.lang.String"/>
+	<field name="address" class="java.lang.String"/>
+	<field name="age" class="java.lang.String"/>
+	<field name="minValue" class="java.lang.String"/>
+	<field name="um" class="java.lang.String"/>
+	<field name="relation_name" class="java.lang.String"/>
+	<field name="unit_name" class="java.lang.String"/>
+	<field name="administrative_sex_name" class="java.lang.String"/>
+	<field name="rank_name" class="java.lang.String"/>
+	<field name="service_no" class="java.lang.String"/>
+	<field name="sample_validation_date" class="java.lang.String"/>
+
+	<variable name="SrNo" class="java.lang.Integer" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[new java.lang.Integer(  ($V{REPORT_COUNT}.intValue()) )]]></variableExpression>
+		<initialValueExpression><![CDATA[new Integer(0)]]></initialValueExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="37"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="19"
+						width="61"
+						height="18"
+						key="staticText-1"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Sl No.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="69"
+						y="18"
+						width="124"
+						height="18"
+						key="staticText-2"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Investigations]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="1"
+						width="214"
+						height="18"
+						key="staticText-4"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Investigations  :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="277"
+						y="18"
+						width="58"
+						height="18"
+						key="staticText-5"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Result]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="403"
+						y="18"
+						width="75"
+						height="18"
+						key="staticText-6"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[UOM]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="495"
+						y="18"
+						width="99"
+						height="18"
+						key="staticText-7"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Normal Range]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="1"
+						y="36"
+						width="590"
+						height="0"
+						key="line-1"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="1"
+						y="17"
+						width="591"
+						height="1"
+						key="line-3"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="21"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="-1"
+						width="61"
+						height="22"
+						key="textField-2"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{SrNo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="277"
+						y="1"
+						width="100"
+						height="20"
+						key="textField"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{result}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="405"
+						y="1"
+						width="75"
+						height="20"
+						key="textField"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{um}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="491"
+						y="1"
+						width="100"
+						height="20"
+						key="textField"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{minValue}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="69"
+						y="1"
+						width="177"
+						height="20"
+						key="textField"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{sub_investigation_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="1"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

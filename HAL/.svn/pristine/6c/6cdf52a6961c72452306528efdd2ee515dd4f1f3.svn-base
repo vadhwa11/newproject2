@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="PRE_PROFORMA_B_LP_NEW_SUB"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="310"
+		 pageHeight="842"
+		 columnWidth="310"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoDataSection"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="poNo" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="itemId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hospitalId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select msi.BRANDED_GENERIC as cat , spd.DISP_TYPE, spd.QUANTITY_ORDERED ,spd.AMOUNT ,spd.UNIT_RATE,spd.DISCOUNT_AMOUNT,sph.*, msi.NOMENCLATURE,msi.PVMS_NO, spd.ID 
+,ppd.DOSAGE,ppd.SO_ID ,v.DIAGNOSIS_NAME , p.P_FIRST_NAME,p.P_LAST_NAME,  me.FIRST_NAME,me.LAST_NAME ,mh.HOSPITAL_NAME,mh.ADDRESS,mss.SUPPLIER_NAME,
+mm.MANUFACTURER_NAME as company,mrel.RELATION_NAME,
+case mrel.RELATION_NAME when 'Self' then (p.SERVICE_NO ||' '||mr.RANK_NAME ||' '||p.S_FIRST_NAME||' '|| nvl(p.S_LAST_NAME,'') ) 
+else (mrel.RELATION_NAME||' '||p.SERVICE_NO||' '||mr.RANK_NAME||' '||p.S_FIRST_NAME||' '||nvl(p.S_LAST_NAME,'')) end as rel
+,msi.ITEM_ID,v.WORKING_DIAGNOSIS 
+ from  store_po_header sph
+left outer join store_po_detail spd on sph.PO_ID = spd.PO_ID 
+left outer join mas_store_item msi on  spd.ITEM_ID= msi.ITEM_ID
+left outer join patient_prescription_details ppd on  spd.ID = ppd.ID
+right outer join patient_prescription_header pph on ppd.PRESCRIPTION_ID=pph.PRESCRIPTION_ID
+left outer join visit v on pph.VISIT_ID=v.VISIT_ID
+left outer join patient p on v.HIN_ID=p.HIN_ID
+left outer join mas_employee me on v.DOCTOR_ID=me.EMPLOYEE_ID
+left outer join mas_hospital mh on v.HOSPITAL_ID=mh.HOSPITAL_ID
+left outer join mas_store_supplier mss on sph.SUPPLIER_ID=mss.SUPPLIER_ID
+left outer join mas_manufacturer mm on spd.MANUFACTURER_ID=mm.MANUFACTURER_ID
+left outer join mas_relation mrel on p.RELATION_ID  =mrel.RELATION_ID
+left outer join mas_rank mr on p.RANK_ID=mr.RANK_ID
+where  sph.PO_NUMBER =$P{poNo} and sph.HOSPITAL_ID=$P{hospitalId} and spd.item_id=$P{itemId}]]></queryString>
+
+	<field name="CAT" class="java.lang.String"/>
+	<field name="DISP_TYPE" class="java.lang.String"/>
+	<field name="QUANTITY_ORDERED" class="java.math.BigDecimal"/>
+	<field name="AMOUNT" class="java.math.BigDecimal"/>
+	<field name="UNIT_RATE" class="java.math.BigDecimal"/>
+	<field name="DISCOUNT_AMOUNT" class="java.math.BigDecimal"/>
+	<field name="PO_ID" class="java.math.BigDecimal"/>
+	<field name="PO_DATE" class="java.sql.Timestamp"/>
+	<field name="PO_TIME" class="java.lang.String"/>
+	<field name="QUOTATION_NUMBER" class="java.lang.String"/>
+	<field name="DEPARTMENT_ID" class="java.math.BigDecimal"/>
+	<field name="SUPPLIER_ID" class="java.math.BigDecimal"/>
+	<field name="DELIVERY_DATE" class="java.sql.Timestamp"/>
+	<field name="NET_AMOUNT" class="java.math.BigDecimal"/>
+	<field name="LAST_CHG_BY" class="java.lang.String"/>
+	<field name="LAST_CHG_DATE" class="java.sql.Timestamp"/>
+	<field name="LAST_CHG_TIME" class="java.lang.String"/>
+	<field name="REMARKS" class="java.lang.String"/>
+	<field name="PAY_TERMS" class="java.lang.String"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="QUOTATION_DATE" class="java.sql.Timestamp"/>
+	<field name="DELIVERY_TERMS" class="java.lang.String"/>
+	<field name="PO_NUMBER" class="java.lang.String"/>
+	<field name="APPROVAL_AUTHORITY" class="java.lang.String"/>
+	<field name="GRN_MASTER_ID" class="java.math.BigDecimal"/>
+	<field name="SIGNING_AUTHORITY" class="java.lang.String"/>
+	<field name="TENDER_ID" class="java.math.BigDecimal"/>
+	<field name="GROUP_ID" class="java.math.BigDecimal"/>
+	<field name="FLAG" class="java.lang.String"/>
+	<field name="PROPOSAL_ID" class="java.math.BigDecimal"/>
+	<field name="FILENO" class="java.lang.String"/>
+	<field name="APP_VIDE" class="java.lang.String"/>
+	<field name="REFERENCES" class="java.lang.String"/>
+	<field name="CATEGORY" class="java.lang.String"/>
+	<field name="TELEPHONE_NO" class="java.lang.String"/>
+	<field name="CODEHEAD" class="java.lang.String"/>
+	<field name="NOMENCLATURE" class="java.lang.String"/>
+	<field name="PVMS_NO" class="java.lang.String"/>
+	<field name="ID" class="java.math.BigDecimal"/>
+	<field name="DOSAGE" class="java.lang.String"/>
+	<field name="SO_ID" class="java.lang.String"/>
+	<field name="DIAGNOSIS_NAME" class="oracle.sql.CLOB"/>
+	<field name="P_FIRST_NAME" class="java.lang.String"/>
+	<field name="P_LAST_NAME" class="java.lang.String"/>
+	<field name="FIRST_NAME" class="java.lang.String"/>
+	<field name="LAST_NAME" class="java.lang.String"/>
+	<field name="HOSPITAL_NAME" class="java.lang.String"/>
+	<field name="ADDRESS" class="java.lang.String"/>
+	<field name="SUPPLIER_NAME" class="java.lang.String"/>
+	<field name="COMPANY" class="java.lang.String"/>
+	<field name="RELATION_NAME" class="java.lang.String"/>
+	<field name="REL" class="java.lang.String"/>
+	<field name="ITEM_ID" class="java.math.BigDecimal"/>
+	<field name="WORKING_DIAGNOSIS" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="44"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="2"
+						y="0"
+						width="134"
+						height="22"
+						key="textField-1"
+						isPrintWhenDetailOverflows="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{REL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="142"
+						y="0"
+						width="67"
+						height="21"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{WORKING_DIAGNOSIS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="213"
+						y="1"
+						width="67"
+						height="21"
+						key="textField-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{FIRST_NAME}+" "+$F{LAST_NAME}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="138"
+						y="-8"
+						width="0"
+						height="50"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="209"
+						y="-8"
+						width="0"
+						height="50"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+		<noData>
+			<band height="24"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="1"
+						width="310"
+						height="22"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[For SMC Use Only]]></text>
+				</staticText>
+			</band>
+		</noData>
+</jasperReport>

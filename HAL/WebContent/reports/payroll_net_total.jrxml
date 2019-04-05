@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="payroll_net_total"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="113"
+		 pageHeight="842"
+		 columnWidth="113"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="employee_id" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="month" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="year" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)
+]]></defaultValueExpression>
+	</parameter>
+	<parameter name="header_id" isForPrompting="true" class="java.lang.Long">
+		<defaultValueExpression ><![CDATA[new Long(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select
+
+(select sum(amount) as en from
+(
+SELECT basic  as amount FROM hr_payroll_process_header where payroll_process_header_id = $P{header_id}
+union
+SELECT 0  as amount
+union all
+SELECT
+     hr_payroll_process_detail.payelement_amount AS amount
+FROM
+     hr_employee_pay_elements hr_employee_pay_elements RIGHT OUTER JOIN hr_payroll_process_detail hr_payroll_process_detail ON hr_employee_pay_elements.id = hr_payroll_process_detail.emp_pay_element_id
+     LEFT OUTER JOIN hr_mas_pay_element hr_mas_pay_element ON hr_employee_pay_elements.pay_element_id = hr_mas_pay_element.pay_element_id
+WHERE
+     hr_mas_pay_element.pay_element_type = 'addition'
+     and hr_mas_pay_element.show_in_payslip = 'y'
+     and hr_payroll_process_detail.payroll_process_header_id = $P{header_id}
+
+
+) as main_er )  -
+
+(
+select sum(deduction) as deduction from
+(
+select itax as  deduction from hr_payroll_process_header where employee_id = $P{employee_id}  and   year = $P{year} and   month = $P{month}
+union
+SELECT 0  as deduction
+
+union All
+SELECT
+     sum(hr_payroll_process_detail.payelement_amount) AS deduction
+
+FROM
+     hr_employee_pay_elements hr_employee_pay_elements RIGHT OUTER JOIN hr_payroll_process_detail hr_payroll_process_detail ON hr_employee_pay_elements.id = hr_payroll_process_detail.emp_pay_element_id
+     LEFT OUTER JOIN hr_mas_pay_element hr_mas_pay_element ON hr_employee_pay_elements.pay_element_id = hr_mas_pay_element.pay_element_id
+WHERE
+     hr_mas_pay_element.pay_element_type = 'deduction'
+     and hr_mas_pay_element.show_in_payslip = 'y'
+     and hr_payroll_process_detail.payroll_process_header_id = $P{header_id}
+) as main1123
+)
++
+(select sum(amount) as arear from
+(
+     SELECT
+       hr_payroll_process_header.arrear_salary_amt AS amount
+       FROM  hr_payroll_process_header hr_payroll_process_header
+       where employee_id = $P{employee_id}
+        and year = $P{year}
+        and month = $P{month}
+union
+select 0 as amount
+
+union all
+
+
+    SELECT
+      hr_arrear.arrear_amount AS amount
+
+      FROM
+        hr_mas_pay_element hr_mas_pay_element RIGHT OUTER JOIN hr_arrear hr_arrear ON hr_mas_pay_element.pay_element_id = hr_arrear.pay_element_id
+        where hr_arrear.employee_id = 0
+         and   hr_arrear.arrear_status = 'paid'
+         and   MONTH(hr_arrear.paid_date) = $P{month}
+         and   YEAR(hr_arrear.paid_date)  = $P{year}
+         and   hr_mas_pay_element.show_in_payslip = 'y'
+) as mainar)
+-
+(
+select sum(loan) as loan  from
+(SELECT
+
+     hr_loan_detail.install_amount AS loan
+
+FROM
+     hr_loan_header hr_loan_header LEFT OUTER JOIN hr_loan_detail hr_loan_detail ON hr_loan_header.loan_header_id = hr_loan_detail.loan_header_id
+      LEFT OUTER JOIN hr_mas_loan hr_mas_loan ON hr_loan_header.loan_id = hr_mas_loan.loan_id
+
+where hr_loan_header.employee_id = $P{employee_id}
+and   hr_loan_header.deduct_from = 'salary'
+and   hr_loan_header.loan_status = 'open'
+and   MONTH(hr_loan_detail.install_date) = $P{month}
+and   YEAR(hr_loan_detail.install_date)  = $P{year}
+
+union
+select 0 as amount
+) as main789
+
+) as netAmount]]></queryString>
+
+	<field name="netAmount" class="java.math.BigDecimal"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="22"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="2"
+						y="2"
+						width="110"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{netAmount}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

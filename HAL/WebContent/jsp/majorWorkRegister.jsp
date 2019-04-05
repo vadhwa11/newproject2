@@ -1,0 +1,141 @@
+<%@ page import="static jkt.hms.util.RequestConstants.*"%>
+<%@ page import="java.util.*"%>
+<%@ page import="jkt.hms.util.HMSUtil"%>
+<%@ page import="jkt.hms.masters.business.MasMinorWorkDetail"%>
+<%@ page import="jkt.hms.masters.business.MasWorkType"%>
+
+
+
+<SCRIPT language=javascript src="/hms/jsp/js/common.js"
+	type=text/javascript></SCRIPT>
+<SCRIPT language=javascript src="/hms/jsp/js/hms.js"
+	type=text/javascript></SCRIPT>
+<SCRIPT language=javascript src="/hms/jsp/js/calendar.js"
+	type=text/javascript></SCRIPT>
+
+<%
+
+		Calendar calendar=Calendar.getInstance();
+		String month=String.valueOf((calendar.get(Calendar.MONTH))+1);
+		String dateCal=String.valueOf(calendar.get(Calendar.DATE));
+		int year=calendar.get(calendar.YEAR);
+		if(month.length()<2){
+			month="0"+month;
+		}
+		if(dateCal.length()<2){
+			dateCal="0"+dateCal;
+		}
+			
+	%>
+<SCRIPT>
+	serverdate = '<%=dateCal+"/"+month+"/"+year%>';
+</SCRIPT>
+<%	String 	userName="";
+	Map<String,Object> map = new HashMap<String,Object>();
+	if (request.getAttribute("map") != null) {
+		map = (Map) request.getAttribute("map");
+	}
+	if(session.getAttribute("userName")!=null){
+		userName=(String)session.getAttribute("userName");
+	}
+	Map<String, Object> utilMap = new HashMap<String, Object>();
+	utilMap = (Map) HMSUtil.getCurrentDateAndTime();
+	//String date = (String) utilMap.get("currentDate");
+	//String Session=(String) utilMap.get("session");
+	String time = (String) utilMap.get("currentTime");
+	String currentDate = (String)utilMap.get("currentDate");  
+
+	String sessionPeriod="";
+	if(map.get("session")!=null)
+	{
+		sessionPeriod=(String) map.get("session");
+	}
+	
+	List<MasMinorWorkDetail> minorWorkDetailList = new ArrayList<MasMinorWorkDetail>();
+	if(map.get("minorWorkDetailList")!=null)
+	{
+		minorWorkDetailList = (List) map.get("minorWorkDetailList");
+	}
+	
+	List<MasWorkType> masWorkTypeList = new ArrayList<MasWorkType>();
+	if(map.get("masWorkTypeList")!=null)
+	{
+		masWorkTypeList = (List) map.get("masWorkTypeList");
+	}
+		
+	if(map.get("message") != null){
+		   String message = (String)map.get("message");
+		   out.println(message);
+		  
+		  }
+	
+	%>
+
+<script type="text/javascript">
+function checkd(){
+var SDate = document.majorWorkRegister.<%= FROM_DATE%>.value;
+var EDate = document.majorWorkRegister.<%= TO_DATE %>.value;
+
+
+var endDate =new Date(EDate.substring(6),(EDate.substring(3,5) - 1) ,EDate.substring(0,2))
+var startDate =new Date(SDate.substring(6),(SDate.substring(3,5) - 1) ,SDate.substring(0,2))
+
+
+if(startDate > endDate)
+{
+alert("Please ensure that the To Date is greater than or equal to the From Date.");
+document.calldate.next_day.focus();
+return false;
+}
+}
+</script>
+
+<DIV id=contentHolder>
+<FORM name="majorWorkRegister" action="" method=post>
+<h6>Major Work Register</h6>
+<div class="Clear"></div>
+<DIV class="blockFrame"><Label><span>*</span> Major Work
+From Date</Label> <input type="text" name="<%=FROM_DATE%>" id="date1" value=""
+	class="calDate" readonly="readonly"
+	validate="Pick a from date,date,yes" MAXLENGTH="30" /> <img
+	src="/hms/jsp/images/cal.gif" width="16" height="16" border="0"
+	validate="Pick a date"
+	onClick="setdate('<%=currentDate%>',document.majorWorkRegister.<%= FROM_DATE%>,true);"
+	class="calender" /> </a> <Label><span>*</span> Major Work To Date</LABEL>
+<input type="text" name="<%=TO_DATE%>" id="date2" value=""
+	class="calDate" readonly="readonly" validate="Pick a to date,date,yes"
+	MAXLENGTH="30" /> <img src="/hms/jsp/images/cal.gif" width="16"
+	height="16" border="0" validate="Pick a date"
+	onClick="setdate('<%=currentDate%>',document.majorWorkRegister.<%= TO_DATE%>,true);"
+	class="calender" /> </a> <label>Work Type</label> <select name="work"
+	id="work" tabindex=1>
+	<option value="">Select</option>
+	<%
+		for (MasWorkType masWorkType : masWorkTypeList) {%>
+	<option value="<%=masWorkType.getId()%>"><%=masWorkType.getWorkTypeName()%></option>
+	<%
+		}
+		%>
+</select>
+
+<div class="Clear"></div>
+
+<label><span>*</span> Status</label> <label class="unit">Pending</label>
+<input type="radio" class="radio" name="<%=SELECTED_RADIO  %>" value="1"
+	checked="checked" /> <label class="unit">Approval</label> <input
+	type="radio" class="radio" name="<%=SELECTED_RADIO  %>" value="2" /> <label
+	class="unit">Completion</label> <input type="radio" class="radio"
+	name="<%=SELECTED_RADIO  %>" value="3" /> <label class="unit">Cancel</label>
+<input type="radio" class="radio" name="<%=SELECTED_RADIO  %>" value="4" />
+<div class="Clear"></div>
+
+</DIV>
+<div class="division"></div>
+<div class="bottom"><input type="button" class=button value="Ok"
+	name="print"
+	onclick="submitForm('majorWorkRegister','/hms/hms/workServiceReport?method=printMajorWorkRegister','checkd()');" />
+<INPUT class=button id=reset accessKey=r onclick=resetCheck();
+	type=reset value=Reset name=Reset></div>
+<div class="division"></div>
+</form>
+</div>

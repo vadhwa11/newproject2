@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="sub_sildil_report"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="595"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isFloatColumnFooter="true"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="toDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="fromDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="inpatient_id" isForPrompting="false" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="srNo" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="idno" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(1)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+CONCAT($P{idno},' ',UPPER(mas_rank.`rank_name`),"  ",patient.`p_first_name`," ",
+patient.`p_middle_name`," ",patient.`p_last_name`,"   ",
+patient.`service_no`,"-",patient.`suffix`,"   "
+,if(mas_trade.`trade_name`,mas_trade.`trade_name`,""),
+" AGED ",SUBSTRING(patient.`age`,1,2), " YRS"
+" OF ",mas_unit.`unit_name`," (.) ADMITTED ") AS DETAILS,
+mas_rank.`rank_name` AS rank,
+concat(patient.`p_first_name`," ",patient.`p_middle_name`," ",patient.`p_last_name`) AS pName,
+concat(patient.`service_no`,"-",patient.`suffix`) AS service_no,
+mas_trade.`trade_name` AS trade,
+patient.`age`  AS age,
+mas_unit.`unit_name` AS unit_name,
+sil_dil_status.`condition_status` AS condition_status,
+inpatient.`list_date` AS list_date,
+inpatient.`list_time` AS list_time,
+patient.`relation_id` AS relation,
+inpatient.`patient_condition` AS patientcondition,
+patient.`service_status_id` AS service_status,
+(case WHEN sil_dil_status.`remarks` = "Critical" THEN
+"(.)CONDITION(.) CRITICAL (.)"
+WHEN sil_dil_status.`remarks` = 'Stable' THEN
+"(.)CONDITION(.) STABLE (.)"
+WHEN sil_dil_status.`remarks` = 'Critical But Stable' THEN
+"(.)CONDITION(.) CRITICAL BUT STABLE (.)"
+WHEN sil_dil_status.`remarks` = 'Improved' THEN
+"(.)CONDITION(.) IMPROVED (.)"
+
+ELSE sil_dil_status.`remarks` END) AS remarks,
+upper(cast(date_format(inpatient.`date_of_addmission`,'%d-%b-%Y')as char)) AS doa,
+inpatient.`init_diagnosis` AS init_diagnosis,
+inpatient.`inpatient_id` AS inpatientId
+FROM
+     `inpatient` inpatient
+ INNER JOIN `sil_dil_status` sil_dil_status ON inpatient.`inpatient_id` =
+
+sil_dil_status.`inpatient_id`
+LEFT OUTER JOIN `patient` patient ON inpatient.`hin_id` = patient.`hin_id`
+LEFT OUTER JOIN `mas_rank` mas_rank ON patient.`rank_id` = mas_rank.`rank_id`
+LEFT OUTER JOIN `mas_trade` mas_trade ON patient.`trade_id` = mas_trade.`trade_id`
+LEFT OUTER JOIN `mas_unit` mas_unit ON patient.`unit_id` = mas_unit.`unit_id`
+LEFT OUTER JOIN `mas_relation` mas_relation ON patient.`relation_id` = mas_relation.`relation_id`
+WHERE inpatient.`inpatient_id` = $P{inpatient_id} order by sil_dil_status.`id` desc limit 0,1]]></queryString>
+
+	<field name="DETAILS" class="java.lang.String"/>
+	<field name="rank" class="java.lang.String"/>
+	<field name="pName" class="java.lang.String"/>
+	<field name="service_no" class="java.lang.String"/>
+	<field name="trade" class="java.lang.String"/>
+	<field name="age" class="java.lang.String"/>
+	<field name="unit_name" class="java.lang.String"/>
+	<field name="condition_status" class="java.lang.String"/>
+	<field name="list_date" class="java.sql.Date"/>
+	<field name="list_time" class="java.lang.String"/>
+	<field name="relation" class="java.lang.Integer"/>
+	<field name="patientcondition" class="java.lang.String"/>
+	<field name="service_status" class="java.lang.Integer"/>
+	<field name="remarks" class="java.lang.String"/>
+	<field name="doa" class="java.lang.String"/>
+	<field name="init_diagnosis" class="java.lang.String"/>
+	<field name="inpatientId" class="java.lang.Integer"/>
+
+	<variable name="sr" class="java.lang.Integer" resetType="None" incrementType="Column" calculation="Nothing">
+		<variableExpression><![CDATA[new java.lang.Integer(  ($V{REPORT_COUNT}.intValue()) )]]></variableExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="1"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="67"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="1"
+						y="18"
+						width="80"
+						height="15"
+						key="staticText-5"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Verdana" size="10"/>
+					</textElement>
+				<text><![CDATA[ TO ORIG ON]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="MMM / dd" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="72"
+						y="18"
+						width="73"
+						height="15"
+						key="textField"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Verdana" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{doa}]]></textFieldExpression>
+				</textField>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="142"
+						y="18"
+						width="172"
+						height="17"
+						key="subreport-1"
+						positionType="Float"/>
+					<subreportParameter  name="toDate">
+						<subreportParameterExpression><![CDATA[$P{toDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="inpatientId">
+						<subreportParameterExpression><![CDATA[$F{inpatientId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="fromDate">
+						<subreportParameterExpression><![CDATA[$P{fromDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//sub_sildil2.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="0"
+						y="51"
+						width="84"
+						height="13"
+						key="staticText-13"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Verdana" size="10"/>
+					</textElement>
+				<text><![CDATA[DIAGNOSIS(.)]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="36"
+						width="286"
+						height="13"
+						key="textField-2"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Verdana" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{remarks}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="2"
+						width="580"
+						height="14"
+						key="textField"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Verdana" pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DETAILS}
+
+
+]]></textFieldExpression>
+				</textField>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="77"
+						y="51"
+						width="480"
+						height="13"
+						key="subreport-2"
+						positionType="Float"/>
+					<subreportParameter  name="inpatient_id">
+						<subreportParameterExpression><![CDATA[$F{inpatientId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//sil_dil_Diagnosis.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

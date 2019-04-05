@@ -1,0 +1,1614 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="medicalCaseSheetnewforstorage"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoDataSection"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="hinNo" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="visitDate" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="diagnosis" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="hospitalId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["D:\\mukesh back\\SMC WORK\\jsper report\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="date" isForPrompting="false" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="visitId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hospitalName" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="FlagforOPD" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+     (patient.p_first_name + ' ' + patient.p_middle_name+ ' '  +patient.p_last_name)AS patient_name,
+      patient.sex_id AS patient_sex_id,
+     patient.age AS patient_age,
+     mas_administrative_sex.administrative_sex_name AS administrative_sex_name,
+     patient.relation_id AS patient_relation_id,
+     mas_relation_A.relation_name AS A_relation_name,
+     patient.hin_no AS patient_hin_no,
+     patient.drug_allergies AS patient_drug_allergies,
+     mas_rank.rank_name AS mas_rank_rank_name,
+     (patient.s_first_name+ ' ' +patient.s_middle_name+ ' ' +patient.s_last_name)AS service_name,
+    mas_marital_status.MARITAL_STATUS_NAME as marital_status,
+     mas_blood_group.blood_group_name as bloodgroup,
+     patient.unit_id AS patient_unit_id,
+    patient.date_of_birth as dob,
+visit.visit_time,
+     mas_unit.unit_name AS mas_unit_unit_name,
+     patient.service_type_id AS patient_service_type_id,
+     mas_service_type.service_type_name AS service_type_name,
+     patient.trade_id AS patient_trade_id,
+     mas_trade.trade_name AS mas_trade_trade_name,
+     visit.hin_id AS visit_hin_id,
+     visit.visit_date AS visit_visit_date,
+     visit.visit_no as visitNo,
+     visit.visit_date as visitDate,
+     visit.working_diagnosis AS working_diagnosis,
+     patient.rank_id AS patient_rank_id,
+     mas_hospital.hospital_name AS hospital_name,
+     mas_hospital.address AS hospital_address,
+     patient.service_no as serviceNo,
+     mas_occupation.occupation_name as occupation,
+     diagnosis.system_diagnosis_name as sysDiag,
+     CATEGORY.CATEGORIES AS CATEGORY_NAME,
+    OPD_PATIENT_DETAILS.BP AS OPD_PATIENT_DETAILS_BP,
+     OPD_PATIENT_DETAILS.plans AS OPD_PATIENT_DETAILS_PLAN,
+     OPD_PATIENT_DETAILS.AFMS_DESC AS OPD_PATIENT_DETAILS_AFMS_DESC,
+     OPD_PATIENT_DETAILS.NEXT_VISIT_DATE AS OPD_PATIENT_DETAILS_NEXT_VISIT,
+     OPD_PATIENT_DETAILS.CONSULTATION_DATE AS OPD_PATIENT_DETAILS_CONSULTATI,
+     OPD_PATIENT_DETAILS.CONSULTATION_TIME AS OPD_PATIENT_DETAILS_CONSULTATI,
+     OPD_PATIENT_DETAILS.REFERRED_DEPT AS OPD_PATIENT_DETAILS_REFERRED_D,
+     OPD_PATIENT_DETAILS.INITIAL_DIAGNOSIS AS OPD_PATIENT_DETAILS_INITIAL_DI,
+     OPD_PATIENT_DETAILS.OPD_DATE AS OPD_PATIENT_DETAILS_OPD_DATE,
+     OPD_PATIENT_DETAILS.OPD_TIME AS OPD_PATIENT_DETAILS_OPD_TIME,
+     OPD_PATIENT_DETAILS.ON_EXAMINATION AS OPD_PATIENT_DETAILS_ON_EXAMINA,
+     OPD_PATIENT_DETAILS.REFERED_DOCTARS AS OPD_PATIENT_DETAILS_REFERED_DO,
+     OPD_PATIENT_DETAILS.DISPOSAL AS OPD_PATIENT_DETAILS_DISPOSAL,
+     OPD_PATIENT_DETAILS.DAYS AS OPD_PATIENT_DETAILS_DAYS,
+     OPD_PATIENT_DETAILS.RETURNFROMHOSPITAL AS OPD_PATIENT_DETAILS_RETURNFROM,
+     OPD_PATIENT_DETAILS.GPE_EXAMINATION AS OPD_PATIENT_DETAILS_GPE_EXAMIN,
+     OPD_PATIENT_DETAILS.SYSTAMICEXAM AS OPD_PATIENT_DETAILS_SYSTAMICEX,
+     OPD_PATIENT_DETAILS.HEIGHT AS OPD_PATIENT_DETAILS_HEIGHT,
+     OPD_PATIENT_DETAILS.WEIGHT AS OPD_PATIENT_DETAILS_WEIGHT,
+     OPD_PATIENT_DETAILS.PULSE AS OPD_PATIENT_DETAILS_PULSE,
+     OPD_PATIENT_DETAILS.TEMPERATURE AS OPD_PATIENT_DETAILS_TEMPERATUR,
+     OPD_PATIENT_DETAILS.RR AS OPD_PATIENT_DETAILS_RR,
+     OPD_PATIENT_DETAILS.BMI AS OPD_PATIENT_DETAILS_BMI,
+     OPD_PATIENT_DETAILS.PHY_STATUS AS OPD_PATIENT_DETAILS_PHY_STATUS,
+     OPD_PATIENT_DETAILS.DAYSPHY AS OPD_PATIENT_DETAILS_DAYSPHY,
+     OPD_PATIENT_DETAILS.THREPYTYPEID AS OPD_PATIENT_DETAILS_THREPYTYPE,
+     OPD_PATIENT_DETAILS.DURATIONPHY AS OPD_PATIENT_DETAILS_DURATIONPH,
+     OPD_PATIENT_DETAILS.MH_RUN AS OPD_PATIENT_DETAILS_MH_RUN,
+     OPD_PATIENT_DETAILS.ideal_weight AS ideal_weight,
+ OPD_PATIENT_DETAILS.initial_diagnosis as workingDiagnosis ,
+visit.visit_id as visit_id,
+visit.visit_no as visitNo,
+dep.department_name,
+patient.hin_id as hin_id, opd_patient_details.hospname AS hospname,
+ patient.service_no as serviceNo
+FROM   OPD_PATIENT_DETAILS OPD_PATIENT_DETAILS 
+
+ LEFT OUTER JOIN visit visit ON OPD_PATIENT_DETAILS.visit_id = visit.visit_id
+ LEFT OUTER JOIN patient patient on visit.hin_id=patient.hin_id
+ LEFT OUTER JOIN mas_department dep ON visit.department_id = dep.department_id
+left join
+     mas_administrative_sex mas_administrative_sex  ON mas_administrative_sex.administrative_sex_id = patient.sex_id
+     LEFT OUTER JOIN mas_relation mas_relation ON patient.relation_id = mas_relation.relation_id
+     LEFT OUTER JOIN mas_relation mas_relation_A ON patient.relation_id = mas_relation_A.relation_id
+     LEFT OUTER JOIN mas_rank mas_rank ON patient.rank_id = mas_rank.rank_id
+     LEFT OUTER JOIN mas_unit mas_unit ON patient.unit_id = mas_unit.unit_id
+     LEFT OUTER JOIN mas_service_type mas_service_type ON patient.service_type_id = mas_service_type.service_type_id
+     LEFT OUTER JOIN mas_trade mas_trade ON patient.trade_id = mas_trade.trade_id
+    left join mas_occupation mas_occupation on patient.occupation_id = mas_occupation.occupation_id
+  left join mas_marital_status mas_marital_status on patient.marital_status_id = mas_marital_status.marital_status_id
+    left join mas_blood_group mas_blood_group on patient.BLOOD_GROUP_ID = mas_blood_group.BLOOD_GROUP_ID
+    
+     LEFT OUTER JOIN mas_hospital mas_hospital ON visit.hospital_id = mas_hospital.hospital_id
+     LEFT OUTER JOIN MAS_MEDICAL_EXAMINATION_REPORT MAS_MEDICAL_EXAMINATION_REPORT ON visit.visit_id = MAS_MEDICAL_EXAMINATION_REPORT.visit_id
+     LEFT OUTER JOIN CATEGORY CATEGORY ON MAS_MEDICAL_EXAMINATION_REPORT.PASTMEDICALCATEGORY = CATEGORY.CATEGORYID
+     AND CATEGORY.CATEGORYID = MAS_MEDICAL_EXAMINATION_REPORT.PRESENTMEDICALCATEGORY
+     left join opd_patient_history opd_patient_history on OPD_PATIENT_DETAILS.Id = opd_patient_history.opd_patient_details_id
+   left join mas_system_diagnosis diagnosis on OPD_PATIENT_DETAILS.system_diagnosis_id = diagnosis.system_diagnosis_id
+ 
+WHERE
+     patient.hin_no = $P{hinNo}
+     And visit.hospital_id=$P{hospitalId}
+     And visit.visit_id = $P{visitId}]]></queryString>
+
+	<field name="patient_name" class="java.lang.String"/>
+	<field name="patient_sex_id" class="java.lang.Integer"/>
+	<field name="patient_age" class="java.lang.String"/>
+	<field name="administrative_sex_name" class="java.lang.String"/>
+	<field name="patient_relation_id" class="java.lang.Integer"/>
+	<field name="A_relation_name" class="java.lang.String"/>
+	<field name="patient_hin_no" class="java.lang.String"/>
+	<field name="patient_drug_allergies" class="java.lang.String"/>
+	<field name="mas_rank_rank_name" class="java.lang.String"/>
+	<field name="service_name" class="java.lang.String"/>
+	<field name="marital_status" class="java.lang.String"/>
+	<field name="bloodgroup" class="java.lang.String"/>
+	<field name="patient_unit_id" class="java.lang.Integer"/>
+	<field name="dob" class="java.util.Date"/>
+	<field name="visit_time" class="java.lang.String"/>
+	<field name="mas_unit_unit_name" class="java.lang.String"/>
+	<field name="patient_service_type_id" class="java.lang.Integer"/>
+	<field name="service_type_name" class="java.lang.String"/>
+	<field name="patient_trade_id" class="java.lang.Integer"/>
+	<field name="mas_trade_trade_name" class="java.lang.String"/>
+	<field name="visit_hin_id" class="java.lang.Integer"/>
+	<field name="visit_visit_date" class="java.sql.Timestamp"/>
+	<field name="visitNo" class="java.lang.Integer"/>
+	<field name="visitDate" class="java.sql.Timestamp"/>
+	<field name="working_diagnosis" class="java.lang.String"/>
+	<field name="patient_rank_id" class="java.lang.Integer"/>
+	<field name="hospital_name" class="java.lang.String"/>
+	<field name="hospital_address" class="java.lang.String"/>
+	<field name="serviceNo" class="java.lang.String"/>
+	<field name="occupation" class="java.lang.String"/>
+	<field name="sysDiag" class="java.lang.String"/>
+	<field name="CATEGORY_NAME" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_BP" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_PLAN" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_AFMS_DESC" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_NEXT_VISIT" class="java.sql.Timestamp"/>
+	<field name="OPD_PATIENT_DETAILS_CONSULTATI" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_REFERRED_D" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_INITIAL_DI" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_OPD_DATE" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_OPD_TIME" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_ON_EXAMINA" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_REFERED_DO" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_DISPOSAL" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_DAYS" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_RETURNFROM" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_GPE_EXAMIN" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_SYSTAMICEX" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_HEIGHT" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_WEIGHT" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_PULSE" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_TEMPERATUR" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_RR" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_BMI" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_PHY_STATUS" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_DAYSPHY" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_THREPYTYPE" class="java.lang.Integer"/>
+	<field name="OPD_PATIENT_DETAILS_DURATIONPH" class="java.lang.String"/>
+	<field name="OPD_PATIENT_DETAILS_MH_RUN" class="java.lang.String"/>
+	<field name="ideal_weight" class="java.lang.String"/>
+	<field name="workingDiagnosis" class="java.lang.String"/>
+	<field name="visit_id" class="java.lang.Integer"/>
+	<field name="department_name" class="java.lang.String"/>
+	<field name="hin_id" class="java.lang.Integer"/>
+	<field name="hospname" class="java.lang.String"/>
+
+	<variable name="date" class="java.util.Date" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[new Date()]]></variableExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="607"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="333"
+						width="548"
+						height="17"
+						key="subreport-1"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetIcdDiagnosis.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="384"
+						width="548"
+						height="17"
+						key="subreport-2"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetMedicine.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="520"
+						width="548"
+						height="17"
+						key="subreport-3"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetAdditionalAdvice.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="452"
+						width="548"
+						height="17"
+						key="subreport-4"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetProcedureAdvice.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="503"
+						width="548"
+						height="17"
+						key="subreport-5"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetPhysiotheraphyAdvice.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="227"
+						width="548"
+						height="17"
+						key="subreport-6"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="visit_id">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hin_id">
+						<subreportParameterExpression><![CDATA[$F{hin_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetFamilyHistory.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="179"
+						width="548"
+						height="14"
+						key="subreport-7"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="visit_id">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetPrevHospitalDt.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="193"
+						width="548"
+						height="17"
+						key="subreport-8"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetComplaints.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="210"
+						width="548"
+						height="17"
+						key="subreport-9"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetPastMedicalHistory.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="401"
+						width="548"
+						height="17"
+						key="subreport-12"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetOtherMedicine.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="299"
+						width="548"
+						height="17"
+						key="subreport-13"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetForVitals.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="350"
+						width="548"
+						height="17"
+						key="subreport-14"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetInvestigation.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="367"
+						width="548"
+						height="17"
+						key="subreport-15"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetOtherInvestigation.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="537"
+						width="548"
+						height="17"
+						key="subreport-17"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalName">
+						<subreportParameterExpression><![CDATA[$P{hospitalName}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetAdmissionAdvised.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="554"
+						width="548"
+						height="17"
+						key="subreport-18"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalName">
+						<subreportParameterExpression><![CDATA[$P{hospitalName}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetInternalReferrall.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="571"
+						width="548"
+						height="17"
+						key="subreport-19"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalName">
+						<subreportParameterExpression><![CDATA[$P{hospitalName}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetEmpanelReferrall.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="244"
+						width="548"
+						height="17"
+						key="subreport-20"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[Boolean.valueOf(((java.lang.String)$P{FlagforOPD}).equalsIgnoreCase("Dental"))]]></printWhenExpression>
+						</reportElement>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//dental_casesheet_subReport.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="-4"
+						y="39"
+						width="535"
+						height="18"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[OPD CASE SHEET]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="-4"
+						y="3"
+						width="535"
+						height="18"
+						key="textField-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{hospital_name}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="-4"
+						y="1"
+						width="102"
+						height="73"
+						key="image-1"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{path}]]></imageExpression>
+				</image>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="-4"
+						y="22"
+						width="535"
+						height="18"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{department_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="155"
+						y="125"
+						width="80"
+						height="18"
+						key="staticText-2"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Age]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="246"
+						y="76"
+						width="149"
+						height="18"
+						key="textField-3"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{patient_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="246"
+						y="125"
+						width="149"
+						height="18"
+						key="textField-4"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{patient_age}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="61"
+						y="97"
+						width="94"
+						height="28"
+						key="textField-5"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{mas_rank_rank_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="-15"
+						y="74"
+						width="69"
+						height="20"
+						key="staticText-3"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Employee No.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="-15"
+						y="97"
+						width="67"
+						height="28"
+						key="staticText-4"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Designation]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="155"
+						y="76"
+						width="80"
+						height="18"
+						key="staticText-5"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Patient Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="395"
+						y="76"
+						width="63"
+						height="18"
+						key="staticText-6"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Relation]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="155"
+						y="98"
+						width="80"
+						height="27"
+						key="staticText-7"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Employee Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="395"
+						y="98"
+						width="63"
+						height="27"
+						key="staticText-8"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Gender]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="-15"
+						y="143"
+						width="67"
+						height="18"
+						key="staticText-9"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Visit No.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="-15"
+						y="125"
+						width="67"
+						height="18"
+						key="staticText-10"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[DOB]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="155"
+						y="143"
+						width="80"
+						height="18"
+						key="staticText-11"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Visit date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="395"
+						y="125"
+						width="63"
+						height="18"
+						key="staticText-12"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Blood Group]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="465"
+						y="98"
+						width="66"
+						height="27"
+						key="textField-6"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{administrative_sex_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="465"
+						y="76"
+						width="66"
+						height="18"
+						key="textField-7"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{A_relation_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="465"
+						y="125"
+						width="66"
+						height="18"
+						key="textField-8"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{bloodgroup}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="246"
+						y="98"
+						width="149"
+						height="27"
+						key="textField-9"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{service_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="247"
+						y="143"
+						width="148"
+						height="18"
+						key="textField-10"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{visit_visit_date}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="61"
+						y="125"
+						width="94"
+						height="18"
+						key="textField-11"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{dob}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="52"
+						y="74"
+						width="9"
+						height="18"
+						key="staticText-13"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="97"
+						width="9"
+						height="28"
+						key="staticText-14"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="125"
+						width="9"
+						height="17"
+						key="staticText-15"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="143"
+						width="9"
+						height="18"
+						key="staticText-16"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="52"
+						y="163"
+						width="9"
+						height="16"
+						key="staticText-17"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="236"
+						y="98"
+						width="10"
+						height="27"
+						key="staticText-18"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="458"
+						y="76"
+						width="5"
+						height="18"
+						key="staticText-19"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="458"
+						y="97"
+						width="5"
+						height="28"
+						key="staticText-20"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="458"
+						y="125"
+						width="5"
+						height="18"
+						key="staticText-21"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="###0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="65"
+						y="143"
+						width="94"
+						height="18"
+						key="textField-12"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{visitNo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="63"
+						y="76"
+						width="92"
+						height="18"
+						key="textField-13"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{serviceNo}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="-15"
+						y="163"
+						width="67"
+						height="16"
+						key="staticText-22"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Allergies]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="66"
+						y="163"
+						width="469"
+						height="16"
+						key="textField-14"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{patient_drug_allergies}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="395"
+						y="143"
+						width="63"
+						height="18"
+						key="staticText-23"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Visit Time]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="465"
+						y="143"
+						width="66"
+						height="18"
+						key="textField-15"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{visit_time}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="458"
+						y="144"
+						width="5"
+						height="18"
+						key="staticText-24"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="236"
+						y="125"
+						width="10"
+						height="18"
+						key="staticText-25"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="236"
+						y="76"
+						width="10"
+						height="18"
+						key="staticText-26"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="236"
+						y="143"
+						width="10"
+						height="18"
+						key="staticText-27"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="418"
+						width="548"
+						height="17"
+						key="subreport-21"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetMajor.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="435"
+						width="548"
+						height="17"
+						key="subreport-22"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetMinor.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="469"
+						width="548"
+						height="17"
+						key="subreport-24"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[new Boolean($F{department_name}.equalsIgnoreCase("OPD Psychiatrist"))]]></printWhenExpression>
+						</reportElement>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetTherapy.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="261"
+						width="548"
+						height="17"
+						key="subreport-26"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[new Boolean($F{department_name}.equals("OB&G"))]]></printWhenExpression>
+						</reportElement>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetForObg.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="316"
+						width="548"
+						height="17"
+						key="subreport-27"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetIcdVaccination.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="278"
+						width="548"
+						height="21"
+						key="subreport-28"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true">
+							<printWhenExpression><![CDATA[new Boolean($F{department_name}.equals("OB&G"))]]></printWhenExpression>
+						</reportElement>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//gyna.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-17"
+						y="486"
+						width="548"
+						height="17"
+						key="subreport-29"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="visitDate">
+						<subreportParameterExpression><![CDATA[$P{visitDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="diagnosis">
+						<subreportParameterExpression><![CDATA[$P{diagnosis}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="date">
+						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalName">
+						<subreportParameterExpression><![CDATA[$P{hospitalName}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="path">
+						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medicalCaseSheetDental.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</summary>
+</jasperReport>

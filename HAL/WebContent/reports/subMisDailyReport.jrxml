@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="subMisDailyReport"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="610"
+		 pageHeight="864"
+		 columnWidth="610"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="toDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="deptId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer("0")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dept_name" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["C:\\Documents and Settings\\Administrator\\Desktop\\august\\mis\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select (todays_bal.todays_total - ad.todate_admis - todate_tran_in.transferin + todate_tran_out.transferout + current_dis.CU_DIS) as TT,
+d.REMD + ifnull(f.TOUT,0) - ifnull(e.TIN,0)  as REMD,
+a.ADM,ifnull(c.DIS,0)- ifnull(b.Death,0) as DIS,
+e.TIN,f.TOUT,g.SIL,h.DIL,b.Death,
+((todays_bal.todays_total - ad.todate_admis - todate_tran_in.transferin + todate_tran_out.transferout + current_dis.CU_DIS) + ifnull(a.ADM,0) - ifnull(c.DIS,0) + ifnull(e.TIN,0) - ifnull(f.TOUT,0))  as total
+from
+(SELECT count(*) as ADM FROM inpatient inpatient  where inpatient.date_of_addmission = $P{toDate} and  inpatient.ad_ward_id = $P{deptId} and inpatient.ad_status !="C") a,
+(SELECT count(*) as Death FROM discharge dis where dis.date_of_discharge  = $P{toDate}
+and dis.discharge_status_id = '3' and dis.disposed_to_id  = '16' and dis.disposal_id = '8' and dis.ward_id = $P{deptId}) b,
+(SELECT count(*) as DIS FROM discharge discharge where discharge.date_of_discharge = $P{toDate} and  discharge.ward_id = $P{deptId}) c,
+(SELECT count(*) as REMD FROM inpatient inp2 where inp2.date_of_addmission <= DATE_ADD($P{toDate},INTERVAL '-1' DAY)  and
+ DATE_ADD($P{toDate},INTERVAL '0' DAY) <= ifNull(inp2.discharge_date,NOW()) and inp2.department_id = $P{deptId} and inp2.ad_status !="C") d,
+(SELECT count(*) as TIN FROM transfer tri where tri.date_of_transfer = $P{toDate} and tri.to_ward_id = $P{deptId}) e,
+(SELECT count(*) as TIN FROM transfer tri where tri.date_of_transfer = DATE_ADD($P{toDate},INTERVAL '1' DAY) and tri.to_ward_id = $P{deptId}) e1,
+(SELECT count(*) as TOUT FROM transfer tro where tro.date_of_transfer = $P{toDate} and tro.from_ward_id = $P{deptId}) f,
+(SELECT count(*) as TOUT FROM transfer tro where tro.date_of_transfer = DATE_ADD($P{toDate},INTERVAL '1' DAY) and tro.from_ward_id = $P{deptId}) f1,
+(SELECT count(distinct(sil.inpatient_id)) as SIL FROM sil_dil_status sil where sil.last_chg_date = $P{toDate} and sil.department_id = $P{deptId} and sil.condition_status ='SIL' ) g,
+(SELECT count(distinct(dil.inpatient_id)) as DIL FROM sil_dil_status dil where dil.last_chg_date = $P{toDate} and dil.department_id = $P{deptId} and dil.condition_status ='DIL' ) h,
+(select count(*)as todays_total from inpatient where ad_status != "C" and department_id=$P{deptId} and discharge_date is null)todays_bal,
+(SELECT count(*) as todate_admis FROM inpatient inpatient where inpatient.date_of_addmission >= $P{toDate} and ad_ward_id=$P{deptId}  and inpatient.ad_status !="C") ad,
+(SELECT count(*) as transferin FROM transfer tri where tri.date_of_transfer >= $P{toDate} and tri.to_ward_id = $P{deptId}) todate_tran_in,
+(SELECT count(*) as transferout FROM transfer tri where tri.date_of_transfer >= $P{toDate} and tri.from_ward_id = $P{deptId}) todate_tran_out,
+(SELECT count(*) as CU_DIS FROM discharge discharge where discharge.date_of_discharge >= $P{toDate} and  discharge.ward_id = $P{deptId}) current_dis
+;]]></queryString>
+
+	<field name="TT" class="java.lang.Long"/>
+	<field name="REMD" class="java.lang.Long"/>
+	<field name="ADM" class="java.lang.Long"/>
+	<field name="DIS" class="java.lang.Long"/>
+	<field name="TIN" class="java.lang.Long"/>
+	<field name="TOUT" class="java.lang.Long"/>
+	<field name="SIL" class="java.lang.Long"/>
+	<field name="DIL" class="java.lang.Long"/>
+	<field name="Death" class="java.lang.Long"/>
+	<field name="total" class="java.lang.Long"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="14"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="162"
+						y="0"
+						width="38"
+						height="13"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{TT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="203"
+						y="0"
+						width="38"
+						height="13"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{ADM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="242"
+						y="0"
+						width="33"
+						height="13"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{DIS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="277"
+						y="0"
+						width="40"
+						height="13"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{TIN}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="318"
+						y="0"
+						width="30"
+						height="13"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{TOUT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="446"
+						y="0"
+						width="33"
+						height="13"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{Death}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="150"
+						height="13"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{dept_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="489"
+						y="0"
+						width="62"
+						height="14"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{total}]]></textFieldExpression>
+				</textField>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="354"
+						y="-1"
+						width="43"
+						height="13"
+						key="subreport-1"
+						positionType="Float"/>
+					<subreportParameter  name="toDate">
+						<subreportParameterExpression><![CDATA[$P{toDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="deptId">
+						<subreportParameterExpression><![CDATA[$P{deptId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="dept_name">
+						<subreportParameterExpression><![CDATA[$P{dept_name}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//silMisDailyReport.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="396"
+						y="-1"
+						width="44"
+						height="12"
+						key="subreport-2"/>
+					<subreportParameter  name="toDate">
+						<subreportParameterExpression><![CDATA[$P{toDate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="deptId">
+						<subreportParameterExpression><![CDATA[$P{deptId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//dilMisDailyReport.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

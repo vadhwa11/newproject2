@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="pendingForSampleValidationSub"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="113"
+		 pageHeight="842"
+		 columnWidth="113"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoDataSection"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="sub_chargecode_id" isForPrompting="false" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QUERY" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+      count(distinct dg_sample_collection_header.sample_collection_header_id) as g,
+     dg_sample_collection_header.`sample_collection_header_id` as sample_collection_header_id,
+     mas_main_chargecode.`main_chargecode_name` as main_chargecode_name,
+     dg_sample_collection_details.`order_status`,
+     dg_orderhd.`order_no` as order_no,
+     dg_orderhd.`patient_type` as patinet_type,
+     mas_charge_code.`charge_code_name` as chargecode_name,
+     mas_sub_chargecode.`sub_chargecode_name` as sub_chargecode_name
+FROM
+   `mas_department` mas_department RIGHT OUTER JOIN `dg_sample_collection_header` dg_sample_collection_header ON mas_department.`department_id` = dg_sample_collection_header.`department_id`
+     LEFT OUTER JOIN `dg_sample_collection_details` dg_sample_collection_details ON dg_sample_collection_header.`sample_collection_header_id` = dg_sample_collection_details.`sample_collection_header_id`
+     LEFT OUTER JOIN `mas_sub_chargecode` mas_sub_chargecode ON dg_sample_collection_details.`subcharge` = mas_sub_chargecode.`sub_chargecode_id`
+     LEFT OUTER JOIN `mas_charge_code` mas_charge_code ON dg_sample_collection_details.`charge_code_id` = mas_charge_code.`charge_code_id`
+     LEFT OUTER JOIN `mas_main_chargecode` mas_main_chargecode ON dg_sample_collection_details.`maincharge` = mas_main_chargecode.`main_chargecode_id`
+     LEFT OUTER JOIN `dg_orderhd` dg_orderhd ON dg_sample_collection_header.`order_id` = dg_orderhd.`orderhd_id`
+where dg_sample_collection_header.diagnosis_date<=(select current_date() from dual)
+$P!{QUERY}
+and mas_sub_chargecode.`sub_chargecode_id`=$P!{sub_chargecode_id}
+and dg_sample_collection_details.order_status='P'
+  and dg_sample_collection_details.rejected='n'
+ group by sample_collection_header_id]]></queryString>
+
+	<field name="g" class="java.lang.Long"/>
+	<field name="sample_collection_header_id" class="java.lang.Integer"/>
+	<field name="main_chargecode_name" class="java.lang.String"/>
+	<field name="order_status" class="java.lang.String"/>
+	<field name="order_no" class="java.lang.String"/>
+	<field name="patinet_type" class="java.lang.String"/>
+	<field name="chargecode_name" class="java.lang.String"/>
+	<field name="sub_chargecode_name" class="java.lang.String"/>
+
+	<variable name="totCount" class="java.lang.Long" resetType="Group" resetGroup="SubChargeCodeGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{g}]]></variableExpression>
+	</variable>
+
+		<group  name="SubChargeCodeGroup" >
+			<groupExpression><![CDATA[$P{sub_chargecode_id}]]></groupExpression>
+			<groupHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="1"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="23"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="9"
+						y="2"
+						width="85"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$V{totCount}]]></textFieldExpression>
+				</textField>
+			</band>
+		</summary>
+		<noData>
+			<band height="20"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="9"
+						y="0"
+						width="85"
+						height="16"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<text><![CDATA[0]]></text>
+				</staticText>
+			</band>
+		</noData>
+</jasperReport>

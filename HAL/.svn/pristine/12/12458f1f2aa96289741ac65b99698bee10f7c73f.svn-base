@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="SuplementaryDietRight"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="535"
+		 pageHeight="842"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="departmentid" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DietSummaryDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[Select dd.* ,mdc.Diet_Combination_Name From
+(SELECT Count(*) as CountInPatient,ip.diet_id,
+case diet_type When 'Non-Veg' Then '2'
+When 'Veg' Then '1'Else '3' end as Diet_Type_ID ,
+case rank_category_name when 'Officer' then 'Officer'
+when 'Officer Family' then 'Officer'
+else 'Other' end as category_name ,DATE_FORMAT(concat("",date_of_addmission), '%d %b %Y') AS Date_Prv_Current
+FROM inpatient ip
+left join patient p on ip.hin_id = p.hin_id
+left join mas_rank mr on p.rank_id = mr.rank_id
+left join mas_rank_category mrc on  mr.rank_category_id = mrc.rank_category_id
+where ip.department_id= $P{departmentid} and date_of_addmission = DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY) and ad_status='A'
+group by diet_id, diet_type,category_name ) as dd , mas_diet_combination mdc ,mas_diet_type mdt
+Where dd.diet_id = mdc.diet_id And dd.diet_type_ID = mdt.Diet_Type_ID  And mdc.Diet_Type_ID = mdt.Diet_Type_ID
+And Demand_Display ='n'
+
+Union All
+
+select sum(countinpatient) as CountInPatient,1 as diet_id,1 as Diet_Type_Id,a.category_name,
+DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY),'%d %b %Y') AS Date_Prv_Current, 'OD VEG' as Diet_combination_name from (
+Select dd.* ,mdc.Diet_Combination_Name From
+(SELECT Count(*) as CountInPatient,ip.diet_id,
+case diet_type When 'Non-Veg' Then '2'
+When 'Veg' Then '1'Else '3' end as Diet_Type_ID ,
+case rank_category_name when 'Officer' then 'Officer'
+when 'Officer Family' then 'Officer'
+else 'Other' end as category_name ,DATE_FORMAT(concat("",date_of_addmission), '%d %b %Y') AS Date_Prv_Current
+FROM inpatient ip
+left join patient p on ip.hin_id = p.hin_id
+left join mas_rank mr on p.rank_id = mr.rank_id
+left join mas_rank_category mrc on  mr.rank_category_id = mrc.rank_category_id
+where ip.department_id= $P{departmentid} and date_of_addmission = DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY) and ad_status='A'
+group by diet_id, diet_type,category_name ) as dd , mas_diet_combination mdc ,mas_diet_type mdt
+Where dd.diet_id = mdc.diet_id And dd.diet_type_ID = mdt.Diet_Type_ID  And mdc.Diet_Type_ID = mdt.Diet_Type_ID
+And Demand_Display ='n') a group by a.category_name
+
+Union All
+
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 1
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 2
+union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 14
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 15
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 17
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 18
+
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 22
+
+Union All
+
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 1
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 2
+union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 14
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 15
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 17
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 18
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Other' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 22
+
+
+Union All
+
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 1
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 2
+union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 14
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 15
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 17
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 18
+
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-2'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 22
+
+Union All
+
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 1
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 2
+union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 14
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 15
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 17
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 18
+Union All
+Select 0 as CountInPatient ,diet_id, Diet_Type_id,'Officer' as Category_Name
+,DATE_FORMAT(DATE_ADD($P{DietSummaryDate},INTERVAL '-1'DAY), '%d %b %Y') as Date_Prv_Current , Diet_Combination_Name From
+mas_diet_combination Where Diet_Combination_id = 22]]></queryString>
+
+	<field name="CountInPatient" class="java.math.BigDecimal"/>
+	<field name="diet_id" class="java.lang.Long"/>
+	<field name="Diet_Type_ID" class="java.lang.String"/>
+	<field name="category_name" class="java.lang.String"/>
+	<field name="Date_Prv_Current" class="java.lang.String"/>
+	<field name="Diet_Combination_Name" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="1"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="77"  isSplitAllowed="true" >
+				<crosstab >
+					<reportElement
+						x="-1"
+						y="2"
+						width="482"
+						height="75"
+						key="crosstab-1"/>
+					<crosstabHeaderCell>						<cellContents mode="Transparent">
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabHeaderCell>					<rowGroup name="dietid" width="1">
+						<bucket>
+							<bucketExpression class="java.lang.Long"><![CDATA[$F{diet_id}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						</cellContents>
+						</crosstabRowHeader>
+					</rowGroup>
+					<rowGroup name="Diet_Combination_Name" width="70">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{Diet_Combination_Name}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="1"
+						width="57"
+						height="9"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Verdana" pdfFontName="Helvetica-Bold" size="6" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{Diet_Combination_Name}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabRowHeader>
+					</rowGroup>
+					<columnGroup name="Date_Prv_Current" height="16" headerPosition="Center">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{Date_Prv_Current}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+						<cellContents mode="Transparent">
+					<box topBorder="1Point" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="2"
+						y="1"
+						width="66"
+						height="14"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{Date_Prv_Current}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabColumnHeader>
+					</columnGroup>
+					<columnGroup name="category_name" height="13" headerPosition="Center">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{category_name}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="0"
+						width="69"
+						height="12"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{category_name}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+						</cellContents>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+
+					<measure name="CountInPatient_Sum" class="java.math.BigDecimal" calculation="Sum">
+						<measureExpression><![CDATA[$F{CountInPatient}]]></measureExpression>
+					</measure>
+					<crosstabCell width="70" height="13">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="69"
+						height="12"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{CountInPatient_Sum}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="68" height="13" columnTotalGroup="category_name">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="67"
+						height="12"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{CountInPatient_Sum}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="13" columnTotalGroup="Date_Prv_Current">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="70" height="0" rowTotalGroup="Diet_Combination_Name">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="68" height="0" rowTotalGroup="Diet_Combination_Name" columnTotalGroup="category_name">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="Diet_Combination_Name" columnTotalGroup="Date_Prv_Current">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="70" height="0" rowTotalGroup="dietid">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="68" height="0" rowTotalGroup="dietid" columnTotalGroup="category_name">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="dietid" columnTotalGroup="Date_Prv_Current">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<whenNoDataCell>						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+						</cellContents>
+					</whenNoDataCell>					</crosstab>
+			</band>
+		</summary>
+</jasperReport>

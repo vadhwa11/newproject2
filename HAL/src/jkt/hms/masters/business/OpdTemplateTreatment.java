@@ -1,0 +1,22 @@
+package jkt.hms.masters.business;
+
+import jkt.hms.masters.business.base.BaseOpdTemplateTreatment;
+
+public class OpdTemplateTreatment extends BaseOpdTemplateTreatment {
+	private static final long serialVersionUID = 1L;
+
+	/* [CONSTRUCTOR MARKER BEGIN] */
+	public OpdTemplateTreatment () {
+		super();
+	}
+
+	/**
+	 * Constructor for primary key
+	 */
+	public OpdTemplateTreatment (java.lang.Integer id) {
+		super(id);
+	}
+
+	/* [CONSTRUCTOR MARKER END] */
+
+}

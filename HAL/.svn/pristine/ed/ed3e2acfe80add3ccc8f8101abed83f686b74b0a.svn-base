@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="wardCaseSheet_sub"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="595"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="bookingId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select 
+osh.requisition_date,surgery_date,surgery_start_time,surgery_end_time,
+ot.ot_name,bed.bed_no,d.department_name,d1.department_name as d1
+
+
+FROM
+
+ot_booking ot_booking
+left outer join ot_booking_dt ot_booking_dt on ot_booking_dt.ot_booking_hd=ot_booking.booking_id
+left outer join ot_pre_anesthesia_detail ot_pre_anesthesia_detail on ot_pre_anesthesia_detail.id=ot_booking_dt.ot_pre_anesthesia_detail
+left outer join opd_surgery_detail osd    on  ot_pre_anesthesia_detail.opd_surgery_detail =osd.id
+left outer join opd_surgery_header  osh on   osd.opd_surgery_id=osh.opd_surgery_id
+
+left outer JOIN INPATIENT INPATIENT ON ot_booking.inpatient_id = inpatient.inpatient_id
+left outer join  mas_department d on osh.prescribed_department_id=d.department_id
+left outer join  mas_department d1 on ot_booking.department_id=d1.department_id
+left outer JOIN patient patient ON ot_booking.hin_id = patient.hin_id
+left outer join mas_ot ot on ot.ot_id=ot_booking.ot_id
+left outer join mas_bed bed on bed.bed_id=ot_booking.bed_id
+where ot_booking.booking_id=$P{bookingId}]]></queryString>
+
+	<field name="requisition_date" class="java.util.Date"/>
+	<field name="surgery_date" class="java.util.Date"/>
+	<field name="surgery_start_time" class="java.lang.String"/>
+	<field name="surgery_end_time" class="java.lang.String"/>
+	<field name="ot_name" class="java.lang.String"/>
+	<field name="bed_no" class="java.lang.String"/>
+	<field name="department_name" class="java.lang.String"/>
+	<field name="d1" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="95"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="109"
+						y="68"
+						width="5"
+						height="15"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="68"
+						width="104"
+						height="15"
+						key="staticText-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true" isUnderline="true"/>
+					</textElement>
+				<text><![CDATA[PREVIOUS HISTORY]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="109"
+						y="13"
+						width="5"
+						height="15"
+						key="staticText-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="5"
+						y="13"
+						width="104"
+						height="15"
+						key="staticText-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true" isUnderline="true"/>
+					</textElement>
+				<text><![CDATA[PRESENT HISTORY]]></text>
+				</staticText>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

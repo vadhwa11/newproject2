@@ -1,0 +1,723 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="pathology_report"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="733"
+		 pageHeight="842"
+		 columnWidth="733"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="order_no" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="medical_examination_id" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select p.hin_no,(p.p_first_name||' '|| p.p_middle_name||' '||p.p_last_name) as name,
+dgo.hin_id,dgo.order_no,dgo.order_date,
+decode(dgo.patient_type,'OP' , 'Out Patient' , 'In Patient' ) as patient_type,
+mmcc.main_chargecode_name,mscc.sub_chargecode_name sub_chargecode_name,
+dreh.remarks as header_remarks,dred.remarks as details_remarks,
+dmi.investigation_name investigation_name,
+NVL(dsmi.sub_investigation_name,dmi.investigation_name) as sub_investigation_name,
+dreh.result_date,dreh.result_time,
+to_char(decode(dred.fixed_id, null , dred.result,dfv.fixed_value)) as result,
+---if(dred.fixed_id is not null,dfv.fixed_value,dred.result) as result,
+(me.first_name||' '||me.middle_name||' '||me.last_name) as emp_name,
+(me1.first_name||' '||me1.middle_name||' '||me1.last_name) as pre_emp_name,
+mh.contact_number,
+mh.hospital_name,
+mh.address,
+(p.age ||'/' || administrative_sex_name) as age,
+decode(investigation_type, 's' ,(dmi.min_normal_value||'-' ||dmi.max_normal_value),
+(select (min_normal_value||' '||max_normal_value) from dg_normal_value where sub_investigation_id=dsmi.sub_investigation_id
+and substr(age,1,2) between from_age and to_age and sex= decode(sex, 'n' ,sex,substr(administrative_sex_name,1,1))) ) as minValue,
+
+decode(investigation_type,'s' ,du.uom_name,nvl(dus.uom_name,' ' )) as uom
+ from dg_result_entry_header dreh
+left outer join dg_result_entry_detail dred on dreh.result_entry_id=dred.result_entry_id
+left outer join dg_sample_collection_header dsch on dreh.sample_collection_header_id=dsch.sample_collection_header_id
+left outer join dg_orderhd dgo on dsch.order_id=dgo.orderhd_id
+left outer join mas_main_chargecode mmcc on mmcc.main_chargecode_id=dreh.main_chargecode_id
+left outer join mas_sub_chargecode mscc on mscc.sub_chargecode_id=dreh.sub_chargecode_id
+left outer join dg_mas_investigation dmi on dred.investigation_id=dmi.investigation_id
+left outer join dg_uom du on du.uom_id=dmi.uom_id
+left outer join dg_sub_mas_investigation dsmi on dred.sub_investigation_id=dsmi.sub_investigation_id
+left outer join dg_uom dus on dus.uom_id=dsmi.uom_id
+left outer join patient p on p.hin_id=dgo.hin_id
+left outer join mas_employee me on dreh.result_verified_by=me.employee_id
+left outer join mas_hospital mh on dreh.hospital_id=mh.hospital_id
+left outer join mas_employee me1 on dgo.prescribed_by=me1.employee_id
+left outer join mas_administrative_sex mas on p.sex_id=mas.administrative_sex_id
+left outer join dg_fixed_value dfv on dred.fixed_id=dfv.fixed_id
+where dgo.order_no=$P{order_no} and dred.validated= 'Y' 
+order by INVESTIGATION_NAME,SUB_INVESTIGATION_NAME]]></queryString>
+
+	<field name="HIN_NO" class="java.lang.String"/>
+	<field name="NAME" class="java.lang.String"/>
+	<field name="HIN_ID" class="java.math.BigDecimal"/>
+	<field name="ORDER_NO" class="java.lang.String"/>
+	<field name="ORDER_DATE" class="java.sql.Timestamp"/>
+	<field name="PATIENT_TYPE" class="java.lang.String"/>
+	<field name="MAIN_CHARGECODE_NAME" class="java.lang.String"/>
+	<field name="SUB_CHARGECODE_NAME" class="java.lang.String"/>
+	<field name="HEADER_REMARKS" class="java.lang.String"/>
+	<field name="DETAILS_REMARKS" class="java.lang.String"/>
+	<field name="INVESTIGATION_NAME" class="java.lang.String"/>
+	<field name="SUB_INVESTIGATION_NAME" class="java.lang.String"/>
+	<field name="RESULT_DATE" class="java.sql.Timestamp"/>
+	<field name="RESULT_TIME" class="java.lang.String"/>
+	<field name="RESULT" class="java.lang.String"/>
+	<field name="EMP_NAME" class="java.lang.String"/>
+	<field name="PRE_EMP_NAME" class="java.lang.String"/>
+	<field name="CONTACT_NUMBER" class="java.lang.String"/>
+	<field name="HOSPITAL_NAME" class="java.lang.String"/>
+	<field name="ADDRESS" class="java.lang.String"/>
+	<field name="AGE" class="java.lang.String"/>
+	<field name="MINVALUE" class="java.lang.String"/>
+	<field name="UOM" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="18"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="2"
+						width="535"
+						height="16"
+						key="staticText-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica" size="12" isBold="false" isUnderline="true"/>
+					</textElement>
+				<text><![CDATA[Investigation Result]]></text>
+				</staticText>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="171"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="22"
+						y="10"
+						width="39"
+						height="19"
+						key="staticText-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Blood :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="62"
+						y="11"
+						width="91"
+						height="17"
+						key="staticText-6"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Hb%.............Gm%,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="149"
+						y="12"
+						width="105"
+						height="16"
+						key="staticText-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[TLC..................mm3,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="246"
+						y="12"
+						width="88"
+						height="14"
+						key="staticText-8"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[DLC N...................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="326"
+						y="12"
+						width="57"
+						height="17"
+						key="staticText-9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[M...............]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="373"
+						y="12"
+						width="53"
+						height="15"
+						key="staticText-10"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[E.............]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="418"
+						y="11"
+						width="47"
+						height="16"
+						key="staticText-11"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[B...........]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="456"
+						y="11"
+						width="51"
+						height="18"
+						key="staticText-12"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[ESR........]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="493"
+						y="11"
+						width="77"
+						height="17"
+						key="staticText-13"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[mm fall in 1 hrs]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="19"
+						y="32"
+						width="39"
+						height="17"
+						key="staticText-14"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Urin  :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="54"
+						y="32"
+						width="16"
+						height="17"
+						key="staticText-15"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[RE]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="68"
+						y="39"
+						width="20"
+						height="0"
+						key="line-9"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="88"
+						y="30"
+						width="34"
+						height="20"
+						key="staticText-16"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[NAD,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="120"
+						y="30"
+						width="17"
+						height="20"
+						key="staticText-17"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[ME]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="137"
+						y="37"
+						width="22"
+						height="1"
+						key="line-10"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="159"
+						y="29"
+						width="27"
+						height="20"
+						key="staticText-18"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[NAD,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="187"
+						y="29"
+						width="26"
+						height="20"
+						key="staticText-19"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[SP]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="212"
+						y="28"
+						width="111"
+						height="20"
+						key="staticText-20"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[gravity.........................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="324"
+						y="28"
+						width="108"
+						height="20"
+						key="staticText-21"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Albumen......................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="430"
+						y="28"
+						width="144"
+						height="20"
+						key="staticText-22"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Sugar.....................................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="20"
+						y="50"
+						width="68"
+						height="21"
+						key="staticText-23"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Blood Sugar:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="83"
+						y="51"
+						width="99"
+						height="18"
+						key="staticText-24"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[F....................mg/dl,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="182"
+						y="50"
+						width="105"
+						height="19"
+						key="staticText-25"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[PP...................mg/dl,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="285"
+						y="51"
+						width="106"
+						height="17"
+						key="staticText-26"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Urea..................mg/dl]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="388"
+						y="51"
+						width="85"
+						height="16"
+						key="staticText-27"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[.................Uric]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="461"
+						y="50"
+						width="117"
+						height="18"
+						key="staticText-28"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Acid..................mg/dl]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="20"
+						y="71"
+						width="111"
+						height="14"
+						key="staticText-29"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Sr Creatine...........mg%]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="131"
+						y="72"
+						width="161"
+						height="12"
+						key="staticText-30"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Cholesterol......................mg/dl,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="20"
+						y="84"
+						width="177"
+						height="17"
+						key="staticText-31"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Triglycerids...........................mg/dl,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="188"
+						y="84"
+						width="130"
+						height="18"
+						key="staticText-32"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[HDL.........................mg/dl,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="316"
+						y="84"
+						width="178"
+						height="18"
+						key="staticText-33"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[VLDL......................................mg/dl]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="297"
+						y="102"
+						width="113"
+						height="14"
+						key="staticText-34"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Report.......................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="201"
+						y="102"
+						width="95"
+						height="15"
+						key="staticText-35"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Dt..........................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="20"
+						y="102"
+						width="177"
+						height="16"
+						key="staticText-36"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[X-Ray chest PA view.........................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="20"
+						y="119"
+						width="179"
+						height="17"
+						key="staticText-37"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[ECG No-412 AFS/..............................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="202"
+						y="120"
+						width="85"
+						height="17"
+						key="staticText-38"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Dt.......................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="283"
+						y="119"
+						width="122"
+						height="17"
+						key="staticText-39"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Report.............................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="20"
+						y="134"
+						width="111"
+						height="17"
+						key="staticText-40"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Hbs Ag&VDRL-AFTC/]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="20"
+						y="149"
+						width="27"
+						height="18"
+						key="staticText-41"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[HIV]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="48"
+						y="149"
+						width="49"
+						height="19"
+						key="staticText-42"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[(Elisa)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="123"
+						y="149"
+						width="57"
+						height="17"
+						key="staticText-43"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[AFTC/]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="97"
+						y="158"
+						width="23"
+						height="0"
+						key="line-11"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="309"
+						y="147"
+						width="130"
+						height="18"
+						key="staticText-44"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Others................................]]></text>
+				</staticText>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="-223"
+						width="535"
+						height="1"
+						key="line-8"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="61"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="2"
+						y="6"
+						width="594"
+						height="48"
+						key="subreport-1"/>
+					<subreportParameter  name="order_no">
+						<subreportParameterExpression><![CDATA[$P{order_no}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="medical_examination_id">
+						<subreportParameterExpression><![CDATA[$P{medical_examination_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "\\sub_medical_exam_report_discharge.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</summary>
+		<noData>
+			<band height="2"  isSplitAllowed="true" >
+			</band>
+		</noData>
+</jasperReport>

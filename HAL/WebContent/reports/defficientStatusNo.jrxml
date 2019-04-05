@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="defficientStatusNo"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="2" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="fromDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="toDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+     concat(mas_employee.`first_name`," ",mas_employee.`last_name`," ",mas_employee.`middle_name`)as empName,
+     mas_unit.`unit_name` AS mas_unit_unit_name,
+     mas_trade.`trade_name` AS mas_trade_trade_name,
+     mas_employee.`first_name` AS mas_employee_first_name,
+     mas_employee.`last_name` AS mas_employee_last_name,
+     mas_employee.`middle_name` AS mas_employee_middle_name,
+     mas_employee.`service_no` AS mas_employee_service_no,
+     mas_rank.`rank_name` AS mas_rank_rank_name
+FROM
+     `mas_rank` mas_rank INNER JOIN `mas_employee` mas_employee ON mas_rank.`rank_id` = mas_employee.`rank_id`
+     INNER JOIN `mas_unit` mas_unit ON mas_employee.`unit_id` = mas_unit.`unit_id`
+     INNER JOIN `mas_trade` mas_trade ON mas_employee.`trade_id` = mas_trade.`trade_id`,emp_afmsf_det
+     
+     
+WHERE mas_employee.`join_date` between $P{fromDate} and $P{toDate}
+    and
+    NOT EXISTS (select service_no from emp_afmsf_det where emp_afmsf_det.service_no=mas_employee.service_no)]]></queryString>
+
+	<field name="empName" class="java.lang.String"/>
+	<field name="mas_unit_unit_name" class="java.lang.String"/>
+	<field name="mas_trade_trade_name" class="java.lang.String"/>
+	<field name="mas_employee_first_name" class="java.lang.String"/>
+	<field name="mas_employee_last_name" class="java.lang.String"/>
+	<field name="mas_employee_middle_name" class="java.lang.String"/>
+	<field name="mas_employee_service_no" class="java.lang.String"/>
+	<field name="mas_rank_rank_name" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="50"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="50"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="30"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="20"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="100"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{mas_employee_service_no}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="1"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

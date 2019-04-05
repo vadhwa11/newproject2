@@ -1,0 +1,1518 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="PatientMedicalCaseSheetReport"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="612"
+		 pageHeight="990"
+		 columnWidth="552"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoDataSection"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false"
+		 isIgnorePagination="true">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="visitNo" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="serviceNo" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hinNo" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="currentDate" isForPrompting="false" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hospitalId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hospitalName" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hospitalAddress" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="deptId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="userName" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="userRank" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="userId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="iKeyLogin" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT mas_hospital.hospital_name,mas_hospital.address,
+  (SELECT DISTINCT (
+    CASE
+      WHEN opd_patient_history.present_complain=''
+      THEN ''
+      ELSE concat('COMPLAINTS :  ',concat(REPLACE(REPLACE(opd_patient_history.present_complain , '\n', ' '), '\r', ','),''))
+    END)AS history_present_complain
+  FROM visit
+  LEFT OUTER JOIN patient
+  ON visit.hin_id = patient.hin_id
+  INNER JOIN opd_patient_details
+  ON visit.visit_id = opd_patient_details.visit_id
+  INNER JOIN opd_patient_history
+  ON opd_patient_details.id = opd_patient_history.opd_patient_details
+  WHERE visit.visit_id      = $P{visitNo}
+  AND patient.service_no    = $P{serviceNo}
+  AND patient.hin_no        = $P{hinNo}
+  )AS present_complain,
+  (SELECT DISTINCT (
+    CASE
+      WHEN opd_patient_history.present_illness=''
+      THEN ''
+      ELSE concat('H/O PRESENT ILLNESS :  ',concat(REPLACE(REPLACE(opd_patient_history.present_illness , '\n', ' '), '\r', ','),''))
+    END)AS history_present_illness
+  FROM visit
+  LEFT OUTER JOIN patient
+  ON visit.hin_id = patient.hin_id
+  INNER JOIN opd_patient_details
+  ON visit.visit_id = opd_patient_details.visit_id
+  INNER JOIN opd_patient_history
+  ON opd_patient_details.id = opd_patient_history.opd_patient_details
+  WHERE visit.visit_id      = $P{visitNo}
+  AND patient.service_no    = $P{serviceNo}
+  AND patient.hin_no        = $P{hinNo}
+  ) AS present_illness,
+  (SELECT DISTINCT (
+    CASE
+      WHEN opd_patient_history.personal_past_history=''
+      THEN ''
+      ELSE concat('PAST HISTORY: ',concat(REPLACE(REPLACE(opd_patient_history.personal_past_history , '\n', ' '), '\r', ','),''))
+    END)AS personal_past_history
+  FROM visit
+  LEFT OUTER JOIN patient
+  ON visit.hin_id = patient.hin_id
+  INNER JOIN opd_patient_details
+  ON visit.visit_id = opd_patient_details.visit_id
+  INNER JOIN opd_patient_history
+  ON opd_patient_details.id = opd_patient_history.opd_patient_details
+  WHERE visit.visit_id      = $P{visitNo}
+  AND patient.service_no    = $P{serviceNo}
+  AND patient.hin_no        = $P{hinNo}
+  )AS personal_past_history,
+  (SELECT DISTINCT (
+    CASE
+      WHEN opd_patient_history.family_present_history=''
+      THEN ''
+      ELSE concat('FAMILY HISTORY: ',concat(REPLACE(REPLACE(opd_patient_history.family_present_history, '\n', ' '), '\r', ','),''))
+    END)AS family_present_history
+  FROM visit
+  LEFT OUTER JOIN patient
+  ON visit.hin_id = patient.hin_id
+  INNER JOIN opd_patient_details
+  ON visit.visit_id = opd_patient_details.visit_id
+  INNER JOIN opd_patient_history
+  ON opd_patient_details.id = opd_patient_history.opd_patient_details
+  WHERE visit.visit_id      = $P{visitNo}
+  AND patient.service_no    = $P{serviceNo}
+  AND patient.hin_no        = $P{hinNo}
+  ) AS family_present_history,
+  (SELECT DISTINCT (
+    CASE
+      WHEN opd_patient_history.personal_other_details =''
+      THEN ''
+      ELSE concat('OTHER : ',concat(REPLACE(REPLACE(opd_patient_history.personal_other_details, '\n', ' '), '\r', ','),''))
+    END)AS patient_history_other
+  FROM visit
+  LEFT OUTER JOIN patient
+  ON visit.hin_id = patient.hin_id
+  INNER JOIN opd_patient_details
+  ON visit.visit_id = opd_patient_details.visit_id
+  INNER JOIN opd_patient_history
+  ON opd_patient_details.id = opd_patient_history.opd_patient_details
+  WHERE visit.visit_id      = $P{visitNo}
+  AND patient.service_no    = $P{serviceNo}
+  AND patient.hin_no        = $P{hinNo}
+  ) AS OTHERS,
+  (SELECT DISTINCT (
+    CASE
+      WHEN TO_CHAR(opd_patient_details.AFMS_desc)=''
+      THEN ''
+      ELSE concat('ON EXAMINATION :  ',concat(REPLACE(REPLACE(TO_CHAR(opd_patient_details.AFMS_desc) , '\n', ' '), '\r', ','),''))
+    END)AS details_on_examination
+  FROM visit visit
+  LEFT OUTER JOIN patient patient
+  ON visit.hin_id = patient.hin_id
+  INNER JOIN opd_patient_details opd_patient_details
+  ON visit.visit_id = opd_patient_details.visit_id
+  INNER JOIN opd_patient_history
+  ON opd_patient_details.id = opd_patient_history.opd_patient_details
+  WHERE visit.visit_id      = $P{visitNo}
+  AND patient.service_no    = $P{serviceNo}
+  AND patient.hin_no        = $P{hinNo}
+  )AS examination,
+  (SELECT DISTINCT (
+    CASE
+      WHEN opd_patient_history.present_advice=''
+      THEN ''
+      ELSE concat('ADVICE :  ',concat(REPLACE(REPLACE(opd_patient_history.present_advice , '\n', ' '), '\r', ','),''))
+    END)AS history_present_advice
+  FROM visit
+  LEFT OUTER JOIN patient
+  ON visit.hin_id = patient.hin_id
+  INNER JOIN opd_patient_details
+  ON visit.visit_id = opd_patient_details.visit_id
+  INNER JOIN opd_patient_history
+  ON opd_patient_details.id = opd_patient_history.opd_patient_details
+  WHERE visit.visit_id      = $P{visitNo}
+  AND patient.service_no    = $P{serviceNo}
+  AND patient.hin_no        = $P{hinNo}
+  ) AS present_advice,
+  (SELECT DISTINCT concat((
+    CASE
+      WHEN visit.ed_dispose=''
+      THEN ''
+      ELSE concat('DISPOSAL: ',visit.ed_dispose)
+    END),concat(' X ',(
+    CASE
+      WHEN visit.ed_days=''
+      THEN ''
+      ELSE concat(visit.ed_days,' Days')
+    END)))AS disposal
+  FROM visit
+  LEFT OUTER JOIN patient
+  ON visit.hin_id = patient.hin_id
+    --INNER JOIN opd_patient_details ON visit.visit_id = opd_patient_details.visit_id
+  WHERE visit.visit_id   = $P{visitNo}
+  AND patient.service_no = $P{serviceNo}
+  AND patient.hin_no     = $P{hinNo}
+  ) AS disposal,
+  (
+  CASE
+    WHEN opd_patient_details.initial_diagnosis=''
+    THEN ''
+    ELSE concat('WORKING DIAGNOSIS : ',opd_patient_details.initial_diagnosis)
+  END) AS prov_diag,
+  concat((
+  CASE
+    WHEN opd_patient_details.height=''
+    THEN ''
+    ELSE concat('Ht:-',concat(opd_patient_details.height,concat('Cms','/')))
+  END),(
+  CASE
+    WHEN opd_patient_details.weight=''
+    THEN ''
+    ELSE concat('Wt:-',concat(opd_patient_details.weight,'Kg'))
+  END)) AS HtWt,
+  concat((
+  CASE
+    WHEN opd_patient_details.temperature=''
+    THEN ''
+    ELSE concat('Temp :-',concat(opd_patient_details.temperature,' F   '))
+  END),concat( (
+  CASE
+    WHEN opd_patient_details.pulse=''
+    THEN ''
+    ELSE concat('Pulse :-',concat(opd_patient_details.pulse,' /Min  '))
+  END),concat( (
+  CASE
+    WHEN opd_patient_details.resp=''
+    THEN ''
+    ELSE concat('Resp :-',concat(opd_patient_details.resp,' /Min   '))
+  END), (
+  CASE
+    WHEN opd_patient_details.bp=''
+    THEN ''
+    ELSE concat('BP :-',concat(opd_patient_details.bp,' mm of Hg'))
+  END))))                                                                                                AS clinicalInfo,
+  visit.visit_date                                                                                       AS visit_visit_date,
+  visit.visit_no                                                                                         AS visit_visit_no,
+  patient.service_no                                                                                     AS patient_service_no,
+  patient.hin_no                                                                                         AS patient_hin_no,
+  concat(patient.service_years,patient.total_service_period)                                             AS serviceYears,
+  mas_icd.icd_name                                                                                       AS mas_icd_icd_name,
+  concat(mas_department.department_name,concat('/',concat(visit.visit_no,concat('/',visit.visit_date)))) AS deptName,
+  --(case when mas_department1.department_name='' then '' else concat('REFERED TO : ',concat(mas_department1.department_name,' for specialist opinion and further management please.'))end) AS department_name1,
+  mas_hospital.hospital_name                                                                              AS mas_hospital_hospital_name,
+  concat(patient.p_first_name,concat(' ',concat(patient.p_middle_name ,concat(' ',patient.p_last_name)))) AS patient_name,
+  concat(patient.s_first_name,concat(' ',concat(patient.s_middle_name ,concat(' ',patient.s_last_name)))) AS s_name,
+  mas_relation.relation_name                                                                              AS relation_relation_name,
+  mas_rank.rank_name                                                                                      AS mas_rank_rank_name,
+  mas_administrative_sex.administrative_sex_name                                                          AS sexName,
+  mas_unit.unit_name                                                                                      AS mas_unit_unit_name,
+  mas_service_type.service_type_name                                                                      AS service_type_name,
+  mas_trade.trade_name                                                                                    AS mas_trade_trade_name,
+  opd_patient_history.ip_op_pac_status                                                                    AS ip_op_pac_status,
+  patient_prescription_header.prescription_id                                                             AS header_prescription_id,
+  patient_investigation_header.investigation_header_id                                                    AS investigation_header_id,
+  opd_patient_details.referred_dept                                                                       AS details_referred_dept,
+  opd_patient_details.refered_doctars                                                                     AS details_refered_doctars,
+  opd_patient_details.initial_diagnosis                                                                   AS details_initial_diagnosis,
+  (
+  CASE
+    WHEN opd_patient_details.next_visit_date=NULL
+    THEN ''
+    ELSE concat('FOLLOW UP ON :',opd_patient_details.next_visit_date)
+  END) AS details_next_visit_date,
+  (
+  CASE
+    WHEN opd_patient_details.plan=''
+    THEN ''
+    ELSE concat('',opd_patient_details.plan)
+  END) AS details_plan,
+  (
+  CASE
+    WHEN opd_patient_details.outside_investigation=''
+    THEN ''
+    ELSE concat('OTHER/OUTSIDE INVESTIGATION :',concat(REPLACE(REPLACE(opd_patient_details.outside_investigation , '\n', ' '), '\r', ','),''))
+  END)                                                                                                             AS history_outside_investigation,
+  concat(mas_employee.first_name,concat(' ',concat(mas_employee.middle_name ,concat(' ',mas_employee.last_name)))) AS doc_name,
+  rank.rank_name                                                                                                   AS doc_rank,
+  (
+  CASE
+    WHEN $P{iKeyLogin}='yes'
+    THEN
+      (SELECT concat(concat(concat(concat(concat(concat(concat(concat(concat('** THIS DOCUMENT IS DIGITALLY SIGNED BY',' '), mr.rank_name),' '),me.first_name),' '),me.middle_name),' '),me.last_name),' **')
+      FROM mas_rank mr
+      LEFT JOIN mas_employee me
+      ON mr.rank_id       =me.rank_id
+      WHERE me.employee_id=$P{userId}
+      )
+    ELSE ' '
+  END ) AS iKeyLogin,
+             (Case 
+     when (patient.date_of_birth is not null )
+     then
+     ( Case 
+          when 
+              (trunc(months_between(sysdate,patient.date_of_birth)/12)) is not null
+              then
+              (Case
+                     when 
+                      (trunc(months_between(sysdate,patient.date_of_birth)/12))!=0
+                    then 
+                      concat((trunc(months_between(sysdate,patient.date_of_birth)/12)), ' Year(s)')
+                  else
+                      (case
+                           when 
+                              (trunc(mod(months_between(sysdate,patient.date_of_birth),12)))!=0
+                            then
+                              concat(trunc(mod(months_between(sysdate,patient.date_of_birth),12)),' Month(s)')
+                            else
+                               
+                            (case    
+                            when (trunc(sysdate-add_months(patient.date_of_birth,trunc(months_between(sysdate,patient.date_of_birth)/12)*12+trunc(mod(months_between(sysdate,patient.date_of_birth),12)))))!=0
+                            then
+                               concat(trunc(sysdate-add_months(patient.date_of_birth,trunc(months_between(sysdate,patient.date_of_birth)/12)*12+trunc(mod(months_between(sysdate,patient.date_of_birth),12)))),' Day(s)')
+                               else
+                               '1 Day(s)'
+              
+             end) end)
+            
+    end) end )else
+    patient.age
+    end)                                                                                                                                       AS patient_age
+  
+  
+  
+FROM visit
+LEFT OUTER JOIN patient
+ON visit.hin_id=patient.hin_id
+LEFT OUTER JOIN patient_prescription_header
+ON patient_prescription_header.visit_id = visit.visit_id
+AND patient_prescription_header.hin_id  = visit.hin_id
+LEFT OUTER JOIN mas_department
+ON visit.department_id = mas_department.department_id
+LEFT OUTER JOIN mas_hospital
+ON visit.hospital_id = mas_hospital.hospital_id
+LEFT OUTER JOIN mas_relation
+ON patient.relation_id = mas_relation.relation_id
+LEFT OUTER JOIN mas_rank
+ON patient.rank_id = mas_rank.rank_id
+LEFT OUTER JOIN mas_administrative_sex
+ON patient.sex_id = mas_administrative_sex.administrative_sex_id
+LEFT OUTER JOIN mas_unit
+ON patient.unit_id = mas_unit.unit_id
+LEFT OUTER JOIN mas_service_type
+ON patient.service_type_id = mas_service_type.service_type_id
+LEFT OUTER JOIN mas_trade
+ON patient.trade_id = mas_trade.trade_id
+LEFT OUTER JOIN patient_investigation_header
+ON patient.hin_id                         = patient_investigation_header.hin_id
+AND patient_investigation_header.visit_id = visit.visit_id
+INNER JOIN opd_patient_details
+ON visit.visit_id = opd_patient_details.visit_id
+  -- LEFT OUTER JOIN mas_employee ON opd_patient_details.refered_doctars = mas_employee.employee_id
+  --LEFT OUTER JOIN mas_department mas_department1 ON opd_patient_details.referred_dept = mas_department1.department_id
+INNER JOIN opd_patient_history
+ON opd_patient_details.id = opd_patient_history.opd_patient_details
+LEFT OUTER JOIN discharge_icd_code
+ON discharge_icd_code.visit_id=opd_patient_details.visit_id
+LEFT OUTER JOIN mas_icd
+ON discharge_icd_code.icd_id = mas_icd.icd_id
+LEFT OUTER JOIN mas_employee
+ON mas_employee.employee_id = visit.doctor_id
+LEFT OUTER JOIN mas_rank rank
+ON rank.rank_id        = MAS_EMPLOYEE.rank_id
+WHERE visit.visit_id   = $P{visitNo}
+AND patient.service_no = $P{serviceNo}
+AND patient.hin_no     = $P{hinNo}
+AND ROWNUM             <2]]></queryString>
+
+	<field name="HOSPITAL_NAME" class="java.lang.String"/>
+	<field name="ADDRESS" class="java.lang.String"/>
+	<field name="PRESENT_COMPLAIN" class="java.lang.String"/>
+	<field name="PRESENT_ILLNESS" class="java.lang.String"/>
+	<field name="PERSONAL_PAST_HISTORY" class="java.lang.String"/>
+	<field name="FAMILY_PRESENT_HISTORY" class="java.lang.String"/>
+	<field name="OTHERS" class="java.lang.String"/>
+	<field name="EXAMINATION" class="java.lang.String"/>
+	<field name="PRESENT_ADVICE" class="java.lang.String"/>
+	<field name="DISPOSAL" class="java.lang.String"/>
+	<field name="PROV_DIAG" class="java.lang.String"/>
+	<field name="HTWT" class="java.lang.String"/>
+	<field name="CLINICALINFO" class="java.lang.String"/>
+	<field name="VISIT_VISIT_DATE" class="java.sql.Timestamp"/>
+	<field name="VISIT_VISIT_NO" class="java.math.BigDecimal"/>
+	<field name="PATIENT_SERVICE_NO" class="java.lang.String"/>
+	<field name="PATIENT_HIN_NO" class="java.lang.String"/>
+	<field name="SERVICEYEARS" class="java.lang.String"/>
+	<field name="MAS_ICD_ICD_NAME" class="java.lang.String"/>
+	<field name="DEPTNAME" class="java.lang.String"/>
+	<field name="MAS_HOSPITAL_HOSPITAL_NAME" class="java.lang.String"/>
+	<field name="PATIENT_NAME" class="java.lang.String"/>
+	<field name="S_NAME" class="java.lang.String"/>
+	<field name="RELATION_RELATION_NAME" class="java.lang.String"/>
+	<field name="MAS_RANK_RANK_NAME" class="java.lang.String"/>
+	<field name="SEXNAME" class="java.lang.String"/>
+	<field name="MAS_UNIT_UNIT_NAME" class="java.lang.String"/>
+	<field name="SERVICE_TYPE_NAME" class="java.lang.String"/>
+	<field name="MAS_TRADE_TRADE_NAME" class="java.lang.String"/>
+	<field name="IP_OP_PAC_STATUS" class="java.lang.String"/>
+	<field name="HEADER_PRESCRIPTION_ID" class="java.math.BigDecimal"/>
+	<field name="INVESTIGATION_HEADER_ID" class="java.math.BigDecimal"/>
+	<field name="DETAILS_REFERRED_DEPT" class="java.lang.String"/>
+	<field name="DETAILS_REFERED_DOCTARS" class="java.lang.String"/>
+	<field name="DETAILS_INITIAL_DIAGNOSIS" class="java.lang.String"/>
+	<field name="DETAILS_NEXT_VISIT_DATE" class="java.lang.String"/>
+	<field name="DETAILS_PLAN" class="java.lang.String"/>
+	<field name="HISTORY_OUTSIDE_INVESTIGATION" class="java.lang.String"/>
+	<field name="DOC_NAME" class="java.lang.String"/>
+	<field name="DOC_RANK" class="java.lang.String"/>
+	<field name="IKEYLOGIN" class="java.lang.String"/>
+	<field name="PATIENT_AGE" class="java.lang.String"/>
+
+	<variable name="srNo" class="java.lang.Integer" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[new java.lang.Integer(($V{REPORT_COUNT}.intValue()))]]></variableExpression>
+		<initialValueExpression><![CDATA[new Integer(0)]]></initialValueExpression>
+	</variable>
+
+		<group  name="header" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="223"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="446"
+						y="17"
+						width="106"
+						height="13"
+						key="staticText-34"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isUnderline="true"/>
+					</textElement>
+				<text><![CDATA[In Lieu of AFMSF-7A]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="69"
+						width="552"
+						height="19"
+						key="staticText-19"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="12" isBold="true" isUnderline="true" isPdfEmbedded ="true"/>
+					</textElement>
+				<text><![CDATA[PATIENT MEDICAL CASE SHEET]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="164"
+						y="3"
+						width="226"
+						height="19"
+						key="staticText-46"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true" isUnderline="true"/>
+					</textElement>
+				<text><![CDATA[CONFIDENTIAL]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="30"
+						width="552"
+						height="18"
+						key="textField"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{MAS_HOSPITAL_HOSPITAL_NAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="47"
+						width="552"
+						height="18"
+						key="textField"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="11" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ADDRESS}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="3"
+						y="124"
+						width="83"
+						height="15"
+						key="staticText-2"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Service No:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="280"
+						y="96"
+						width="59"
+						height="15"
+						key="staticText-3"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Age:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="4"
+						y="175"
+						width="72"
+						height="15"
+						key="staticText-4"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Total Service:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="3"
+						y="96"
+						width="255"
+						height="13"
+						key="staticText-6"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Name of the Patient:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="419"
+						y="95"
+						width="103"
+						height="15"
+						key="staticText-7"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Relationship:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="98"
+						y="177"
+						width="141"
+						height="15"
+						key="staticText-8"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Arms/Corps/Branch/Trade:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="279"
+						y="111"
+						width="61"
+						height="13"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Helvetica" size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PATIENT_AGE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="109"
+						width="254"
+						height="13"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PATIENT_NAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="138"
+						width="82"
+						height="14"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Helvetica" size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{serviceNo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="420"
+						y="110"
+						width="105"
+						height="13"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" pdfFontName="Helvetica" size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{RELATION_RELATION_NAME}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="98"
+						y="157"
+						width="61"
+						height="15"
+						key="staticText-31"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Rank:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="159"
+						y="156"
+						width="363"
+						height="15"
+						key="textField"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Helvetica" size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{MAS_RANK_RANK_NAME}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="299"
+						y="124"
+						width="104"
+						height="15"
+						key="staticText-32"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Unit /Ship:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="299"
+						y="139"
+						width="223"
+						height="14"
+						key="textField"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" pdfFontName="Helvetica" size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{MAS_UNIT_UNIT_NAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="4"
+						y="205"
+						width="73"
+						height="14"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Helvetica" size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{SERVICE_TYPE_NAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="98"
+						y="191"
+						width="140"
+						height="15"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Helvetica" size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{MAS_TRADE_TRADE_NAME}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="3"
+						y="95"
+						width="524"
+						height="0"
+						key="line-1"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="98"
+						y="124"
+						width="190"
+						height="15"
+						key="staticText-41"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Serving Personnal Name :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="97"
+						y="139"
+						width="192"
+						height="15"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Helvetica" size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{S_NAME}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="2"
+						y="95"
+						width="0"
+						height="126"
+						key="line-9"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="526"
+						y="96"
+						width="0"
+						height="125"
+						key="line-10"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="3"
+						y="124"
+						width="522"
+						height="0"
+						key="line-11"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="277"
+						y="96"
+						width="0"
+						height="28"
+						key="line-12"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="342"
+						y="95"
+						width="0"
+						height="29"
+						key="line-14"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="346"
+						y="95"
+						width="69"
+						height="15"
+						key="staticText-44"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Sex:]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="416"
+						y="95"
+						width="0"
+						height="30"
+						key="line-15"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="4"
+						y="173"
+						width="522"
+						height="0"
+						key="line-16"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="93"
+						y="124"
+						width="0"
+						height="29"
+						key="line-17"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="291"
+						y="124"
+						width="0"
+						height="32"
+						key="line-19"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="3"
+						y="220"
+						width="523"
+						height="0"
+						key="line-20"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="93"
+						y="152"
+						width="0"
+						height="68"
+						key="line-21"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="243"
+						y="176"
+						width="279"
+						height="13"
+						key="staticText-45"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[OPD Visit:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="346"
+						y="110"
+						width="68"
+						height="13"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Helvetica" size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{SEXNAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd-MMM-yy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="243"
+						y="188"
+						width="277"
+						height="15"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DEPTNAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="4"
+						y="191"
+						width="73"
+						height="14"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font pdfFontName="Helvetica" size="8" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{SERVICEYEARS}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="94"
+						y="155"
+						width="432"
+						height="0"
+						key="line-22"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="243"
+						y="203"
+						width="112"
+						height="17"
+						key="textField"
+						stretchType="RelativeToBandHeight"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{HTWT}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="239"
+						y="174"
+						width="0"
+						height="46"
+						key="line-23"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="234"  isSplitAllowed="true" >
+				<elementGroup><!--  Start: 1 !-->
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="1"
+						y="25"
+						width="548"
+						height="18"
+						key="textField"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"
+						isPrintWhenDetailOverflows="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PRESENT_ILLNESS}]]></textFieldExpression>
+				</textField>
+				</elementGroup><!-- End 1 !-->
+				<elementGroup><!--  Start: 2 !-->
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="1"
+						y="51"
+						width="548"
+						height="18"
+						key="textField"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"
+						isPrintWhenDetailOverflows="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PERSONAL_PAST_HISTORY}]]></textFieldExpression>
+				</textField>
+				</elementGroup><!-- End 2 !-->
+				<elementGroup><!--  Start: 3 !-->
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="1"
+						y="76"
+						width="548"
+						height="18"
+						key="textField"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"
+						isPrintWhenDetailOverflows="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{FAMILY_PRESENT_HISTORY}]]></textFieldExpression>
+				</textField>
+				</elementGroup><!-- End 3 !-->
+				<elementGroup><!--  Start: 4 !-->
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="1"
+						y="127"
+						width="548"
+						height="17"
+						key="textField"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"
+						isPrintWhenDetailOverflows="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{EXAMINATION}]]></textFieldExpression>
+				</textField>
+				</elementGroup><!-- End 4 !-->
+				<elementGroup><!--  Start: 5 !-->
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="1"
+						y="152"
+						width="548"
+						height="17"
+						key="textField"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"
+						isPrintWhenDetailOverflows="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CLINICALINFO}]]></textFieldExpression>
+				</textField>
+				</elementGroup><!-- End 5 !-->
+				<elementGroup><!--  Start: 6 !-->
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="1"
+						y="103"
+						width="548"
+						height="18"
+						key="textField-12"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"
+						isPrintWhenDetailOverflows="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{OTHERS}]]></textFieldExpression>
+				</textField>
+				</elementGroup><!-- End 6 !-->
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="1"
+						y="198"
+						width="548"
+						height="35"
+						key="subreport-4"
+						positionType="Float"/>
+					<subreportParameter  name="visitNo">
+						<subreportParameterExpression><![CDATA[$P{visitNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="serviceNo">
+						<subreportParameterExpression><![CDATA[$P{serviceNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//Diagnosis_report_sub.jasper"]]></subreportExpression>
+				</subreport>
+				<elementGroup><!--  Start: 7 !-->
+				<textField isStretchWithOverflow="true" pattern=" " isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="1"
+						y="4"
+						width="548"
+						height="15"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"
+						isPrintWhenDetailOverflows="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PRESENT_COMPLAIN}]]></textFieldExpression>
+				</textField>
+				</elementGroup><!-- End 7 !-->
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="3"
+						y="175"
+						width="547"
+						height="18"
+						key="textField-14"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PROV_DIAG}]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="false" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="482"  isSplitAllowed="true" >
+				<elementGroup><!--  Start: 8 !-->
+				<textField isStretchWithOverflow="true" pattern="dd-MMM-yy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="360"
+						y="399"
+						width="184"
+						height="17"
+						key="textField-11"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DETAILS_NEXT_VISIT_DATE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="159"
+						y="2"
+						width="251"
+						height="19"
+						key="staticText-47"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true" isUnderline="true"/>
+					</textElement>
+				<text><![CDATA[CONFIDENTIAL]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="2"
+						y="98"
+						width="550"
+						height="20"
+						key="subreport-1"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"
+						isPrintWhenDetailOverflows="true"/>
+					<subreportParameter  name="visitNo">
+						<subreportParameterExpression><![CDATA[$P{visitNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="serviceNo">
+						<subreportParameterExpression><![CDATA[$P{serviceNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"//drugDetailSubReport.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="2"
+						y="122"
+						width="550"
+						height="21"
+						key="subreport-2"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="visitNo">
+						<subreportParameterExpression><![CDATA[$P{visitNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="serviceNo">
+						<subreportParameterExpression><![CDATA[$P{serviceNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//InvestigationDetailSubReport.jasper"]]></subreportExpression>
+				</subreport>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="2"
+						y="74"
+						width="546"
+						height="19"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Times New Roman" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DEPTNAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="50"
+						width="546"
+						height="18"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DISPOSAL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="23"
+						width="546"
+						height="15"
+						key="textField"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PRESENT_ADVICE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="170"
+						width="546"
+						height="15"
+						key="textField-13"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{HISTORY_OUTSIDE_INVESTIGATION}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="5"
+						y="304"
+						width="253"
+						height="16"
+						key="textField"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{userRank}+" "+$P{userName}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="355"
+						y="423"
+						width="194"
+						height="15"
+						key="textField"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DOC_RANK}+" "+$F{DOC_NAME}]]></textFieldExpression>
+				</textField>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="3"
+						y="187"
+						width="546"
+						height="20"
+						key="subreport-5"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="visitNo">
+						<subreportParameterExpression><![CDATA[$P{visitNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="serviceNo">
+						<subreportParameterExpression><![CDATA[$P{serviceNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//referredDeptSubReport.jasper"]]></subreportExpression>
+				</subreport>
+				</elementGroup><!-- End 8 !-->
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="3"
+						y="209"
+						width="546"
+						height="20"
+						key="subreport-6"
+						positionType="Float"
+						isPrintRepeatedValues="false"
+						isRemoveLineWhenBlank="true"/>
+					<subreportParameter  name="visitNo">
+						<subreportParameterExpression><![CDATA[$P{visitNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="serviceNo">
+						<subreportParameterExpression><![CDATA[$P{serviceNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hinNo">
+						<subreportParameterExpression><![CDATA[$P{hinNo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="hospitalId">
+						<subreportParameterExpression><![CDATA[$P{hospitalId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//outSideInvestigationSubReport.jasper"]]></subreportExpression>
+				</subreport>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="258"
+						width="546"
+						height="18"
+						key="textField"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DETAILS_PLAN}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="0"
+						y="236"
+						width="93"
+						height="19"
+						key="staticText-48"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Plan :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="459"
+						width="546"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{IKEYLOGIN}]]></textFieldExpression>
+				</textField>
+			</band>
+		</summary>
+		<noData>
+			<band height="21"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="490"
+						y="17"
+						width="0"
+						height="0"
+						key="line-4"
+						positionType="Float"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="5"
+						y="4"
+						width="547"
+						height="17"
+						key="staticText-20"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[ No Record Found!]]></text>
+				</staticText>
+			</band>
+		</noData>
+</jasperReport>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="MedicalExamAssistent_subreport0_subreport0"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="534"
+		 pageHeight="50"
+		 columnWidth="534"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="order_id" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+     distinct (case when (dg_result_entry_detail.sub_investigation_id) is null then dg_mas_investigation.investigation_name else (concat(dg_mas_investigation.investigation_name,concat(' / ',dg_sub_mas_investigation.sub_investigation_name)))end)AS investigation_name,
+    --  (case when (dg_result_entry_detail.fixed_id) is null then dg_result_entry_detail.result
+     --else (dg_fixed_value.fixed_value)end) as result,
+     DBMS_LOB.substr(dg_result_entry_detail.result,3000)as result,
+ case when dg_mas_investigation.normal_value is null then concat(concat(dg_mas_investigation.min_normal_value,'-'),dg_mas_investigation.max_normal_value) else dg_mas_investigation.normal_value end as normal_range,
+ case
+     when dg_mas_investigation.investigation_type='s' then
+     (select uom_name from dg_uom where uom_id=dg_mas_investigation.uom_id)
+     else (select uom_name from dg_uom where uom_id=dg_sub_mas_investigation.uom_id) end as uom,
+    dg_result_entry_detail.remarks as remarks
+FROM
+      dg_orderhd
+      LEFT  JOIN dg_orderdt ON dg_orderdt.orderhd_id = dg_orderhd.orderhd_id
+
+       LEFT  JOIN dg_sample_collection_header ON dg_sample_collection_header.order_id=dg_orderhd.orderhd_id
+       LEFT  JOIN dg_result_entry_header ON dg_result_entry_header.sample_collection_header_id=dg_sample_collection_header.sample_collection_header_id
+       LEFT  JOIN dg_result_entry_detail ON dg_result_entry_header.result_entry_id=dg_result_entry_detail.result_entry_id
+       LEFT  JOIN  dg_mas_investigation ON dg_mas_investigation.investigation_id=dg_result_entry_header.investigation_id
+      LEFT  JOIN  dg_sub_mas_investigation ON dg_sub_mas_investigation.sub_investigation_id=dg_result_entry_detail.sub_investigation_id
+      LEFT  JOIN dg_normal_value on dg_normal_value.normal_id=dg_result_entry_detail.normal_id and dg_result_entry_detail.sub_investigation_ID=dg_normal_value.sub_investigation_ID
+       LEFT  JOIN dg_uom on dg_uom.uom_id=dg_result_entry_detail.uom_id
+       LEFT  JOIN mas_sub_chargecode on mas_sub_chargecode.sub_chargecode_id=dg_result_entry_header.sub_chargecode_id
+LEFT  JOIN dg_fixed_value on dg_fixed_value.fixed_id=dg_result_entry_detail.fixed_id
+where
+
+
+dg_orderhd.orderhd_id=$P{order_id}
+ order by investigation_name]]></queryString>
+
+	<field name="INVESTIGATION_NAME" class="java.lang.String"/>
+	<field name="RESULT" class="java.lang.String"/>
+	<field name="NORMAL_RANGE" class="java.lang.String"/>
+	<field name="UOM" class="java.lang.String"/>
+	<field name="REMARKS" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="13"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="0"
+						width="108"
+						height="13"
+						key="textField"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{INVESTIGATION_NAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="129"
+						y="0"
+						width="85"
+						height="13"
+						key="textField"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{RESULT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="255"
+						y="0"
+						width="66"
+						height="13"
+						key="textField"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="338"
+						y="0"
+						width="66"
+						height="13"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NORMAL_RANGE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="414"
+						y="0"
+						width="120"
+						height="13"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{REMARKS}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

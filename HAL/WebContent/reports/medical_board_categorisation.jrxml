@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="medical_board_categorisation"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="612"
+		 pageHeight="864"
+		 columnWidth="552"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="id" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String"/>
+	<queryString><![CDATA[SELECT
+     concat(ifnull(mas_employee1.`first_name`,''),' ',ifnull(mas_employee1.`last_name`,'')) AS member1_name,
+     concat(ifnull(mas_employee2.`first_name`,''),' ',ifnull(mas_employee2.`last_name`,'')) AS member2_name,
+     mas_medical_board_proceedings.`service_no` AS service_no,
+     mas_medical_board_proceedings.`rank_name` AS rank_name,
+     mas_medical_board_proceedings.`unit_name` AS unit_name,
+     mas_medical_board_proceedings.`service_name` AS service_name,
+     (select CONCAT(first_name,' ',last_name) from  mas_medical_board_proceedings where  mas_medical_board_proceedings.`medical_board_id`=$P{id} ) AS first_name,
+     mas_medical_board_proceedings.`age` AS Age,
+     mas_medical_board_proceedings.`sex` AS Sex,
+     mas_medical_board_proceedings.`weight` AS Weight,
+     mas_medical_board_proceedings.`height` AS Height,
+     mas_medical_board_proceedings.`trade_name` AS TradeName,
+     mas_medical_board_proceedings.`address` AS Address,
+     mas_medical_board_proceedings.`date_of_commissioning` AS DateOfCommissioning,
+     mas_medical_board_proceedings.`date_of_recategorization` AS DateOfRecategorization,
+     mas_medical_board_proceedings.`place_of_recategorization` AS PlaceOfRecategorization,
+     mas_medical_board_proceedings.`previous_disablement` AS PreviousDisablement,
+     mas_medical_board_proceedings.`present_disablement` AS Present_disablement,
+     mas_medical_board_proceedings.`disability_attributable_status` AS DisabilityAttributableStatus,
+     mas_medical_board_proceedings.`disability_attributable_desc` AS DisabilityAttributableDesc,
+     mas_medical_board_proceedings.`address_on_leave` AS AddressOnLeave,
+     mas_medical_board_proceedings.`ceased_duty_on` AS CeasedDutyOn,
+     mas_medical_board_proceedings.`medical_category_duration` AS MedicalCategoryDuration,
+     mas_medical_board_proceedings.`past_medical_history` AS PastMedicalHistory,
+     mas_medical_board_proceedings.`medical_category` AS MedicalCategory,
+     mas_medical_board_proceedings.`instruction_by_president` AS InstructionByPresident,
+     mas_medical_board_proceedings.`restriction_regarding_employment` AS RestrictionRegardingEmployment,
+     mas_medical_board_proceedings.`reasons_for_variation` AS ReasonsForVariation,
+     mas_medical_board_proceedings.`aggravated_service_status` AS AggravatedServiceStatus,
+     mas_medical_board_proceedings.`aggravated_service_desc` AS AggravatedServiceDesc,
+     mas_medical_board_proceedings.`entry_no` AS Entry_No,
+     mas_medical_board_proceedings.`entry_date` AS EntryDate,
+     mas_medical_board_proceedings.`clinical_summary` AS ClinicalSummary,
+     mas_medical_board_proceedings.`ad_no` AS AdNo,
+     mas_medical_board_proceedings.`medical_category_with_duration` As MedicalCategoryWithDuration,
+     mas_district.`district_name` AS City,
+     mas_state.`state_name` AS State,
+     mas_medical_board_proceedings.`board_president` AS BoardPresident,
+     mas_medical_board_proceedings.`medical_type` AS Medical_type,
+     mas_medical_board_details.`disabilities` AS Disabilities,
+     mas_medical_board_details.`date_of_origin` AS DateOfOrigin,
+     mas_medical_board_details.`place_of_origin` AS PlaceOfOrigin,
+     mas_medical_board_details.`previous_medical_categorisatrion` AS PreviousMedicalCategorisatrion,
+     mas_medical_board_details.`previous_medical_categorisation_date` AS PreviousMedicalCategorisation_date,
+     mas_medical_board_details.`next_medical_categorisation_due` AS NextMedicalCategorisationDue ,
+     mas_medical_board_proceedings.`sick_leave_in_week` as weeks ,
+     mas_medical_board_proceedings.`sick_leave_date` as sick_date ,
+     case when ((mas_medical_board_proceedings.`sick_leave_in_week` is not null ) and ( mas_medical_board_proceedings.`sick_leave_date` is not null))
+     then ADDDATE(mas_medical_board_proceedings.`sick_leave_date` ,(mas_medical_board_proceedings.`sick_leave_in_week` * 7))
+     else ''
+     end as due_date ,
+     concat(ifnull(mas_medical_board_proceedings.`medical_category_with_duration` ,''),' ',ifnull(mas_medical_board_proceedings.`medical_category_duration`,'') ) as LMC
+     FROM
+     `mas_medical_board_proceedings` mas_medical_board_proceedings inner JOIN `mas_medical_board_details` mas_medical_board_details ON mas_medical_board_proceedings.`medical_board_id` = mas_medical_board_details.`board_proceedings_id`
+      left outer join mas_employee `mas_employee1` on  mas_medical_board_proceedings.`board_president`= mas_employee1.`employee_id`
+      left outer join mas_employee `mas_employee2` on  mas_medical_board_proceedings.`member1_name`= mas_employee2.`employee_id`
+      left outer join mas_employee `mas_employee3` on  mas_medical_board_proceedings.`member2_name`= mas_employee3.`employee_id`
+      left outer join mas_district `mas_district` on mas_medical_board_proceedings.`city`= mas_district.`district_id`
+      left outer join mas_state `mas_state` on 	  mas_medical_board_proceedings.`state`= mas_state.`state_id`
+where mas_medical_board_proceedings.`medical_board_id`=$P{id}]]></queryString>
+
+	<field name="member1_name" class="java.lang.String"/>
+	<field name="member2_name" class="java.lang.String"/>
+	<field name="service_no" class="java.lang.String"/>
+	<field name="rank_name" class="java.lang.String"/>
+	<field name="unit_name" class="java.lang.String"/>
+	<field name="service_name" class="java.lang.String"/>
+	<field name="first_name" class="java.lang.String"/>
+	<field name="Age" class="java.lang.String"/>
+	<field name="Sex" class="java.lang.String"/>
+	<field name="Weight" class="java.lang.String"/>
+	<field name="Height" class="java.lang.String"/>
+	<field name="TradeName" class="java.lang.String"/>
+	<field name="Address" class="java.lang.String"/>
+	<field name="DateOfCommissioning" class="java.sql.Date"/>
+	<field name="DateOfRecategorization" class="java.sql.Date"/>
+	<field name="PlaceOfRecategorization" class="java.lang.String"/>
+	<field name="PreviousDisablement" class="java.lang.Long"/>
+	<field name="Present_disablement" class="java.lang.Long"/>
+	<field name="DisabilityAttributableStatus" class="java.lang.String"/>
+	<field name="DisabilityAttributableDesc" class="java.lang.String"/>
+	<field name="AddressOnLeave" class="java.lang.String"/>
+	<field name="CeasedDutyOn" class="java.sql.Date"/>
+	<field name="MedicalCategoryDuration" class="java.lang.String"/>
+	<field name="PastMedicalHistory" class="java.lang.String"/>
+	<field name="MedicalCategory" class="java.lang.String"/>
+	<field name="InstructionByPresident" class="java.lang.String"/>
+	<field name="RestrictionRegardingEmployment" class="java.lang.String"/>
+	<field name="ReasonsForVariation" class="java.lang.String"/>
+	<field name="AggravatedServiceStatus" class="java.lang.String"/>
+	<field name="AggravatedServiceDesc" class="java.lang.String"/>
+	<field name="Entry_No" class="java.lang.String"/>
+	<field name="EntryDate" class="java.sql.Date"/>
+	<field name="ClinicalSummary" class="java.lang.String"/>
+	<field name="AdNo" class="java.lang.String"/>
+	<field name="MedicalCategoryWithDuration" class="java.lang.String"/>
+	<field name="City" class="java.lang.String"/>
+	<field name="State" class="java.lang.String"/>
+	<field name="BoardPresident" class="java.lang.Long"/>
+	<field name="Medical_type" class="java.lang.String"/>
+	<field name="Disabilities" class="java.lang.String"/>
+	<field name="DateOfOrigin" class="java.sql.Date"/>
+	<field name="PlaceOfOrigin" class="java.lang.String"/>
+	<field name="PreviousMedicalCategorisatrion" class="java.lang.String"/>
+	<field name="PreviousMedicalCategorisation_date" class="java.sql.Date"/>
+	<field name="NextMedicalCategorisationDue" class="java.sql.Date"/>
+	<field name="weeks" class="java.lang.Long"/>
+	<field name="sick_date" class="java.sql.Date"/>
+	<field name="due_date" class="java.lang.String"/>
+	<field name="LMC" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="239"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="377"
+						y="4"
+						width="169"
+						height="20"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true" isUnderline="true"/>
+					</textElement>
+				<text><![CDATA[AFMSF :- 79]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="113"
+						y="28"
+						width="284"
+						height="18"
+						key="staticText-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true" isUnderline="true"/>
+					</textElement>
+				<text><![CDATA[CATEGORISATION MEDICAL BOARD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="113"
+						y="47"
+						width="284"
+						height="18"
+						key="staticText-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[(Instruction given to the individual)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="79"
+						width="324"
+						height="19"
+						key="staticText-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Place : Command Hospital Air Force Banglore-560007]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="409"
+						y="79"
+						width="80"
+						height="17"
+						key="staticText-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Date :-]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="103"
+						width="552"
+						height="0"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch" pen="Dotted"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="0"
+						y="106"
+						width="83"
+						height="17"
+						key="staticText-6"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Service No .:- ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="156"
+						y="107"
+						width="53"
+						height="16"
+						key="staticText-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Rank :-]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="322"
+						y="108"
+						width="59"
+						height="15"
+						key="staticText-8"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Name :-]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="128"
+						width="63"
+						height="16"
+						key="staticText-9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Branch :-]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="155"
+						y="128"
+						width="60"
+						height="15"
+						key="staticText-10"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Age :-]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="247"
+						y="128"
+						width="34"
+						height="15"
+						key="staticText-11"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Yrs]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="298"
+						y="128"
+						width="59"
+						height="15"
+						key="staticText-12"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Unit :-]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="154"
+						width="552"
+						height="17"
+						key="staticText-13"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Was medically examined on :- ..................................... for categorization/grant of sick leave and was :- ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="35"
+						y="174"
+						width="146"
+						height="18"
+						key="staticText-14"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[(a) Classified in category :-]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="35"
+						y="195"
+						width="144"
+						height="16"
+						key="staticText-15"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[(b) Granted sick leave for :-]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="221"
+						y="195"
+						width="77"
+						height="18"
+						key="staticText-16"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Weeks wef.:-]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="219"
+						width="73"
+						height="17"
+						key="staticText-17"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[DIAG:-]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="63"
+						y="106"
+						width="86"
+						height="16"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{service_no}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="193"
+						y="107"
+						width="124"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rank_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="365"
+						y="107"
+						width="176"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{first_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="44"
+						y="128"
+						width="111"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{TradeName}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="193"
+						y="128"
+						width="48"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{Age}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="330"
+						y="128"
+						width="216"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{unit_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="154"
+						y="151"
+						width="100"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{EntryDate}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="181"
+						y="174"
+						width="339"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{LMC}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="166"
+						y="195"
+						width="55"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{weeks}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="281"
+						y="195"
+						width="100"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{sick_date}]]></textFieldExpression>
+				</textField>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="22"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="25"
+						y="1"
+						width="215"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{Disabilities}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="456"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-13"
+						y="441"
+						width="565"
+						height="15"
+						key="subreport-1"/>
+					<subreportParameter  name="id">
+						<subreportParameterExpression><![CDATA[$P{id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "//medical_board_history.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="231"
+						height="20"
+						key="staticText-18"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[He/She is due for another medical board on :- ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="24"
+						width="230"
+						height="19"
+						key="staticText-19"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[He/she has been instructed to :-]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="156"
+						y="136"
+						width="317"
+						height="19"
+						key="staticText-20"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[(a)  Report back to his/her unit/ship/establishment/nearest MH .]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="156"
+						y="157"
+						width="316"
+						height="18"
+						key="staticText-21"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[(b)  Proceed on sick leave to (Leave address) :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="156"
+						y="216"
+						width="385"
+						height="18"
+						key="staticText-22"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[And inform his/her commanding officer .]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="156"
+						y="250"
+						width="384"
+						height="41"
+						key="staticText-23"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[(C)  To request the nearest Armed Force Hospital/Sick Bay to arrange a medical board in case he/she has not received notice to attend a medical board within 8 days of the due date .]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="158"
+						y="344"
+						width="159"
+						height="18"
+						key="staticText-24"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[(Signature of the individual)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="384"
+						y="342"
+						width="162"
+						height="17"
+						key="staticText-25"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[President Medical Board]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="384"
+						y="359"
+						width="162"
+						height="15"
+						key="staticText-26"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[CHAFB Banglore]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="384"
+						y="402"
+						width="105"
+						height="17"
+						key="staticText-27"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Date :-]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="231"
+						y="0"
+						width="209"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{due_date}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="43"
+						width="552"
+						height="78"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{InstructionByPresident}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="156"
+						y="175"
+						width="390"
+						height="36"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{Address}]]></textFieldExpression>
+				</textField>
+			</band>
+		</summary>
+</jasperReport>

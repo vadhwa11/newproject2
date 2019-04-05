@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="subBedStatisticsDetail3"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="864"
+		 pageHeight="1080"
+		 columnWidth="864"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="toDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select  d.REMD,ADM,b.Death,c.DIS,ifnull(a.ADM,0) + ifnull(d.REMD,0) - ifnull(b.Death,0) - ifnull(c.DIS,0) as TOT
+,e.OFF_AF,f.OFF_ARMY,g.OFF_NAVY,ifnull(e.OFF_AF,0)+ifnull(f.OFF_ARMY,0)+ifnull(g.OFF_NAVY,0)AS OFF_TOT,
+h.OFF_FAM_AF,i.OFF_FAM_ARMY,j.OFF_FAM_NAVY,ifnull(h.OFF_FAM_AF,0)+ifnull(i.OFF_FAM_ARMY,0)+ifnull(OFF_FAM_NAVY,0)AS OFF_FAM_TOT
+,k.ORS_AF,l.ORS_ARMY,m.ORS_NAVY,ifnull(k.ORS_AF,0)+ifnull(l.ORS_ARMY,0)+ifnull(m.ORS_NAVY,0)AS ORS_TOT,
+n.ORS_FAM_AF,o.ORS_FAM_ARMY,p.ORS_FAM_NAVY,ifnull(n.ORS_FAM_AF,0)+ifnull(o.ORS_FAM_ARMY,0)+ifnull(p.ORS_FAM_NAVY,0)AS ORS_FAM_TOT,
+ifnull(e.OFF_AF,0)+ifnull(h.OFF_FAM_AF,0)+ifnull(k.ORS_AF,0)+ifnull(n.ORS_FAM_AF,0) AS AF_TOT,
+ifnull(f.OFF_ARMY,0)+ifnull(i.OFF_FAM_ARMY,0)+ifnull(l.ORS_ARMY,0)+ifnull(o.ORS_FAM_ARMY,0) AS ARMY_TOT,
+ifnull(g.OFF_NAVY,0)+ifnull(j.OFF_FAM_NAVY,0)+ifnull(m.ORS_NAVY,0)+ifnull(p.ORS_FAM_NAVY,0) AS NAVY_TOT,
+q.CE_NE AS CE_NE,
+r.FORG,
+ifnull(ifnull(e.OFF_AF,0)+ifnull(h.OFF_FAM_AF,0)+ifnull(k.ORS_AF,0)+ifnull(n.ORS_FAM_AF,0),0)
++ifnull(ifnull(f.OFF_ARMY,0)+ifnull(i.OFF_FAM_ARMY,0)+ifnull(l.ORS_ARMY,0)+ifnull(o.ORS_FAM_ARMY,0),0)
++ifnull(ifnull(g.OFF_NAVY,0)+ifnull(j.OFF_FAM_NAVY,0)+ifnull(m.ORS_NAVY,0)+ifnull(p.ORS_FAM_NAVY,0),0)
++ifnull(CE_NE,0)+ifnull(r.FORG,0) AS FINAL_TOT
+
+
+
+ from 
+(SELECT count(*) as ADM FROM inpatient inpatient  where inpatient.date_of_addmission = $P{toDate} ) a,
+(SELECT count(*) as Death FROM expiry_details expiry_details where expiry_details.expiry_date  = $P{toDate}  ) b,
+(SELECT count(*) as DIS FROM discharge discharge where discharge.date_of_discharge = $P{toDate}) c,
+(SELECT count(*) as REMD FROM inpatient inp2 where inp2.date_of_addmission <= DATE_ADD($P{toDate},INTERVAL '-1'DAY)  and DATE_ADD($P{toDate},INTERVAL '-1'DAY) <= inp2.discharge_date ) d,
+
+
+(SELECT count(*) as OFF_AF FROM inpatient inp3 
+ LEFT OUTER JOIN patient patient1 ON inp3.`hin_id` = patient1.`hin_id`
+ left outer JOIN mas_rank rank1 ON rank1.`rank_id` = patient1.`rank_id`
+ where inp3.date_of_addmission <= $P{toDate} and $P{toDate} <= inp3.discharge_date 
+and rank1.`rank_category_id` =1 and patient1.`relation_id` =8 and patient1.`service_type_id` =2) e,
+
+(SELECT count(*) as OFF_ARMY FROM inpatient inp4 
+ LEFT OUTER JOIN patient patient2 ON inp4.`hin_id` = patient2.`hin_id`
+ left outer JOIN mas_rank rank2 ON rank2.`rank_id` = patient2.`rank_id`
+ where inp4.date_of_addmission <= $P{toDate} and $P{toDate} <= inp4.discharge_date 
+and rank2.`rank_category_id` =1 and patient2.`relation_id` =8 and patient2.`service_type_id` =1) f,
+
+(SELECT count(*) as OFF_NAVY FROM inpatient inp5 
+ LEFT OUTER JOIN patient patient3 ON inp5.`hin_id` = patient3.`hin_id`
+ left outer JOIN mas_rank rank3 ON rank3.`rank_id` = patient3.`rank_id`
+ where inp5.date_of_addmission <= $P{toDate} and $P{toDate} <= inp5.discharge_date 
+and rank3.`rank_category_id` =1 and patient3.`relation_id` =8 and patient3.`service_type_id` IN (4,6)) g,
+
+
+
+
+
+
+(SELECT count(*) as OFF_FAM_AF FROM inpatient inp3 
+ LEFT OUTER JOIN patient patient1 ON inp3.`hin_id` = patient1.`hin_id`
+ left outer JOIN mas_rank rank1 ON rank1.`rank_id` = patient1.`rank_id`
+ where inp3.date_of_addmission <= $P{toDate} and $P{toDate} <= inp3.discharge_date 
+and rank1.`rank_category_id` =1 and patient1.`relation_id` !=8 and patient1.`service_type_id` =2) h,
+
+(SELECT count(*) as OFF_FAM_ARMY FROM inpatient inp4 
+ LEFT OUTER JOIN patient patient2 ON inp4.`hin_id` = patient2.`hin_id`
+ left outer JOIN mas_rank rank2 ON rank2.`rank_id` = patient2.`rank_id`
+ where inp4.date_of_addmission <= $P{toDate} and $P{toDate} <= inp4.discharge_date 
+and rank2.`rank_category_id` =1 and patient2.`relation_id`!=8 and patient2.`service_type_id` =1) i,
+
+(SELECT count(*) as OFF_FAM_NAVY FROM inpatient inp5 
+ LEFT OUTER JOIN patient patient3 ON inp5.`hin_id` = patient3.`hin_id`
+ left outer JOIN mas_rank rank3 ON rank3.`rank_id` = patient3.`rank_id`
+ where inp5.date_of_addmission <= $P{toDate} and $P{toDate} <= inp5.discharge_date 
+and rank3.`rank_category_id` =1 and patient3.`relation_id` !=8 and patient3.`service_type_id` IN (4,6)) j,
+
+
+
+(SELECT count(*) as ORS_AF FROM inpatient inp3 
+ LEFT OUTER JOIN patient patient1 ON inp3.`hin_id` = patient1.`hin_id`
+ left outer JOIN mas_rank rank1 ON rank1.`rank_id` = patient1.`rank_id`
+ where inp3.date_of_addmission <= $P{toDate} and $P{toDate} <= inp3.discharge_date 
+and rank1.`rank_category_id` !=1 and patient1.`relation_id` =8 and patient1.`service_type_id` =2) k,
+
+(SELECT count(*) as ORS_ARMY FROM inpatient inp4 
+ LEFT OUTER JOIN patient patient2 ON inp4.`hin_id` = patient2.`hin_id`
+ left outer JOIN mas_rank rank2 ON rank2.`rank_id` = patient2.`rank_id`
+ where inp4.date_of_addmission <= $P{toDate} and $P{toDate} <= inp4.discharge_date 
+and rank2.`rank_category_id` !=1 and patient2.`relation_id` =8 and patient2.`service_type_id` =1) l,
+
+(SELECT count(*) as ORS_NAVY FROM inpatient inp5 
+ LEFT OUTER JOIN patient patient3 ON inp5.`hin_id` = patient3.`hin_id`
+ left outer JOIN mas_rank rank3 ON rank3.`rank_id` = patient3.`rank_id`
+ where inp5.date_of_addmission <= $P{toDate} and $P{toDate} <= inp5.discharge_date 
+and rank3.`rank_category_id` !=1 and patient3.`relation_id` =8 and patient3.`service_type_id` IN (4,6)) m,
+
+
+
+
+
+
+(SELECT count(*) as ORS_FAM_AF FROM inpatient inp3 
+ LEFT OUTER JOIN patient patient1 ON inp3.`hin_id` = patient1.`hin_id`
+ left outer JOIN mas_rank rank1 ON rank1.`rank_id` = patient1.`rank_id`
+ where inp3.date_of_addmission <= $P{toDate} and $P{toDate} <= inp3.discharge_date 
+and rank1.`rank_category_id` !=1 and patient1.`relation_id` !=8 and patient1.`service_type_id` =2) n,
+
+(SELECT count(*) as ORS_FAM_ARMY FROM inpatient inp4 
+ LEFT OUTER JOIN patient patient2 ON inp4.`hin_id` = patient2.`hin_id`
+ left outer JOIN mas_rank rank2 ON rank2.`rank_id` = patient2.`rank_id`
+ where inp4.date_of_addmission <= $P{toDate} and $P{toDate} <= inp4.discharge_date 
+and rank2.`rank_category_id` !=1 and patient2.`relation_id`!=8 and patient2.`service_type_id` =1)o,
+
+(SELECT count(*) as ORS_FAM_NAVY FROM inpatient inp5 
+ LEFT OUTER JOIN patient patient3 ON inp5.`hin_id` = patient3.`hin_id`
+ left outer JOIN mas_rank rank3 ON rank3.`rank_id` = patient3.`rank_id`
+ where inp5.date_of_addmission <= $P{toDate} and $P{toDate} <= inp5.discharge_date 
+and rank3.`rank_category_id` !=1 and patient3.`relation_id` !=8 and patient3.`service_type_id`IN (4,6)) p,
+
+
+(SELECT count(*) as CE_NE FROM inpatient inp5 
+ LEFT OUTER JOIN patient patient3 ON inp5.`hin_id` = patient3.`hin_id`
+ 
+ where inp5.date_of_addmission <= $P{toDate} and $P{toDate} <= inp5.discharge_date 
+and  patient3.`service_type_id` IN (3,7)) q,
+
+
+(SELECT count(*) as FORG FROM inpatient inp5 
+ LEFT OUTER JOIN patient patient3 ON inp5.`hin_id` = patient3.`hin_id`
+ 
+ where inp5.date_of_addmission <= $P{toDate} and $P{toDate} <= inp5.discharge_date 
+and  patient3.`service_type_id` =5) r
+
+
+
+;]]></queryString>
+
+	<field name="REMD" class="java.lang.Long"/>
+	<field name="ADM" class="java.lang.Long"/>
+	<field name="Death" class="java.lang.Long"/>
+	<field name="DIS" class="java.lang.Long"/>
+	<field name="TOT" class="java.lang.Long"/>
+	<field name="OFF_AF" class="java.lang.Long"/>
+	<field name="OFF_ARMY" class="java.lang.Long"/>
+	<field name="OFF_NAVY" class="java.lang.Long"/>
+	<field name="OFF_TOT" class="java.lang.Long"/>
+	<field name="OFF_FAM_AF" class="java.lang.Long"/>
+	<field name="OFF_FAM_ARMY" class="java.lang.Long"/>
+	<field name="OFF_FAM_NAVY" class="java.lang.Long"/>
+	<field name="OFF_FAM_TOT" class="java.lang.Long"/>
+	<field name="ORS_AF" class="java.lang.Long"/>
+	<field name="ORS_ARMY" class="java.lang.Long"/>
+	<field name="ORS_NAVY" class="java.lang.Long"/>
+	<field name="ORS_TOT" class="java.lang.Long"/>
+	<field name="ORS_FAM_AF" class="java.lang.Long"/>
+	<field name="ORS_FAM_ARMY" class="java.lang.Long"/>
+	<field name="ORS_FAM_NAVY" class="java.lang.Long"/>
+	<field name="ORS_FAM_TOT" class="java.lang.Long"/>
+	<field name="AF_TOT" class="java.lang.Long"/>
+	<field name="ARMY_TOT" class="java.lang.Long"/>
+	<field name="NAVY_TOT" class="java.lang.Long"/>
+	<field name="CE_NE" class="java.lang.Long"/>
+	<field name="FORG" class="java.lang.Long"/>
+	<field name="FINAL_TOT" class="java.lang.Long"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="17"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="2"
+						y="0"
+						width="28"
+						height="15"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{FORG}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="42"
+						y="0"
+						width="38"
+						height="14"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{FINAL_TOT}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="1"
+						y="15"
+						width="81"
+						height="0"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="82"
+						y="0"
+						width="0"
+						height="16"
+						key="line-4"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="41"
+						y="0"
+						width="0"
+						height="16"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="0"
+						width="0"
+						height="16"
+						key="line-6"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

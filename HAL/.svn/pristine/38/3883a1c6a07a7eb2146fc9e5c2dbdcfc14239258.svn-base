@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="jkt.hms.masters.business">
+	<class name="DgMasInvestigation" table="dg_mas_investigation">
+		<meta attribute="sync-DAO">false</meta>
+		<id name="Id" type="integer" column="investigation_id">
+			<generator class="native"></generator>
+		</id>
+
+		<property name="InvestigationName" column="investigation_name"
+			type="string" not-null="false" length="200" />
+		<property name="Status" column="status" type="string"
+			not-null="false" length="1" />
+		<property name="Confidential" column="confidential" type="string"
+			not-null="false" length="1" />
+		<property name="AppearInDischargeSummary" column="appear_in_discharge_summary"
+			type="string" not-null="false" length="1" />
+		<property name="InvestigationType" column="investigation_type"
+			type="string" not-null="false" length="1" />
+		<property name="MultipleResults" column="multiple_results"
+			type="string" not-null="false" length="1" />
+		<property name="Quantity" column="quantity" type="string"
+			not-null="false" length="10" />
+		<property name="NormalValue" column="normal_value" type="string"
+			not-null="false" length="20" />
+		<property name="LastChgBy" column="last_chg_by" type="string"
+			not-null="false" length="12" />
+		<property name="LastChgDate" column="last_chg_date" type="date"
+			not-null="false" />
+		<property name="LastChgTime" column="last_chg_time" type="string"
+			not-null="false" length="10" />
+		<property name="AppointmentRequired" column="appointment_required"
+			type="string" not-null="false" length="1" />
+		<property name="MaxNormalValue" column="max_normal_value"
+			type="string" not-null="false" length="10" />
+		<property name="MinNormalValue" column="min_normal_value"
+			type="string" not-null="false" length="10" />
+		<property name="TestOrderNo" column="test_order_no" type="integer"
+			not-null="false" length="3" />
+		<property name="NumericOrString" column="numeric_or_string"
+			type="string" not-null="false" length="1" />
+		<property name="HicCode" column="hic_code" type="string"
+			not-null="false" length="25" />
+		<many-to-one name="ChargeCode" column="charge_code_id"
+			class="MasChargeCode" not-null="false">
+		</many-to-one>
+		<many-to-one name="MainChargecode" column="main_chargecode_id"
+			class="MasMainChargecode" not-null="false">
+		</many-to-one>
+		<many-to-one name="Uom" column="uom_id" class="DgUom"
+			not-null="false">
+		</many-to-one>
+		<many-to-one name="SubChargecode" column="sub_chargecode_id"
+			class="MasSubChargecode" not-null="false">
+		</many-to-one>
+		<many-to-one name="Sample" column="sample_id" class="MasSample"
+			not-null="false">
+		</many-to-one>
+		<many-to-one name="Equipment" column="equipment_id" class="AppEquipmentMaster"
+			not-null="false">
+		</many-to-one>
+		<many-to-one name="Container" column="collection_id"
+			class="DgMasCollection" not-null="false">
+		</many-to-one>
+		<property name="BloodReactionTest" column="blood_reaction_test"
+			type="string" not-null="false" length="1" />
+		<property name="BloodBankScreenTest" column="blood_bank_screen_test"
+			type="string" not-null="false" length="1" />
+			
+			<property name="Instructions" column="instructions"
+			type="string" not-null="false" length="1500" />
+			
+		<set name="DgSubMasInvestigations" inverse="true">
+			<key column="investigation_id" />
+			<one-to-many class="DgSubMasInvestigation" />
+		</set>
+
+		<set name="DgSampleCollectionDetails" inverse="true">
+			<key column="investigation_id" />
+			<one-to-many class="DgSampleCollectionDetails" />
+		</set>
+		<set name="DgResultEntryDetails" inverse="true">
+			<key column="investigation_id" />
+			<one-to-many class="DgResultEntryDetail" />
+		</set>
+
+		<set name="DgTemplates"  inverse="true"  >
+			<key column="investigation_id" />
+			<one-to-many class="DgTemplate" />
+		</set>
+
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,851 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="subBedStatisticsDetail"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="1080"
+		 pageHeight="864"
+		 columnWidth="1080"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="toDate" isForPrompting="true" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select  d.REMD,ADM,b.Death,c.DIS,ifnull(a.ADM,0) + ifnull(d.REMD,0) - ifnull(b.Death,0) - ifnull(c.DIS,0) as TOT
+,e.OFF_AF,f.OFF_ARMY,g.OFF_NAVY,ifnull(e.OFF_AF,0)+ifnull(f.OFF_ARMY,0)+ifnull(g.OFF_NAVY,0)AS OFF_TOT,
+h.OFF_FAM_AF,i.OFF_FAM_ARMY,j.OFF_FAM_NAVY,ifnull(h.OFF_FAM_AF,0)+ifnull(i.OFF_FAM_ARMY,0)+ifnull(OFF_FAM_NAVY,0)AS OFF_FAM_TOT
+,k.ORS_AF,l.ORS_ARMY,m.ORS_NAVY,ifnull(k.ORS_AF,0)+ifnull(l.ORS_ARMY,0)+ifnull(m.ORS_NAVY,0)AS ORS_TOT,
+n.ORS_FAM_AF,o.ORS_FAM_ARMY,p.ORS_FAM_NAVY,ifnull(n.ORS_FAM_AF,0)+ifnull(o.ORS_FAM_ARMY,0)+ifnull(p.ORS_FAM_NAVY,0)AS ORS_FAM_TOT,
+ifnull(e.OFF_AF,0)+ifnull(h.OFF_FAM_AF,0)+ifnull(k.ORS_AF,0)+ifnull(n.ORS_FAM_AF,0) AS AF_TOT,
+ifnull(f.OFF_ARMY,0)+ifnull(i.OFF_FAM_ARMY,0)+ifnull(l.ORS_ARMY,0)+ifnull(o.ORS_FAM_ARMY,0) AS ARMY_TOT,
+ifnull(g.OFF_NAVY,0)+ifnull(j.OFF_FAM_NAVY,0)+ifnull(m.ORS_NAVY,0)+ifnull(p.ORS_FAM_NAVY,0) AS NAVY_TOT,
+q.CE_NE AS CE_NE,
+r.FORG,
+ifnull(ifnull(e.OFF_AF,0)+ifnull(h.OFF_FAM_AF,0)+ifnull(k.ORS_AF,0)+ifnull(n.ORS_FAM_AF,0),0)
++ifnull(ifnull(f.OFF_ARMY,0)+ifnull(i.OFF_FAM_ARMY,0)+ifnull(l.ORS_ARMY,0)+ifnull(o.ORS_FAM_ARMY,0),0)
++ifnull(ifnull(g.OFF_NAVY,0)+ifnull(j.OFF_FAM_NAVY,0)+ifnull(m.ORS_NAVY,0)+ifnull(p.ORS_FAM_NAVY,0),0)
++ifnull(CE_NE,0)+ifnull(r.FORG,0) AS FINAL_TOT
+
+
+
+ from 
+(SELECT count(*) as ADM FROM inpatient inpatient  where inpatient.date_of_addmission = $P{toDate} and inpatient.ad_status !="C") a,
+(SELECT count(*) as Death FROM expiry_details expiry_details where expiry_details.expiry_date  = $P{toDate}  ) b,
+(SELECT count(*) as DIS FROM discharge discharge where discharge.date_of_discharge = $P{toDate}) c,
+(SELECT count(*) as REMD FROM
+inpatient inp2 where inp2.date_of_addmission <= DATE_ADD($P{toDate},INTERVAL '-1'DAY)  and DATE_ADD($P{toDate},INTERVAL '-1'DAY) <= ifNull(inp2.discharge_date,NOW()) and inp2.ad_status !="C") d,
+
+
+(SELECT count(*) as OFF_AF FROM inpatient inp3 
+ LEFT OUTER JOIN patient patient1 ON inp3.`hin_id` = patient1.`hin_id`
+ left outer JOIN mas_rank rank1 ON rank1.`rank_id` = patient1.`rank_id`
+ where inp3.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp3.discharge_date,NOW() ) and inp3.ad_status !="C"
+and rank1.`rank_category_id` =1 and patient1.`relation_id` =8 and patient1.`service_type_id` =2) e,
+
+(SELECT count(*) as OFF_ARMY FROM inpatient inp4 
+ LEFT OUTER JOIN patient patient2 ON inp4.`hin_id` = patient2.`hin_id`
+ left outer JOIN mas_rank rank2 ON rank2.`rank_id` = patient2.`rank_id`
+ where inp4.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp4.discharge_date,NOW()) 
+and rank2.`rank_category_id` =1 and patient2.`relation_id` =8 and patient2.`service_type_id` =1 and inp4.ad_status !="C") f,
+
+(SELECT count(*) as OFF_NAVY FROM inpatient inp5 
+ LEFT OUTER JOIN patient patient3 ON inp5.`hin_id` = patient3.`hin_id`
+ left outer JOIN mas_rank rank3 ON rank3.`rank_id` = patient3.`rank_id`
+ where inp5.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp5.discharge_date,NOW()) and inp5.ad_status !="C"
+and rank3.`rank_category_id` =1 and patient3.`relation_id` =8 and patient3.`service_type_id` IN (4,6)) g,
+
+
+
+
+
+
+(SELECT count(*) as OFF_FAM_AF FROM inpatient inp3 
+ LEFT OUTER JOIN patient patient1 ON inp3.`hin_id` = patient1.`hin_id`
+ left outer JOIN mas_rank rank1 ON rank1.`rank_id` = patient1.`rank_id`
+ where inp3.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp3.discharge_date,NOW()) and inp3.ad_status !="C"
+and rank1.`rank_category_id` =1 and patient1.`relation_id` !=8 and patient1.`service_type_id` =2) h,
+
+(SELECT count(*) as OFF_FAM_ARMY FROM inpatient inp4 
+ LEFT OUTER JOIN patient patient2 ON inp4.`hin_id` = patient2.`hin_id`
+ left outer JOIN mas_rank rank2 ON rank2.`rank_id` = patient2.`rank_id`
+ where inp4.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp4.discharge_date,NOW())  and inp4.ad_status !="C"
+and rank2.`rank_category_id` =1 and patient2.`relation_id`!=8 and patient2.`service_type_id` =1) i,
+
+(SELECT count(*) as OFF_FAM_NAVY FROM inpatient inp5 
+ LEFT OUTER JOIN patient patient3 ON inp5.`hin_id` = patient3.`hin_id`
+ left outer JOIN mas_rank rank3 ON rank3.`rank_id` = patient3.`rank_id`
+ where inp5.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp5.discharge_date,NOW()) and inp5.ad_status !="C"
+and rank3.`rank_category_id` =1 and patient3.`relation_id` !=8 and patient3.`service_type_id` IN (4,6)) j,
+
+
+
+(SELECT count(*) as ORS_AF FROM inpatient inp3 
+ LEFT OUTER JOIN patient patient1 ON inp3.`hin_id` = patient1.`hin_id`
+ left outer JOIN mas_rank rank1 ON rank1.`rank_id` = patient1.`rank_id`
+ where inp3.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp3.discharge_date,NOW()) and inp3.ad_status !="C"
+and rank1.`rank_category_id` !=1 and patient1.`relation_id` =8 and patient1.`service_type_id` =2) k,
+
+(SELECT count(*) as ORS_ARMY FROM inpatient inp4 
+ LEFT OUTER JOIN patient patient2 ON inp4.`hin_id` = patient2.`hin_id`
+ left outer JOIN mas_rank rank2 ON rank2.`rank_id` = patient2.`rank_id`
+ where inp4.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp4.discharge_date,NOW()) and inp4.ad_status !="C"
+and rank2.`rank_category_id` !=1 and patient2.`relation_id` =8 and patient2.`service_type_id` =1) l,
+
+(SELECT count(*) as ORS_NAVY FROM inpatient inp5 
+ LEFT OUTER JOIN patient patient3 ON inp5.`hin_id` = patient3.`hin_id`
+ left outer JOIN mas_rank rank3 ON rank3.`rank_id` = patient3.`rank_id`
+ where inp5.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp5.discharge_date,NOW()) and inp5.ad_status !="C"
+and rank3.`rank_category_id` !=1 and patient3.`relation_id` =8 and patient3.`service_type_id` IN (4,6)) m,
+
+
+
+
+
+
+(SELECT count(*) as ORS_FAM_AF FROM inpatient inp3 
+ LEFT OUTER JOIN patient patient1 ON inp3.`hin_id` = patient1.`hin_id`
+ left outer JOIN mas_rank rank1 ON rank1.`rank_id` = patient1.`rank_id`
+ where inp3.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp3.discharge_date,NOW()) and inp3.ad_status !="C"
+and rank1.`rank_category_id` !=1 and patient1.`relation_id` !=8 and patient1.`service_type_id` =2) n,
+
+(SELECT count(*) as ORS_FAM_ARMY FROM inpatient inp4 
+ LEFT OUTER JOIN patient patient2 ON inp4.`hin_id` = patient2.`hin_id`
+ left outer JOIN mas_rank rank2 ON rank2.`rank_id` = patient2.`rank_id`
+ where inp4.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp4.discharge_date,NOW()) and inp4.ad_status !="C"
+and rank2.`rank_category_id` !=1 and patient2.`relation_id`!=8 and patient2.`service_type_id` =1)o,
+
+(SELECT count(*) as ORS_FAM_NAVY FROM inpatient inp5 
+ LEFT OUTER JOIN patient patient3 ON inp5.`hin_id` = patient3.`hin_id`
+ left outer JOIN mas_rank rank3 ON rank3.`rank_id` = patient3.`rank_id`
+ where inp5.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp5.discharge_date,NOW()) and inp5.ad_status !="C"
+and rank3.`rank_category_id` !=1 and patient3.`relation_id` !=8 and patient3.`service_type_id`IN (4,6)) p,
+
+
+(SELECT count(*) as CE_NE FROM inpatient inp5 
+ LEFT OUTER JOIN patient patient3 ON inp5.`hin_id` = patient3.`hin_id` and inp5.ad_status !="C"
+ 
+ where inp5.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp5.discharge_date,NOW()) and inp5.ad_status !="C"
+and  patient3.`service_type_id` IN (3,7)) q,
+
+
+(SELECT count(*) as FORG FROM inpatient inp5 
+ LEFT OUTER JOIN patient patient3 ON inp5.`hin_id` = patient3.`hin_id`
+  where inp5.date_of_addmission <= $P{toDate} and $P{toDate} <= ifNull(inp5.discharge_date,NOW()) and inp5.ad_status !="C"
+and  patient3.`service_type_id` =5) r
+
+
+
+;]]></queryString>
+
+	<field name="REMD" class="java.lang.Long"/>
+	<field name="ADM" class="java.lang.Long"/>
+	<field name="Death" class="java.lang.Long"/>
+	<field name="DIS" class="java.lang.Long"/>
+	<field name="TOT" class="java.lang.Long"/>
+	<field name="OFF_AF" class="java.lang.Long"/>
+	<field name="OFF_ARMY" class="java.lang.Long"/>
+	<field name="OFF_NAVY" class="java.lang.Long"/>
+	<field name="OFF_TOT" class="java.lang.Long"/>
+	<field name="OFF_FAM_AF" class="java.lang.Long"/>
+	<field name="OFF_FAM_ARMY" class="java.lang.Long"/>
+	<field name="OFF_FAM_NAVY" class="java.lang.Long"/>
+	<field name="OFF_FAM_TOT" class="java.lang.Long"/>
+	<field name="ORS_AF" class="java.lang.Long"/>
+	<field name="ORS_ARMY" class="java.lang.Long"/>
+	<field name="ORS_NAVY" class="java.lang.Long"/>
+	<field name="ORS_TOT" class="java.lang.Long"/>
+	<field name="ORS_FAM_AF" class="java.lang.Long"/>
+	<field name="ORS_FAM_ARMY" class="java.lang.Long"/>
+	<field name="ORS_FAM_NAVY" class="java.lang.Long"/>
+	<field name="ORS_FAM_TOT" class="java.lang.Long"/>
+	<field name="AF_TOT" class="java.lang.Long"/>
+	<field name="ARMY_TOT" class="java.lang.Long"/>
+	<field name="NAVY_TOT" class="java.lang.Long"/>
+	<field name="CE_NE" class="java.lang.Long"/>
+	<field name="FORG" class="java.lang.Long"/>
+	<field name="FINAL_TOT" class="java.lang.Long"/>
+
+	<variable name="sum" class="java.lang.Integer" resetType="Report" calculation="Sum">
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="22"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="144"
+						y="2"
+						width="0"
+						height="20"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="177"
+						y="2"
+						width="0"
+						height="20"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="219"
+						y="2"
+						width="0"
+						height="20"
+						key="line-3"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="321"
+						y="2"
+						width="0"
+						height="20"
+						key="line-4"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="359"
+						y="2"
+						width="0"
+						height="20"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="284"
+						y="2"
+						width="0"
+						height="20"
+						key="line-6"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="467"
+						y="2"
+						width="0"
+						height="20"
+						key="line-7"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="505"
+						y="2"
+						width="0"
+						height="20"
+						key="line-8"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="429"
+						y="2"
+						width="0"
+						height="20"
+						key="line-9"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="608"
+						y="2"
+						width="0"
+						height="20"
+						key="line-10"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="646"
+						y="2"
+						width="0"
+						height="20"
+						key="line-11"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="571"
+						y="2"
+						width="0"
+						height="20"
+						key="line-12"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="754"
+						y="2"
+						width="0"
+						height="20"
+						key="line-13"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="794"
+						y="2"
+						width="0"
+						height="20"
+						key="line-14"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="715"
+						y="2"
+						width="0"
+						height="20"
+						key="line-15"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="912"
+						y="2"
+						width="0"
+						height="20"
+						key="line-16"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="874"
+						y="2"
+						width="0"
+						height="20"
+						key="line-17"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="253"
+						y="2"
+						width="0"
+						height="20"
+						key="line-18"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="395"
+						y="2"
+						width="0"
+						height="20"
+						key="line-19"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="542"
+						y="2"
+						width="0"
+						height="20"
+						key="line-20"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="684"
+						y="2"
+						width="0"
+						height="18"
+						key="line-21"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="837"
+						y="2"
+						width="0"
+						height="19"
+						key="line-22"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="114"
+						y="2"
+						width="28"
+						height="14"
+						key="textField-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{ADM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="184"
+						y="2"
+						width="33"
+						height="14"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{Death}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="146"
+						y="2"
+						width="28"
+						height="14"
+						key="textField-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{DIS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="221"
+						y="2"
+						width="30"
+						height="14"
+						key="textField-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{TOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="257"
+						y="2"
+						width="25"
+						height="14"
+						key="textField-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{OFF_AF}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="291"
+						y="2"
+						width="28"
+						height="14"
+						key="textField-6"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{OFF_ARMY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="322"
+						y="2"
+						width="36"
+						height="14"
+						key="textField-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{OFF_NAVY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="362"
+						y="2"
+						width="31"
+						height="14"
+						key="textField-8"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{OFF_TOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="397"
+						y="2"
+						width="29"
+						height="14"
+						key="textField-9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{OFF_FAM_AF}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="437"
+						y="2"
+						width="27"
+						height="14"
+						key="textField-10"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{OFF_FAM_ARMY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="471"
+						y="2"
+						width="32"
+						height="14"
+						key="textField-11"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{OFF_FAM_NAVY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="507"
+						y="2"
+						width="34"
+						height="14"
+						key="textField-12"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{OFF_FAM_TOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="545"
+						y="2"
+						width="24"
+						height="14"
+						key="textField-13"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{ORS_AF}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="576"
+						y="2"
+						width="30"
+						height="14"
+						key="textField-14"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{ORS_ARMY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="615"
+						y="2"
+						width="29"
+						height="14"
+						key="textField-15"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{ORS_NAVY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="648"
+						y="2"
+						width="33"
+						height="14"
+						key="textField-16"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{ORS_TOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="687"
+						y="2"
+						width="25"
+						height="14"
+						key="textField-17"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{ORS_FAM_AF}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="717"
+						y="2"
+						width="35"
+						height="14"
+						key="textField-18"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{ORS_FAM_ARMY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="756"
+						y="2"
+						width="35"
+						height="14"
+						key="textField-19"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{ORS_FAM_NAVY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="797"
+						y="2"
+						width="38"
+						height="14"
+						key="textField-20"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{ORS_FAM_TOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="843"
+						y="2"
+						width="27"
+						height="14"
+						key="textField-21"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{AF_TOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="877"
+						y="2"
+						width="32"
+						height="14"
+						key="textField-22"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{ARMY_TOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="73"
+						y="2"
+						width="34"
+						height="14"
+						key="textField-23"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{REMD}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="2"
+						width="69"
+						height="14"
+						key="textField-24"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$P{toDate}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="72"
+						y="2"
+						width="0"
+						height="20"
+						key="line-24"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="3"
+						y="1"
+						width="0"
+						height="20"
+						key="line-25"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="110"
+						y="2"
+						width="0"
+						height="20"
+						key="line-26"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="915"
+						y="2"
+						width="32"
+						height="14"
+						key="textField-25"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{NAVY_TOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="950"
+						y="2"
+						width="44"
+						height="14"
+						key="textField-26"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{CE_NE}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="949"
+						y="2"
+						width="0"
+						height="20"
+						key="line-27"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="996"
+						y="2"
+						width="0"
+						height="20"
+						key="line-28"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="1035"
+						y="2"
+						width="0"
+						height="20"
+						key="line-29"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1001"
+						y="2"
+						width="32"
+						height="14"
+						key="textField-27"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{FORG}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1036"
+						y="2"
+						width="38"
+						height="14"
+						key="textField-28"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{FINAL_TOT}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="3"
+						y="20"
+						width="1072"
+						height="2"
+						key="line-30"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="1074"
+						y="2"
+						width="0"
+						height="20"
+						key="line-31"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

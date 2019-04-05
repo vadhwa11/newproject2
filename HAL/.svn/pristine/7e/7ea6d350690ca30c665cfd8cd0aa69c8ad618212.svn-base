@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="ward_Clinical_Sheet_ReportIPD"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="720"
+		 pageHeight="1440"
+		 columnWidth="720"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="jfcRenderer" isForPrompting="true" class="java.lang.Object"/>
+	<parameter name="hospitalId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pjfcRenderer" isForPrompting="true" class="java.lang.Object"/>
+	<parameter name="date" isForPrompting="false" class="java.util.Date"/>
+	<parameter name="adNo" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT
+     (PATIENT.P_FIRST_NAME + ' ' + ISNULL(PATIENT.P_MIDDLE_NAME,'') + ' ' + ISNULL(PATIENT.P_LAST_NAME,'')) AS PATIENT_NAME,
+      PATIENT.SEX_ID AS PATIENT_SEX_ID,
+     PATIENT.AGE AS PATIENT_AGE,
+     MAS_ADMINISTRATIVE_SEX.ADMINISTRATIVE_SEX_NAME AS ADMINISTRATIVE_SEX_NAME,
+     PATIENT.RELATION_ID AS PATIENT_RELATION_ID,
+     MAS_RELATION_A.RELATION_NAME AS A_RELATION_NAME,
+     PATIENT.HIN_NO AS PATIENT_HIN_NO,
+     MAS_RANK.RANK_NAME AS MAS_RANK_RANK_NAME,
+     (PATIENT.S_FIRST_NAME + ' ' + ISNULL(PATIENT.S_MIDDLE_NAME,'') + ' ' + ISNULL(PATIENT.S_LAST_NAME,'')) AS SERVICE_NAME,
+    MAS_MARITAL_STATUS.MARITAL_STATUS_NAME AS MARITAL_STATUS,
+     MAS_BLOOD_GROUP.BLOOD_GROUP_NAME AS BLOODGROUP,
+ 
+    PATIENT.DATE_OF_BIRTH AS DOB,
+    
+     INPATIENT.HIN_ID AS INPATIENT_HIN_ID,
+     INPATIENT.DATE_OF_ADDMISSION ,
+INPATIENT.DISCHARGE_DATE AS DISCHARGE_DATE,
+     INPATIENT.AD_NO AS ADNO,
+     OPD_PATIENT_DETAILS.INITIAL_DIAGNOSIS AS WORKING_DIAGNOSIS,
+     PATIENT.RANK_ID AS PATIENT_RANK_ID,
+     MAS_HOSPITAL.HOSPITAL_NAME AS HOSPITAL_NAME,
+     MAS_HOSPITAL.ADDRESS AS HOSPITAL_ADDRESS,
+     PATIENT.SERVICE_NO AS SERVICENO,
+     
+   
+ OPD_PATIENT_DETAILS.INITIAL_DIAGNOSIS AS WORKINGDIAGNOSIS ,
+INPATIENT.INPATIENT_ID AS INPATIENT_ID,
+SDS.LAST_CHG_DATE AS SILDATE,
+MD.DEPARTMENT_NAME,DATE_OF_ADDMISSION AS DOA, INPATIENT.AD_NO,
+INIT_DIAGNOSIS, MB.BED_NO,
+INPATIENT.LIST_DATE AS SILDILDATE
+ 
+FROM INPATIENT INPATIENT
+LEFT OUTER JOIN   OPD_PATIENT_DETAILS OPD_PATIENT_DETAILS ON OPD_PATIENT_DETAILS.INPATIENT_ID = INPATIENT.INPATIENT_ID
+LEFT OUTER JOIN PATIENT PATIENT ON INPATIENT.HIN_ID=PATIENT.HIN_ID
+LEFT OUTER JOIN SIL_DIL_STATUS SDS ON INPATIENT.INPATIENT_ID=SDS.INPATIENT_ID
+LEFT JOIN  MAS_ADMINISTRATIVE_SEX MAS_ADMINISTRATIVE_SEX  ON MAS_ADMINISTRATIVE_SEX.ADMINISTRATIVE_SEX_ID = PATIENT.SEX_ID
+LEFT OUTER JOIN MAS_RELATION MAS_RELATION ON PATIENT.RELATION_ID = MAS_RELATION.RELATION_ID
+LEFT OUTER JOIN MAS_RELATION MAS_RELATION_A ON PATIENT.RELATION_ID = MAS_RELATION_A.RELATION_ID
+LEFT OUTER JOIN MAS_RANK MAS_RANK ON PATIENT.RANK_ID = MAS_RANK.RANK_ID
+
+LEFT OUTER JOIN MAS_MARITAL_STATUS MAS_MARITAL_STATUS ON PATIENT.MARITAL_STATUS_ID = MAS_MARITAL_STATUS.MARITAL_STATUS_ID
+    LEFT JOIN MAS_BLOOD_GROUP MAS_BLOOD_GROUP ON PATIENT.BLOOD_GROUP_ID = MAS_BLOOD_GROUP.BLOOD_GROUP_ID
+    LEFT JOIN MAS_DEPARTMENT MD ON INPATIENT.DEPARTMENT_ID=MD.DEPARTMENT_ID
+     LEFT OUTER JOIN MAS_HOSPITAL MAS_HOSPITAL ON INPATIENT.HOSPITAL_ID = MAS_HOSPITAL.HOSPITAL_ID
+    
+    LEFT OUTER JOIN MAS_BED MB ON INPATIENT.BED_ID=MB.BED_ID
+     
+     LEFT JOIN OPD_PATIENT_HISTORY OPD_PATIENT_HISTORY ON OPD_PATIENT_DETAILS.ID = OPD_PATIENT_HISTORY.OPD_PATIENT_DETAILS_ID
+ 
+WHERE
+   inpatient.inpatient_id = $P{adNo}
+     and mas_hospital.hospital_id=$P{hospitalId}]]></queryString>
+
+	<field name="PATIENT_NAME" class="java.lang.String"/>
+	<field name="PATIENT_SEX_ID" class="java.lang.Integer"/>
+	<field name="PATIENT_AGE" class="java.lang.String"/>
+	<field name="ADMINISTRATIVE_SEX_NAME" class="java.lang.String"/>
+	<field name="PATIENT_RELATION_ID" class="java.lang.Integer"/>
+	<field name="A_RELATION_NAME" class="java.lang.String"/>
+	<field name="PATIENT_HIN_NO" class="java.lang.String"/>
+	<field name="MAS_RANK_RANK_NAME" class="java.lang.String"/>
+	<field name="SERVICE_NAME" class="java.lang.String"/>
+	<field name="MARITAL_STATUS" class="java.lang.String"/>
+	<field name="BLOODGROUP" class="java.lang.String"/>
+	<field name="DOB" class="java.lang.String"/>
+	<field name="INPATIENT_HIN_ID" class="java.lang.Integer"/>
+	<field name="DATE_OF_ADDMISSION" class="java.util.Date"/>
+	<field name="DISCHARGE_DATE" class="java.util.Date"/>
+	<field name="ADNO" class="java.lang.String"/>
+	<field name="WORKING_DIAGNOSIS" class="java.lang.String"/>
+	<field name="PATIENT_RANK_ID" class="java.lang.Integer"/>
+	<field name="HOSPITAL_NAME" class="java.lang.String"/>
+	<field name="HOSPITAL_ADDRESS" class="java.lang.String"/>
+	<field name="SERVICENO" class="java.lang.String"/>
+	<field name="WORKINGDIAGNOSIS" class="java.lang.String"/>
+	<field name="INPATIENT_ID" class="java.lang.Integer"/>
+	<field name="SILDATE" class="java.sql.Timestamp"/>
+	<field name="DEPARTMENT_NAME" class="java.lang.String"/>
+	<field name="DOA" class="java.lang.String"/>
+	<field name="AD_NO" class="java.lang.String"/>
+	<field name="INIT_DIAGNOSIS" class="java.lang.String"/>
+	<field name="BED_NO" class="java.lang.String"/>
+	<field name="SILDILDATE" class="java.lang.String"/>
+
+	<variable name="current_date" class="java.util.Date" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[new Date()]]></variableExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+				<elementGroup><!--  Start: 1 !-->
+				<staticText>
+					<reportElement
+						x="81"
+						y="-79"
+						width="0"
+						height="1"
+						key="staticText-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Static Text]]></text>
+				</staticText>
+				</elementGroup><!-- End 1 !-->
+				<staticText>
+					<reportElement
+						x="71"
+						y="-69"
+						width="0"
+						height="1"
+						key="staticText-18"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Static Text]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="-4"
+						y="-19"
+						width="603"
+						height="0"
+						key="line-3"/>
+					<graphicElement stretchType="NoStretch" pen="Dotted"/>
+				</line>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="382"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="1"
+						y="1"
+						width="529"
+						height="20"
+						key="staticText-28"/>
+					<box topBorder="1Point" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isUnderline="false"/>
+					</textElement>
+				<text><![CDATA[CLINICAL CHART]]></text>
+				</staticText>
+				<image  vAlign="Middle" hAlign="Center" onErrorType="Icon" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="-4"
+						y="15"
+						width="534"
+						height="170"
+						key="image-1"
+						stretchType="RelativeToTallestObject"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<graphicElement stretchType="RelativeToTallestObject"/>
+					<imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$P{jfcRenderer}]]></imageExpression>
+				</image>
+				<image  vAlign="Middle" hAlign="Center" onErrorType="Icon" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="-4"
+						y="187"
+						width="534"
+						height="180"
+						key="image-2"
+						stretchType="RelativeToTallestObject"
+						positionType="Float"
+						isRemoveLineWhenBlank="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<graphicElement stretchType="RelativeToTallestObject"/>
+					<imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$P{pjfcRenderer}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement
+						x="480"
+						y="369"
+						width="110"
+						height="13"
+						key="staticText-67"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Signature of Medical Officer]]></text>
+				</staticText>
+			</band>
+		</summary>
+</jasperReport>
